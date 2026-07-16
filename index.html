@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Professional Bank Receipt Generator</title>
+    
+    <!-- Dynamic Manifest Link -->
+    <link id="manifest-link" rel="manifest" href="">
+    
+    <!-- Tailwind CSS for Layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- html2canvas for Receipt Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+
+        /* Receipt Canvas Styling - Pixel Perfect Replica */
+        .receipt-wrapper {
+            position: relative;
+            background: #f3f4f6; /* Outer background to match scallops */
+            padding: 10px 0;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.05));
+        }
+
+        .receipt-card {
+            background-color: #ffffff;
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            border-radius: 16px;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        /* Ticket Stub Scalloped Edges */
+        .receipt-card::before, .receipt-card::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 12px;
+            background-size: 20px 20px;
+            background-repeat: repeat-x;
+            z-index: 20;
+        }
+
+        .receipt-card::before {
+            top: -6px;
+            background-image: radial-gradient(circle at 10px 0px, #f3f4f6 6px, transparent 7px);
+        }
+
+        .receipt-card::after {
+            bottom: -6px;
+            background-image: radial-gradient(circle at 10px 20px, #f3f4f6 6px, transparent 7px);
+        }
+
+        /* Watermark Background */
+        .receipt-watermark {
+            position: absolute;
+            top: 0; left: -20%; right: -20%; bottom: 0;
+            background-image: url('https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png');
+            background-size: 150px;
+            background-repeat: repeat;
+            opacity: 0.04;
+            transform: rotate(-25deg);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .receipt-content {
+            position: relative;
+            z-index: 2;
+            padding: 32px 24px;
+        }
+
+        /* Dashed Dividers */
+        .receipt-divider {
+            border-top: 1px dashed #E2E8F0;
+            margin: 20px 0;
+        }
+
+        .naira-symbol { font-family: sans-serif; } /* Ensures ₦ renders perfectly */
+
+        /* Toast Animations */
+        .toast {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(100%);
+            opacity: 0;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Input specific styles */
+        input:focus, select:focus {
+            outline: none;
+            border-color: #6A11E7;
+            box-shadow: 0 0 0 3px rgba(106, 17, 231, 0.1);
+        }
+    </style>
+</head>
+<body class="text-gray-800 h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-white border-b px-4 py-3 flex justify-between items-center shrink-0 shadow-sm z-50">
+        <div class="flex items-center gap-2">
+            <img src="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png" alt="Logo" class="w-8 h-8 object-contain">
+            <h1 class="font-bold text-lg text-gray-800 tracking-tight hidden sm:block">ReceiptGen PWA</h1>
+        </div>
+        <div class="flex items-center gap-3">
+            <span id="nav-offline-badge" class="hidden bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-full uppercase tracking-wide">Offline</span>
+            <div id="nav-user-info" class="hidden items-center gap-3 text-sm">
+                <span class="font-medium bg-purple-50 text-purple-700 px-3 py-1.5 rounded-lg border border-purple-100">
+                    Points: <span id="nav-points" class="font-bold">0</span>
+                </span>
+                <button onclick="app.logout()" class="text-gray-500 hover:text-red-500 transition-colors font-medium">Logout</button>
+            </div>
+            <button id="install-btn" class="hidden bg-black text-white text-sm font-medium px-4 py-2 rounded-lg shadow-md hover:bg-gray-800 transition-colors">Install App</button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="flex-1 overflow-hidden relative">
+
+        <!-- AUTHENTICATION VIEW -->
+        <div id="auth-view" class="absolute inset-0 bg-gray-50 flex items-center justify-center overflow-y-auto p-4 z-40 transition-opacity duration-300">
+            <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+                <div class="text-center mb-8">
+                    <img src="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png" alt="Logo" class="w-16 h-16 object-contain mx-auto mb-4">
+                    <h2 class="text-2xl font-bold text-gray-900" id="auth-title">Welcome Back</h2>
+                    <p class="text-gray-500 text-sm mt-1" id="auth-subtitle">Sign in to access your dashboard</p>
+                </div>
+
+                <form id="auth-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                        <input type="text" id="auth-username" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white transition-colors" placeholder="Enter username">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="auth-password" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white transition-colors" placeholder="Enter password">
+                    </div>
+                    
+                    <!-- Signup specific fields -->
+                    <div id="signup-fields" class="hidden space-y-4 border-t pt-4 mt-2">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="auth-is-admin" class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500 border-gray-300">
+                            <span class="text-sm font-medium text-gray-700">Register as Admin</span>
+                        </label>
+                        <div id="admin-pass-container" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Admin Key</label>
+                            <input type="password" id="auth-admin-key" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white transition-colors" placeholder="Enter secret admin key">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="auth-submit-btn" class="w-full bg-[#6A11E7] hover:bg-[#580ec2] text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-purple-500/30 transition-all mt-4">
+                        Sign In
+                    </button>
+                </form>
+
+                <p class="text-center text-sm text-gray-500 mt-6">
+                    <span id="auth-toggle-text">Don't have an account?</span> 
+                    <button onclick="app.toggleAuthMode()" class="text-[#6A11E7] font-bold hover:underline ml-1" id="auth-toggle-btn">Sign up</button>
+                </p>
+            </div>
+        </div>
+
+        <!-- DASHBOARD VIEW -->
+        <div id="dashboard-view" class="hidden absolute inset-0 overflow-hidden flex flex-col lg:flex-row">
+            
+            <!-- Left Side: Controls & Form -->
+            <div class="w-full lg:w-1/2 h-full overflow-y-auto bg-white border-r border-gray-200 p-4 lg:p-8">
+                <div class="max-w-xl mx-auto">
+                    
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Generate Receipt</h2>
+
+                    <!-- Bank Selector -->
+                    <div class="mb-8">
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">Select Bank Interface</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <button class="border-2 border-[#6A11E7] bg-purple-50 rounded-xl py-3 px-2 flex flex-col items-center justify-center transition-all">
+                                <span class="font-bold text-[#6A11E7] text-sm mt-1">PalmPay</span>
+                            </button>
+                            <button onclick="app.showToast('Not available at the moment. Coming soon!', 'warning')" class="border border-gray-200 hover:bg-gray-50 rounded-xl py-3 px-2 flex flex-col items-center justify-center transition-all opacity-60 grayscale hover:grayscale-0">
+                                <span class="font-bold text-gray-600 text-sm mt-1">OPay</span>
+                            </button>
+                            <button onclick="app.showToast('Not available at the moment. Coming soon!', 'warning')" class="border border-gray-200 hover:bg-gray-50 rounded-xl py-3 px-2 flex flex-col items-center justify-center transition-all opacity-60 grayscale hover:grayscale-0">
+                                <span class="font-bold text-gray-600 text-sm mt-1">Kuda</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <form id="generator-form" class="space-y-8">
+                        
+                        <!-- Transaction Details -->
+                        <section class="bg-gray-50 p-5 rounded-2xl border border-gray-100">
+                            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <span class="w-6 h-6 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs">1</span> Transaction Details
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Amount (₦)</label>
+                                    <input type="text" id="input-amount" value="1,250.00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#6A11E7] font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Date & Time</label>
+                                    <input type="datetime-local" id="input-date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#6A11E7] text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Transaction Type</label>
+                                    <input type="text" id="input-type" value="Transfer to Bank" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#6A11E7] text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Transaction ID</label>
+                                    <input type="text" id="input-txnid" value="0337ol5ld103" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#6A11E7] text-sm font-mono">
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Session ID (2 lines)</label>
+                                    <textarea id="input-sessionid" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#6A11E7] text-sm font-mono">100033260716102&#10;816020183654744</textarea>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Recipient Details -->
+                        <section class="bg-gray-50 p-5 rounded-2xl border border-gray-100">
+                            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <span class="w-6 h-6 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs">2</span> Recipient Details
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Recipient Name</label>
+                                    <input type="text" id="input-rec-name" value="IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#6A11E7] text-sm uppercase font-semibold">
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Bank Name</label>
+                                        <input type="text" id="input-rec-bank" value="Moniepoint" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#6A11E7] text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Account Number</label>
+                                        <input type="text" id="input-rec-acc" value="820 163 3275" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#6A11E7] text-sm font-mono">
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Sender Details -->
+                        <section class="bg-gray-50 p-5 rounded-2xl border border-gray-100">
+                            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <span class="w-6 h-6 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs">3</span> Sender Details
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Sender Name</label>
+                                    <input type="text" id="input-sen-name" value="CHIZOBA ONYEMA" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#6A11E7] text-sm uppercase font-semibold">
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Bank Name (Locked)</label>
+                                        <input type="text" value="PalmPay" readonly class="w-full px-3 py-2 bg-gray-200 border border-gray-300 rounded-lg text-gray-500 text-sm cursor-not-allowed">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Account Number</label>
+                                        <input type="text" id="input-sen-acc" value="906***4954" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#6A11E7] text-sm font-mono">
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                    </form>
+                    
+                    <div class="mt-8 pb-10">
+                        <button onclick="app.downloadReceipt()" class="w-full bg-[#6A11E7] hover:bg-[#580ec2] text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-purple-500/30 transition-all flex items-center justify-center gap-2 text-lg">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Download Receipt (-50 Points)
+                        </button>
+                        <p class="text-center text-xs text-gray-500 mt-3 flex items-center justify-center gap-1">
+                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            High Quality PNG • Pixel Perfect
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right Side: Live Preview Container -->
+            <div class="w-full lg:w-1/2 h-full overflow-y-auto bg-gray-200 flex flex-col items-center justify-start p-6 lg:p-10">
+                <h3 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-6 w-full max-w-md text-center">Live Preview</h3>
+                
+                <!-- THE RECEIPT BLOCK -->
+                <div class="receipt-wrapper w-full" id="receipt-capture-zone">
+                    <div class="receipt-card shadow-sm" id="receipt-card">
+                        <div class="receipt-watermark"></div>
+                        
+                        <div class="receipt-content">
+                            <!-- Header -->
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex items-center gap-1.5">
+                                    <img src="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png" crossorigin="anonymous" alt="PalmPay Logo" class="w-6 h-6 object-contain">
+                                    <span class="font-bold text-[17px] tracking-tight text-gray-900" style="font-family: Arial, sans-serif;">PalmPay</span>
+                                </div>
+                            </div>
+
+                            <!-- Amount -->
+                            <div class="text-center mt-6">
+                                <div class="text-[#6A11E7] font-bold text-4xl mb-1 flex items-center justify-center gap-1">
+                                    <span class="naira-symbol">₦</span> <span id="out-amount">1,250.00</span>
+                                </div>
+                                <div class="text-gray-800 text-[15px] font-medium mt-2">Successful Transaction</div>
+                                <div class="text-gray-400 text-xs mt-1" id="out-date">Jul 16, 2026 11:28:11 AM</div>
+                            </div>
+
+                            <div class="receipt-divider"></div>
+
+                            <!-- Recipient -->
+                            <div class="flex justify-between items-start gap-4 mb-1">
+                                <span class="text-gray-600 text-[15px] shrink-0">Recipient:</span>
+                                <div class="text-right">
+                                    <div class="font-bold text-gray-900 text-[14px] uppercase leading-tight" id="out-rec-name">IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise</div>
+                                    <div class="text-gray-400 text-[13px] mt-1.5"><span id="out-rec-bank">Moniepoint</span> | <span id="out-rec-acc">820 163 3275</span></div>
+                                </div>
+                            </div>
+
+                            <div class="receipt-divider"></div>
+
+                            <!-- Sender -->
+                            <div class="flex justify-between items-start gap-4 mb-1">
+                                <span class="text-gray-600 text-[15px] shrink-0">Sender:</span>
+                                <div class="text-right">
+                                    <div class="font-bold text-gray-900 text-[14px] uppercase" id="out-sen-name">CHIZOBA ONYEMA</div>
+                                    <div class="text-gray-400 text-[13px] mt-1.5">PalmPay | <span id="out-sen-acc">906***4954</span></div>
+                                </div>
+                            </div>
+
+                            <div class="receipt-divider"></div>
+
+                            <!-- Transaction Info -->
+                            <div class="text-gray-600 text-[15px] mb-4">Transaction Info:</div>
+                            
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center text-[13px]">
+                                    <span class="text-gray-400">Transaction Type</span>
+                                    <span class="text-gray-600 font-medium" id="out-type">Transfer to Bank</span>
+                                </div>
+                                <div class="flex justify-between items-center text-[13px]">
+                                    <span class="text-gray-400">Transaction ID</span>
+                                    <span class="text-gray-600 font-medium" id="out-txnid">0337ol5ld103</span>
+                                </div>
+                                <div class="flex justify-between items-start text-[13px]">
+                                    <span class="text-gray-400 shrink-0">Session ID</span>
+                                    <span class="text-gray-600 font-medium text-right leading-tight whitespace-pre-line" id="out-sessionid">100033260716102
+816020183654744</span>
+                                </div>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="text-center text-[#b3b3b3] text-[11px] mt-8 mb-2 px-4">
+                                Enjoy Seamless and Unlimited Free Transfers to All Banks.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Global Toast Container -->
+    <div id="toast-container" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
+    <script>
+        /**
+         * PWA Setup: Inline Manifest & Service Worker
+         */
+        const manifestJSON = {
+            "name": "Professional Bank Receipt Generator",
+            "short_name": "ReceiptGen",
+            "start_url": ".",
+            "display": "standalone",
+            "background_color": "#f3f4f6",
+            "theme_color": "#6A11E7",
+            "icons": [{
+                "src": "https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png",
+                "sizes": "192x192",
+                "type": "image/png"
+            }]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifestJSON)], { type: 'application/json' });
+        document.getElementById('manifest-link').href = URL.createObjectURL(manifestBlob);
+
+        const swCode = `
+            const CACHE_NAME = 'receipt-gen-v1';
+            const ASSETS = [
+                location.href,
+                'https://cdn.tailwindcss.com',
+                'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+                'https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png',
+                'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
+            ];
+
+            self.addEventListener('install', event => {
+                event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)));
+                self.skipWaiting();
+            });
+
+            self.addEventListener('activate', event => {
+                event.waitUntil(clients.claim());
+            });
+
+            self.addEventListener('fetch', event => {
+                event.respondWith(
+                    caches.match(event.request).then(cached => {
+                        return cached || fetch(event.request).then(response => {
+                            // Don't cache API calls
+                            if (!event.request.url.includes('api.jsonbin.io')) {
+                                const responseClone = response.clone();
+                                caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseClone));
+                            }
+                            return response;
+                        }).catch(() => {
+                            // Offline fallback for images
+                            if(event.request.url.includes('images.png')) {
+                                return caches.match('https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png');
+                            }
+                        });
+                    })
+                );
+            });
+        `;
+        const swBlob = new Blob([swCode], { type: 'application/javascript' });
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register(URL.createObjectURL(swBlob))
+                .then(() => console.log('Service Worker Registered Successfully.'))
+                .catch(err => console.error('Service Worker Registration Failed:', err));
+        }
+
+        /**
+         * PWA Install Prompt Logic
+         */
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-btn').classList.remove('hidden');
+        });
+
+        document.getElementById('install-btn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    document.getElementById('install-btn').classList.add('hidden');
+                }
+                deferredPrompt = null;
+            }
+        });
+
+        /**
+         * Core Application Logic
+         */
+        const app = {
+            dbConfig: {
+                url: 'https://api.jsonbin.io/v3/b/6a58c982f5f4af5e29974312',
+                key: '$2a$10$PJWNL5nmooDAmJU3JBroFeZPCID0xzSK42c90gSnFEFT.KUtwOT5K'
+            },
+            state: {
+                isLoginMode: true,
+                currentUser: null,
+                isOffline: !navigator.onLine,
+                offlineQueue: JSON.parse(localStorage.getItem('receiptQueue') || '0') // Store number of deductions
+            },
+
+            init() {
+                this.bindEvents();
+                this.checkSession();
+                this.updateNetworkStatus();
+                window.addEventListener('online', () => this.handleConnectionChange(true));
+                window.addEventListener('offline', () => this.handleConnectionChange(false));
+                
+                // Pre-fill date to current date/time formatted for the input
+                const now = new Date();
+                now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                document.getElementById('input-date').value = now.toISOString().slice(0,16);
+                this.updatePreview();
+            },
+
+            bindEvents() {
+                // Auth
+                document.getElementById('auth-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleAuth();
+                });
+
+                document.getElementById('auth-is-admin').addEventListener('change', (e) => {
+                    document.getElementById('admin-pass-container').style.display = e.target.checked ? 'block' : 'none';
+                });
+
+                // Form Live Preview Syncing
+                const inputs = ['amount', 'date', 'type', 'txnid', 'sessionid', 'rec-name', 'rec-bank', 'rec-acc', 'sen-name', 'sen-acc'];
+                inputs.forEach(id => {
+                    document.getElementById(`input-${id}`).addEventListener('input', () => this.updatePreview());
+                });
+            },
+
+            updatePreview() {
+                // Formatting Date manually to match target design e.g., "Jul 16, 2026 11:28:11 AM"
+                const dateVal = document.getElementById('input-date').value;
+                let formattedDate = "Select a date";
+                if(dateVal) {
+                    const d = new Date(dateVal);
+                    const opts = { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true };
+                    formattedDate = d.toLocaleString('en-US', opts).replace(/,/g, ''); 
+                    // To exactly match formatting: Jul 16 2026 11:28:11 AM -> Add comma after day
+                    const parts = formattedDate.split(' ');
+                    if(parts.length >= 4) {
+                        formattedDate = `${parts[0]} ${parts[1]}, ${parts[2]} ${parts[3]} ${parts[4]}`;
+                    }
+                }
+
+                document.getElementById('out-amount').textContent = document.getElementById('input-amount').value;
+                document.getElementById('out-date').textContent = formattedDate;
+                document.getElementById('out-type').textContent = document.getElementById('input-type').value;
+                document.getElementById('out-txnid').textContent = document.getElementById('input-txnid').value;
+                document.getElementById('out-sessionid').textContent = document.getElementById('input-sessionid').value;
+                document.getElementById('out-rec-name').textContent = document.getElementById('input-rec-name').value;
+                document.getElementById('out-rec-bank').textContent = document.getElementById('input-rec-bank').value;
+                document.getElementById('out-rec-acc').textContent = document.getElementById('input-rec-acc').value;
+                document.getElementById('out-sen-name').textContent = document.getElementById('input-sen-name').value;
+                document.getElementById('out-sen-acc').textContent = document.getElementById('input-sen-acc').value;
+            },
+
+            toggleAuthMode() {
+                this.state.isLoginMode = !this.state.isLoginMode;
+                document.getElementById('auth-title').textContent = this.state.isLoginMode ? 'Welcome Back' : 'Create Account';
+                document.getElementById('auth-subtitle').textContent = this.state.isLoginMode ? 'Sign in to access your dashboard' : 'Get 500 free points on signup';
+                document.getElementById('auth-submit-btn').textContent = this.state.isLoginMode ? 'Sign In' : 'Sign Up';
+                document.getElementById('auth-toggle-text').textContent = this.state.isLoginMode ? "Don't have an account?" : "Already have an account?";
+                document.getElementById('auth-toggle-btn').textContent = this.state.isLoginMode ? 'Sign up' : 'Sign in';
+                document.getElementById('signup-fields').style.display = this.state.isLoginMode ? 'none' : 'block';
+            },
+
+            async fetchDB() {
+                try {
+                    const res = await fetch(this.dbConfig.url, {
+                        headers: { 'X-Master-Key': this.dbConfig.key }
+                    });
+                    if (!res.ok) throw new Error('DB Fetch Failed');
+                    const data = await res.json();
+                    return data.record;
+                } catch (error) {
+                    console.error("Fetch DB Error:", error);
+                    return null;
+                }
+            },
+
+            async updateDB(newData) {
+                if(this.state.isOffline) return false;
+                try {
+                    const res = await fetch(this.dbConfig.url, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': this.dbConfig.key
+                        },
+                        body: JSON.stringify(newData)
+                    });
+                    return res.ok;
+                } catch (error) {
+                    console.error("Update DB Error:", error);
+                    return false;
+                }
+            },
+
+            async handleAuth() {
+                const user = document.getElementById('auth-username').value.trim();
+                const pass = document.getElementById('auth-password').value.trim();
+                const btn = document.getElementById('auth-submit-btn');
+                
+                if (!user || !pass) return this.showToast('Fill all fields', 'error');
+
+                btn.textContent = 'Processing...';
+                btn.disabled = true;
+
+                // Handle Offline Auth
+                if (this.state.isOffline) {
+                    const cachedUsers = JSON.parse(localStorage.getItem('cachedUsers') || '{}');
+                    if (this.state.isLoginMode && cachedUsers[user] && cachedUsers[user].password === pass) {
+                        this.loginSuccess(user, cachedUsers[user]);
+                        this.showToast('Logged in offline mode.', 'warning');
+                    } else {
+                        this.showToast('Cannot verify credentials offline.', 'error');
+                    }
+                    this.resetAuthBtn();
+                    return;
+                }
+
+                const db = await this.fetchDB();
+                if (!db) {
+                    this.showToast('Database connection failed', 'error');
+                    this.resetAuthBtn();
+                    return;
+                }
+
+                if (!db.users) db.users = {};
+
+                if (this.state.isLoginMode) {
+                    // Login
+                    if (db.users[user] && db.users[user].password === pass) {
+                        this.loginSuccess(user, db.users[user]);
+                        // Cache for offline
+                        localStorage.setItem('cachedUsers', JSON.stringify(db.users));
+                        this.showToast('Login successful!', 'success');
+                    } else {
+                        this.showToast('Invalid credentials', 'error');
+                    }
+                } else {
+                    // Signup
+                    if (db.users[user]) {
+                        this.showToast('Username already exists', 'error');
+                    } else {
+                        let isAdmin = document.getElementById('auth-is-admin').checked;
+                        let points = 500;
+                        
+                        if (isAdmin) {
+                            const key = document.getElementById('auth-admin-key').value;
+                            if (key === 'b@4sHA22') {
+                                points = 'Unlimited';
+                            } else {
+                                this.showToast('Invalid Admin Key', 'error');
+                                this.resetAuthBtn();
+                                return;
+                            }
+                        }
+
+                        db.users[user] = { password: pass, points, isAdmin };
+                        const saved = await this.updateDB(db);
+                        
+                        if (saved) {
+                            localStorage.setItem('cachedUsers', JSON.stringify(db.users));
+                            this.loginSuccess(user, db.users[user]);
+                            this.showToast('Account created successfully!', 'success');
+                        } else {
+                            this.showToast('Failed to create account', 'error');
+                        }
+                    }
+                }
+                this.resetAuthBtn();
+            },
+
+            resetAuthBtn() {
+                const btn = document.getElementById('auth-submit-btn');
+                btn.textContent = this.state.isLoginMode ? 'Sign In' : 'Sign Up';
+                btn.disabled = false;
+            },
+
+            loginSuccess(username, userData) {
+                this.state.currentUser = { username, ...userData };
+                
+                // Adjust points if offline deductions exist
+                if (this.state.currentUser.points !== 'Unlimited' && this.state.offlineQueue > 0) {
+                    this.state.currentUser.points -= (this.state.offlineQueue * 50);
+                    if(this.state.currentUser.points < 0) this.state.currentUser.points = 0;
+                }
+
+                localStorage.setItem('session', JSON.stringify(this.state.currentUser));
+                document.getElementById('nav-points').textContent = this.state.currentUser.points;
+                
+                document.getElementById('auth-view').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('auth-view').classList.add('hidden');
+                    document.getElementById('dashboard-view').classList.remove('hidden');
+                    document.getElementById('nav-user-info').classList.remove('hidden');
+                    document.getElementById('nav-user-info').classList.add('flex');
+                }, 300);
+            },
+
+            checkSession() {
+                const session = localStorage.getItem('session');
+                if (session) {
+                    const data = JSON.parse(session);
+                    this.loginSuccess(data.username, data);
+                }
+            },
+
+            logout() {
+                localStorage.removeItem('session');
+                this.state.currentUser = null;
+                document.getElementById('dashboard-view').classList.add('hidden');
+                document.getElementById('nav-user-info').classList.add('hidden');
+                document.getElementById('nav-user-info').classList.remove('flex');
+                
+                document.getElementById('auth-view').classList.remove('hidden');
+                setTimeout(() => document.getElementById('auth-view').style.opacity = '1', 50);
+            },
+
+            async downloadReceipt() {
+                if (!this.state.currentUser) return;
+
+                // Point Check
+                if (this.state.currentUser.points !== 'Unlimited') {
+                    if (this.state.currentUser.points < 50) {
+                        return this.showToast('Insufficient points. You need 50 points.', 'error');
+                    }
+                    this.state.currentUser.points -= 50;
+                    document.getElementById('nav-points').textContent = this.state.currentUser.points;
+                    
+                    if (this.state.isOffline) {
+                        this.state.offlineQueue++;
+                        localStorage.setItem('receiptQueue', this.state.offlineQueue.toString());
+                        this.showToast('Receipt saved offline. Sync pending.', 'warning');
+                    } else {
+                        await this.syncPoints(this.state.currentUser.username, this.state.currentUser.points);
+                    }
+                }
+
+                // Generate Image
+                const btn = document.querySelector('button[onclick="app.downloadReceipt()"]');
+                const ogText = btn.innerHTML;
+                btn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Generating...`;
+
+                const element = document.getElementById('receipt-card');
+                
+                try {
+                    const canvas = await html2canvas(element, {
+                        scale: 3, // High quality
+                        useCORS: true,
+                        backgroundColor: null,
+                        logging: false
+                    });
+                    
+                    const link = document.createElement('a');
+                    link.download = `PalmPay_Receipt_${Date.now()}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    
+                    this.showToast('Receipt downloaded successfully!', 'success');
+                } catch (err) {
+                    console.error(err);
+                    this.showToast('Failed to generate image', 'error');
+                } finally {
+                    btn.innerHTML = ogText;
+                }
+            },
+
+            async syncPoints(username, currentPoints) {
+                const db = await this.fetchDB();
+                if (db && db.users[username]) {
+                    db.users[username].points = currentPoints;
+                    await this.updateDB(db);
+                    // Update cache
+                    localStorage.setItem('cachedUsers', JSON.stringify(db.users));
+                }
+            },
+
+            handleConnectionChange(isOnline) {
+                this.state.isOffline = !isOnline;
+                this.updateNetworkStatus();
+
+                if (isOnline && this.state.offlineQueue > 0 && this.state.currentUser && this.state.currentUser.points !== 'Unlimited') {
+                    this.processOfflineQueue();
+                }
+            },
+
+            async processOfflineQueue() {
+                this.showToast('Syncing offline transactions...', 'warning');
+                const db = await this.fetchDB();
+                if (db && db.users[this.state.currentUser.username]) {
+                    db.users[this.state.currentUser.username].points = this.state.currentUser.points;
+                    const saved = await this.updateDB(db);
+                    if (saved) {
+                        this.state.offlineQueue = 0;
+                        localStorage.setItem('receiptQueue', '0');
+                        localStorage.setItem('cachedUsers', JSON.stringify(db.users));
+                        this.showToast('Synced offline transactions with database!', 'success');
+                    }
+                }
+            },
+
+            updateNetworkStatus() {
+                const badge = document.getElementById('nav-offline-badge');
+                if (this.state.isOffline) {
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            },
+
+            showToast(msg, type = 'success') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                const bg = type === 'success' ? 'bg-gray-900' : type === 'error' ? 'bg-red-600' : 'bg-orange-500';
+                
+                toast.className = `${bg} text-white px-6 py-3 rounded-xl shadow-lg font-medium text-sm toast pointer-events-auto flex items-center gap-2`;
+                
+                let icon = '';
+                if(type === 'success') icon = `<svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+                if(type === 'warning') icon = `<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
+                if(type === 'error') icon = `<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+
+                toast.innerHTML = `${icon} ${msg}`;
+                container.appendChild(toast);
+
+                // Trigger animation
+                setTimeout(() => toast.classList.add('show'), 10);
+
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        };
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => app.init());
+
+    </script>
+</body>
+</html>
