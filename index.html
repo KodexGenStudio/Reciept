@@ -663,17 +663,31 @@
         .recent-item:last-child {
             border-bottom: none;
         }
-        .recent-item .bank-letter {
+        .recent-item .bank-logo {
             width: 40px;
             height: 40px;
             border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: #f0f0f0;
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+        .recent-item .bank-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .recent-item .bank-logo .fallback {
             font-weight: 700;
             font-size: 16px;
             color: #fff;
-            flex-shrink: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .recent-item .info {
             flex: 1;
@@ -696,6 +710,7 @@
             color: #9e9e9e;
         }
 
+        /* Bank dropdown without images - text only */
         .bank-dropdown {
             max-height: 200px;
             overflow-y: auto;
@@ -709,6 +724,9 @@
             border-bottom: 1px solid #f5f5f5;
             cursor: pointer;
             transition: background 0.1s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         .bank-dropdown .bank-option:active {
             background: #f5f2ff;
@@ -716,6 +734,7 @@
         .bank-dropdown .bank-option:last-child {
             border-bottom: none;
         }
+        /* No logo images in dropdown */
 
         .pin-verify-container {
             background: rgba(0, 0, 0, 0.75);
@@ -804,18 +823,6 @@
             color: #fff;
         }
 
-        /* Resolution styles */
-        .resolving-spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #5F259F;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-right: 8px;
-        }
-
         .account-preview-card {
             padding: 12px 16px;
             border-radius: 12px;
@@ -842,6 +849,200 @@
             font-size: 11px;
             color: #757575;
         }
+
+        .resolving-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #5F259F;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+        }
+
+        .bank-logo-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: #f0f0f0;
+        }
+        .bank-logo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .bank-logo-preview .fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            color: #fff;
+        }
+
+        /* Re-authentication overlay */
+        #reauth-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            z-index: 200;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+        }
+        #reauth-overlay.show {
+            display: flex;
+        }
+        #reauth-overlay .reauth-box {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 32px;
+            padding: 32px 24px 40px;
+            width: 100%;
+            max-width: 340px;
+            text-align: center;
+        }
+        #reauth-overlay .reauth-box .lock-icon {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 50%;
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+        #reauth-overlay .reauth-box .lock-icon i {
+            font-size: 28px;
+            color: #fff;
+        }
+        #reauth-overlay .reauth-box h3 {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        #reauth-overlay .reauth-box p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+            margin-bottom: 24px;
+        }
+        #reauth-overlay .reauth-box .pin-dots-row {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 32px;
+        }
+        #reauth-overlay .reauth-box .pin-dots-row .pin-dot {
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        #reauth-overlay .reauth-box .pin-dots-row .pin-dot-filled {
+            background: #fff;
+            border-color: #fff;
+        }
+        #reauth-overlay .reauth-box .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px 16px;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+        #reauth-overlay .reauth-box .keypad-grid .key-btn {
+            color: #fff;
+            font-size: 24px;
+            padding: 12px 0;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            touch-action: manipulation;
+            border-radius: 50%;
+            transition: background 0.12s ease, transform 0.1s ease;
+        }
+        #reauth-overlay .reauth-box .keypad-grid .key-btn:active {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(0.92);
+        }
+        #reauth-overlay .reauth-box .keypad-grid .key-btn i {
+            font-size: 26px;
+        }
+        #reauth-overlay .reauth-box .cancel-btn {
+            color: rgba(255, 255, 255, 0.5);
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 16px;
+            cursor: pointer;
+            padding: 8px 16px;
+        }
+        #reauth-overlay .reauth-box .cancel-btn:active {
+            color: #fff;
+        }
+
+        /* Suggested banks with logos */
+        .suggested-bank-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .suggested-bank-item:active {
+            background: #f5f2ff;
+            border-color: #5F259F;
+            transform: scale(0.98);
+        }
+        .suggested-bank-item .suggested-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: #f0f0f0;
+        }
+        .suggested-bank-item .suggested-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .suggested-bank-item .suggested-logo .fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+        }
+        .suggested-bank-item .suggested-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .suggested-bank-item .suggested-info .name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1A1A1A;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .suggested-bank-item .suggested-info .bank {
+            font-size: 11px;
+            color: #757575;
+        }
     </style>
 </head>
 <body>
@@ -856,6 +1057,36 @@
         </div>
 
         <div id="toast-container"></div>
+
+        <!-- Re-authentication Overlay -->
+        <div id="reauth-overlay">
+            <div class="reauth-box">
+                <div class="lock-icon"><i class="fa-solid fa-lock"></i></div>
+                <h3>Session Locked</h3>
+                <p>Verify your identity to continue</p>
+                <div class="pin-dots-row" id="reauthPinDotsRow">
+                    <div class="pin-dot"></div>
+                    <div class="pin-dot"></div>
+                    <div class="pin-dot"></div>
+                    <div class="pin-dot"></div>
+                </div>
+                <div class="keypad-grid">
+                    <button class="key-btn" onclick="pressReauthPin('1')">1</button>
+                    <button class="key-btn" onclick="pressReauthPin('2')">2</button>
+                    <button class="key-btn" onclick="pressReauthPin('3')">3</button>
+                    <button class="key-btn" onclick="pressReauthPin('4')">4</button>
+                    <button class="key-btn" onclick="pressReauthPin('5')">5</button>
+                    <button class="key-btn" onclick="pressReauthPin('6')">6</button>
+                    <button class="key-btn" onclick="pressReauthPin('7')">7</button>
+                    <button class="key-btn" onclick="pressReauthPin('8')">8</button>
+                    <button class="key-btn" onclick="pressReauthPin('9')">9</button>
+                    <button class="key-btn" onclick="pressReauthPin('fingerprint')"><i class="fa-solid fa-fingerprint"></i></button>
+                    <button class="key-btn" onclick="pressReauthPin('0')">0</button>
+                    <button class="key-btn" onclick="pressReauthPin('backspace')"><i class="fa-solid fa-backspace"></i></button>
+                </div>
+                <button class="cancel-btn" onclick="logout()">Log Out</button>
+            </div>
+        </div>
 
         <div class="page-stack">
 
@@ -1119,7 +1350,7 @@
                 </div>
             </div>
 
-            <!-- ===== PAGE: TRANSFER FLOW ===== -->
+            <!-- ===== PAGE: TRANSFER FLOW (FIXED LAYOUT - NO IMAGES IN DROPDOWN) ===== -->
             <div id="page-transfer" class="page-layer">
                 <div class="flex flex-col h-full" style="background:#F6F7FB;">
                     <div class="bg-white px-4 pt-5 pb-3 border-b border-slate-50 flex items-center gap-3 flex-shrink-0 safe-top">
@@ -1137,9 +1368,23 @@
                                     <span class="text-[10px] text-brand-textGray ml-auto">Unlimited transfers with 0 fees ></span>
                                 </div>
                                 <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-                                    <!-- Bank Selection -->
+                                    <!-- Account Number -->
                                     <div class="mb-3">
-                                        <label class="text-xs font-semibold text-brand-textGray">Select Bank</label>
+                                        <label class="text-xs font-semibold text-brand-textGray">Account Number</label>
+                                        <input type="text" id="transfer-account" maxlength="10" inputmode="numeric" pattern="[0-9]*" placeholder="8201633275" class="w-full mt-1 px-3 py-3 bg-brand-bgGray border-0 rounded-lg text-sm focus:ring-2 focus:ring-brand-purple outline-none font-semibold" />
+                                    </div>
+
+                                    <!-- Suggested Banks (Auto-populated from JSONBin) -->
+                                    <div id="suggested-banks" class="mb-3 hidden">
+                                        <label class="text-xs font-semibold text-brand-textGray">Select linked bank</label>
+                                        <div id="suggested-banks-list" class="mt-2 space-y-2">
+                                            <!-- Populated by JavaScript -->
+                                        </div>
+                                    </div>
+
+                                    <!-- Bank Selection - NO IMAGES -->
+                                    <div class="mb-3">
+                                        <label class="text-xs font-semibold text-brand-textGray">Or select another bank</label>
                                         <div class="relative mt-1">
                                             <button id="bank-selector-btn" onclick="toggleBankDropdown()" class="w-full px-3 py-3 bg-brand-bgGray border-0 rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-brand-purple outline-none font-semibold text-left">
                                                 <span id="selected-bank-label" class="text-brand-textGray">Select bank</span>
@@ -1165,42 +1410,32 @@
                                         </div>
                                     </div>
 
-                                    <!-- Account Number -->
-                                    <div class="mb-3">
-                                        <label class="text-xs font-semibold text-brand-textGray">Enter 10-digit Account No.</label>
-                                        <input type="text" id="transfer-account" maxlength="10" inputmode="numeric" pattern="[0-9]*" placeholder="8201633275" class="w-full mt-1 px-3 py-3 bg-brand-bgGray border-0 rounded-lg text-sm focus:ring-2 focus:ring-brand-purple outline-none font-semibold" />
-                                    </div>
-
                                     <!-- Resolution Status & Result -->
                                     <div id="resolution-area" class="mt-2">
-                                        <!-- Status message -->
                                         <div id="resolution-status" class="text-xs text-brand-textGray hidden">
                                             <span class="resolving-spinner"></span>
                                             <span>Resolving account details...</span>
                                         </div>
 
-                                        <!-- Success result -->
                                         <div id="resolution-success" class="hidden">
-                                            <div class="account-preview-card resolved p-3 bg-brand-lightPurple/40 rounded-lg border border-brand-purple/10">
-                                                <div class="flex items-center gap-3">
-                                                    <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple font-bold text-sm"><i class="fa-solid fa-check-circle"></i></div>
-                                                    <div>
-                                                        <p class="text-xs font-bold text-brand-textDark" id="resolved-account-name">---</p>
-                                                        <p class="text-[10px] text-brand-textGray"><span id="resolved-account-number">---</span> • <span id="resolved-bank-name">---</span></p>
-                                                    </div>
+                                            <div class="account-preview-card resolved p-3 bg-brand-lightPurple/40 rounded-lg border border-brand-purple/10 flex items-center gap-3">
+                                                <div class="bank-logo-preview">
+                                                    <img id="resolved-bank-logo" src="" alt="" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=\\'fallback\\' style=\\'background:#6B4C9A;\\'>M</span>';" />
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs font-bold text-brand-textDark" id="resolved-account-name">---</p>
+                                                    <p class="text-[10px] text-brand-textGray"><span id="resolved-account-number">---</span> • <span id="resolved-bank-name">---</span></p>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <!-- Error -->
                                         <div id="resolution-error" class="hidden text-xs text-red-500 mt-2">
                                             <i class="fa-solid fa-exclamation-circle mr-1"></i>
-                                            <span id="resolution-error-text">Failed to resolve account. Please verify the account number.</span>
+                                            <span id="resolution-error-text">Failed to resolve account. Please enter the account name manually.</span>
                                         </div>
 
-                                        <!-- Manual entry fallback -->
                                         <div id="manual-entry-area" class="hidden mt-3">
-                                            <label class="text-xs font-semibold text-brand-textGray">Account Name (if resolution failed)</label>
+                                            <label class="text-xs font-semibold text-brand-textGray">Account Name (enter manually)</label>
                                             <input type="text" id="manual-account-name" placeholder="Enter account holder name" class="w-full mt-1 px-3 py-3 bg-brand-bgGray border-0 rounded-lg text-sm focus:ring-2 focus:ring-brand-purple outline-none font-semibold" />
                                             <button onclick="confirmManualAccount()" class="mt-2 text-xs text-brand-purple font-bold">Confirm name</button>
                                         </div>
@@ -1208,44 +1443,11 @@
                                 </div>
                             </div>
 
-                            <!-- Recent / Favorites / Contacts -->
+                            <!-- Recent Transfers -->
                             <div>
-                                <div class="tab-bar">
-                                    <button class="tab-btn active" onclick="switchTransferTab('recent', this)">Recent</button>
-                                    <button class="tab-btn" onclick="switchTransferTab('favorites', this)">Favorites</button>
-                                    <button class="tab-btn" onclick="switchTransferTab('contacts', this)">PalmPay Contacts</button>
-                                </div>
+                                <h4 class="text-xs font-bold text-brand-textGray uppercase tracking-wider mb-2 px-1">Recent Transfers</h4>
                                 <div id="transfer-recent-list" class="bg-white rounded-xl shadow-sm border border-slate-100 divide-y divide-slate-50">
-                                    <div class="recent-item px-3" onclick="fillRecentAccount('Moniepoint', 'IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise', '8201633275')">
-                                        <div class="bank-letter" style="background:#6B4C9A;">M</div>
-                                        <div class="info"><div class="name">IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise</div><div class="details">8201633275 Moniepoint</div><div class="date">Last transfer on Jul 16, 2026</div></div>
-                                    </div>
-                                    <div class="recent-item px-3" onclick="fillRecentAccount('OPay', 'AYOTOLA OLUWATOBILOBA ALAMU', '8134013878')">
-                                        <div class="bank-letter" style="background:#E67E22;">O</div>
-                                        <div class="info"><div class="name">AYOTOLA OLUWATOBILOBA ALAMU</div><div class="details">8134013878 OPay</div><div class="date">Last transfer on Jul 15, 2026</div></div>
-                                    </div>
-                                    <div class="recent-item px-3" onclick="fillRecentAccount('OPay', 'FAVOUR STEVE -EMOKINIOVO', '8058746952')">
-                                        <div class="bank-letter" style="background:#E67E22;">O</div>
-                                        <div class="info"><div class="name">FAVOUR STEVE -EMOKINIOVO</div><div class="details">8058746952 OPay</div><div class="date">Last transfer on Jul 15, 2026</div></div>
-                                    </div>
-                                    <div class="recent-item px-3" onclick="fillRecentAccount('OPay', 'PHILO OGHENEOVO EVENT', '8052241166')">
-                                        <div class="bank-letter" style="background:#E67E22;">O</div>
-                                        <div class="info"><div class="name">PHILO OGHENEOVO EVENT</div><div class="details">8052241166 OPay</div><div class="date">Last transfer on Jul 15, 2026</div></div>
-                                    </div>
-                                    <div class="recent-item px-3" onclick="fillRecentAccount('Wema Bank', 'CNL/CODAPAYMENTSNGBANKTR', '8454383041')">
-                                        <div class="bank-letter" style="background:#2E86C1;">W</div>
-                                        <div class="info"><div class="name">CNL/CODAPAYMENTSNGBANKTR</div><div class="details">8454383041 Wema Bank</div><div class="date">Last transfer on Jul 14, 2026</div></div>
-                                    </div>
-                                    <div class="recent-item px-3" onclick="fillRecentAccount('Moniepoint', 'FLORENCE OGHENEMUDIAKEWVE OYIBOCHA', '9153307641')">
-                                        <div class="bank-letter" style="background:#6B4C9A;">M</div>
-                                        <div class="info"><div class="name">FLORENCE OGHENEMUDIAKEWVE OYIBOCHA</div><div class="details">9153307641 Moniepoint</div><div class="date">Last transfer on Jul 14, 2026</div></div>
-                                    </div>
-                                </div>
-                                <div id="transfer-favorites-list" class="bg-white rounded-xl shadow-sm border border-slate-100 divide-y divide-slate-50 hidden">
-                                    <div class="p-4 text-center text-brand-textGray text-sm">No favorites yet. Tap the star on a recent contact.</div>
-                                </div>
-                                <div id="transfer-contacts-list" class="bg-white rounded-xl shadow-sm border border-slate-100 divide-y divide-slate-50 hidden">
-                                    <div class="p-4 text-center text-brand-textGray text-sm">Your PalmPay contacts will appear here.</div>
+                                    <!-- Populated dynamically -->
                                 </div>
                             </div>
                         </div>
@@ -1259,7 +1461,9 @@
                         <div class="step-scroll">
                             <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100 mb-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple font-bold text-sm"><i class="fa-solid fa-user"></i></div>
+                                    <div class="bank-logo-preview">
+                                        <img id="step2-bank-logo" src="" alt="" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=\\'fallback\\' style=\\'background:#6B4C9A;\\'>M</span>';" />
+                                    </div>
                                     <div>
                                         <p class="text-xs font-bold text-brand-textDark" id="step2-account-name">---</p>
                                         <p class="text-[10px] text-brand-textGray"><span id="step2-account-number">---</span> • <span id="step2-bank-name">---</span></p>
@@ -1302,7 +1506,9 @@
                         <div class="step-scroll">
                             <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100 mb-4">
                                 <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple font-bold text-sm"><i class="fa-solid fa-user"></i></div>
+                                    <div class="bank-logo-preview">
+                                        <img id="step3-bank-logo" src="" alt="" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=\\'fallback\\' style=\\'background:#6B4C9A;\\'>M</span>';" />
+                                    </div>
                                     <div>
                                         <p class="text-xs font-bold text-brand-textDark" id="step3-account-name">---</p>
                                         <p class="text-[10px] text-brand-textGray"><span id="step3-account-number">---</span> • <span id="step3-bank-name">---</span></p>
@@ -1492,7 +1698,8 @@
             currentUser: null,
             isBalanceHidden: false,
             enteredPin: "",
-            verifyPin: ""
+            verifyPin: "",
+            reauthPin: ""
         };
 
         const DEFAULT_USER = {
@@ -1500,8 +1707,8 @@
             phone: '8012345678',
             pin: '1234',
             balance: 171.41,
-            transactions: [{ id: 'TX-' + Date.now(), type: 'deposit', amount: 171.41, date: new Date().toLocaleDateString(),
-                title: 'Registration Reward' }]
+            transactions: [],
+            recentTransfers: []
         };
 
         async function fetchUsers() {
@@ -1592,7 +1799,8 @@
             if (appState.enteredPin === appState.currentUser.pin) { playUnlockSound();
                 showToast('Access Authorized.');
                 initializeDashboard();
-                showPage('page-dashboard'); } else { playErrorSound();
+                showPage('page-dashboard');
+                hideReauthOverlay(); } else { playErrorSound();
                 showToast('Incorrect security PIN.', 'error');
                 resetPinState(); }
         }
@@ -1638,14 +1846,100 @@
                     if (assertion) { playUnlockSound();
                         showToast('Fingerprint matched!');
                         initializeDashboard();
-                        showPage('page-dashboard'); return; }
+                        showPage('page-dashboard');
+                        hideReauthOverlay();
+                        return; }
                 } catch (_) { showToast('Biometric scan failed. Use PIN.', 'error'); return; }
             }
             showToast('Touch ID simulation: granted.', 'success');
             playUnlockSound();
             initializeDashboard();
             showPage('page-dashboard');
+            hideReauthOverlay();
         }
+
+        // ===== RE-AUTHENTICATION (App Resume) =====
+        let reauthPin = '';
+
+        function showReauthOverlay() {
+            if (!appState.currentUser) return;
+            reauthPin = '';
+            document.querySelectorAll('#reauthPinDotsRow .pin-dot').forEach(d => d.className = 'pin-dot');
+            document.getElementById('reauth-overlay').classList.add('show');
+            if (localStorage.getItem('palmpay_biometric') === 'true') {
+                setTimeout(async () => {
+                    try {
+                        const savedId = localStorage.getItem('local_biometric_id');
+                        const hasWA = !!window.PublicKeyCredential;
+                        if (hasWA && savedId && !savedId.startsWith('mock_')) {
+                            const challenge = crypto.getRandomValues(new Uint8Array(32));
+                            const rawId = Uint8Array.from(atob(savedId), c => c.charCodeAt(0));
+                            const options = {
+                                publicKey: { challenge, allowCredentials: [{ id: rawId, type: 'public-key' }],
+                                    userVerification: 'required', timeout: 15000 }
+                            };
+                            const assertion = await navigator.credentials.get(options);
+                            if (assertion) {
+                                playUnlockSound();
+                                showToast('Fingerprint matched!');
+                                hideReauthOverlay();
+                                return;
+                            }
+                        }
+                    } catch (_) {}
+                }, 500);
+            }
+        }
+
+        function hideReauthOverlay() {
+            document.getElementById('reauth-overlay').classList.remove('show');
+            reauthPin = '';
+        }
+
+        function pressReauthPin(key) {
+            if (key === 'backspace') {
+                if (reauthPin.length > 0) { reauthPin = reauthPin.slice(0, -1);
+                    updateReauthDots();
+                    playKeySound(); }
+                return;
+            }
+            if (key === 'fingerprint') {
+                triggerBiometricUnlock();
+                return;
+            }
+            if (reauthPin.length < 4) {
+                reauthPin += key;
+                updateReauthDots();
+                playKeySound();
+                if (reauthPin.length === 4) {
+                    setTimeout(() => {
+                        if (reauthPin === appState.currentUser.pin) {
+                            playUnlockSound();
+                            showToast('Session resumed.');
+                            hideReauthOverlay();
+                        } else {
+                            playErrorSound();
+                            showToast('Incorrect PIN.', 'error');
+                            reauthPin = '';
+                            updateReauthDots();
+                        }
+                    }, 200);
+                }
+            }
+        }
+
+        function updateReauthDots() {
+            const dots = document.querySelectorAll('#reauthPinDotsRow .pin-dot');
+            dots.forEach((dot, i) => { dot.className = i < reauthPin.length ? 'pin-dot pin-dot-filled' :
+                'pin-dot'; });
+        }
+
+        // ===== VISIBILITY CHANGE (App Minimize) =====
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && appState.currentUser) {
+                setTimeout(() => { showReauthOverlay(); }, 300);
+            }
+        });
 
         // ===== SESSION =====
         function loadLocalSession() {
@@ -1654,7 +1948,11 @@
                 const user = appState.users.find(u => u.phone === phone);
                 if (user) { appState.currentUser = user;
                     setupLockscreen();
-                    showPage('page-lockscreen'); return; }
+                    showPage('page-lockscreen');
+                    if (document.hidden) {
+                        setTimeout(showReauthOverlay, 500);
+                    }
+                    return; }
             }
             showPage('page-gateway');
         }
@@ -1669,6 +1967,7 @@
             document.getElementById('dashboard-user-title').textContent = `Hi, ${appState.currentUser.name}`;
             updateBalanceUI();
             switchTab('home');
+            updateRecentTransfersList();
         }
 
         // ===== BALANCE =====
@@ -1717,7 +2016,7 @@
             const txs = u.transactions || [];
             if (!txs.length) { container.innerHTML =
                     `<p class="text-[10px] text-brand-textGray text-center py-2">No transactions recorded.</p>`; return; }
-            txs.slice(0, 2).forEach(t => {
+            txs.slice(0, 3).forEach(t => {
                 const isDeposit = t.type === 'deposit';
                 const icon = isDeposit ? 'fa-wallet text-emerald-500' : 'fa-mobile-retro text-brand-purple';
                 const prefix = isDeposit ? '+' : '-';
@@ -1727,9 +2026,9 @@
                     'flex justify-between items-center text-xs border-b border-slate-50 pb-2 last:border-b-0 last:pb-0';
                 row.innerHTML = `
                         <div class="flex items-center gap-2.5"><i class="fa-solid ${icon} text-[11px] opacity-85"></i>
-                            <div><h5 class="font-bold text-brand-textDark text-[11px]">${t.title}</h5><p class="text-[9px] text-brand-textGray font-semibold">${t.date}</p></div>
+                            <div><h5 class="font-bold text-brand-textDark text-[11px]">${t.title || 'Transfer'}</h5><p class="text-[9px] text-brand-textGray font-semibold">${t.date || ''}</p></div>
                         </div>
-                        <div class="text-right"><span class="font-bold ${color}">${prefix} ₦ ${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span><p class="text-[8px] text-emerald-500 font-extrabold mt-0.5">Successful</p></div>
+                        <div class="text-right"><span class="font-bold ${color}">${prefix} ₦ ${(t.amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span><p class="text-[8px] text-emerald-500 font-extrabold mt-0.5">${t.status || 'Successful'}</p></div>
                     `;
                 container.appendChild(row);
             });
@@ -1790,13 +2089,14 @@
             if (isNaN(amount) || amount <= 0) { showToast('Enter a valid amount.', 'error'); return; }
             appState.currentUser.balance += amount;
             appState.currentUser.transactions.unshift({ id: 'TX-' + Date.now(), type: 'deposit', amount, date: new Date()
-                    .toLocaleDateString(), title: 'Account Deposit' });
+                    .toLocaleDateString(), title: 'Account Deposit', status: 'Successful' });
             const ok = await syncUsers();
             if (ok) { showToast(`Deposited ₦${amount.toLocaleString()}`);
                 updateBalanceUI();
                 closeModal('modal-deposit');
                 input.value = '';
-                if (!document.getElementById('tab-me').classList.contains('hidden')) populateMePage(); }
+                if (!document.getElementById('tab-me').classList.contains('hidden')) populateMePage();
+                updateRecentTransfersList(); }
         }
 
         function openAirtimeModal() { document.getElementById('modal-airtime').classList.add('show'); }
@@ -1808,23 +2108,27 @@
             if (appState.currentUser.balance < amount) { showToast('Insufficient Balance.', 'error'); return; }
             appState.currentUser.balance -= amount;
             appState.currentUser.transactions.unshift({ id: 'TX-' + Date.now(), type: 'airtime', amount, date: new Date()
-                    .toLocaleDateString(), title: `Airtime Sent (${phone})` });
+                    .toLocaleDateString(), title: `Airtime Sent (${phone})`, status: 'Successful' });
             const ok = await syncUsers();
             if (ok) { showToast(`₦${amount.toLocaleString()} sent to ${phone}`);
                 updateBalanceUI();
                 closeModal('modal-airtime');
                 document.getElementById('airtime-phone').value = '';
                 document.getElementById('airtime-amount').value = '';
-                if (!document.getElementById('tab-me').classList.contains('hidden')) populateMePage(); }
+                if (!document.getElementById('tab-me').classList.contains('hidden')) populateMePage();
+                updateRecentTransfersList(); }
         }
 
         function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
         // ===== LOGOUT =====
-        function logout() { localStorage.removeItem('palmpay_current_phone');
+        function logout() {
+            localStorage.removeItem('palmpay_current_phone');
             appState.currentUser = null;
+            hideReauthOverlay();
             showPage('page-gateway');
-            showToast('Logged out.'); }
+            showToast('Logged out.');
+        }
 
         // ===== FORMS =====
         document.getElementById('form-signup').addEventListener('submit', async (e) => {
@@ -1837,7 +2141,8 @@
             if (pin !== confirm) { showToast('PIN mismatch.', 'error'); return; }
             if (appState.users.find(u => u.phone === phone)) { showToast('Number already registered.', 'error'); return; }
             const newUser = { name, phone, pin, balance: 171.41, transactions: [{ id: 'TX-' + Date.now(), type: 'deposit',
-                    amount: 171.41, date: new Date().toLocaleDateString(), title: 'Registration Reward' }] };
+                    amount: 171.41, date: new Date().toLocaleDateString(), title: 'Registration Reward',
+                    status: 'Successful' }], recentTransfers: [] };
             appState.users.push(newUser);
             const ok = await syncUsers();
             if (ok) { appState.currentUser = newUser;
@@ -1903,10 +2208,9 @@
         });
 
         // ================================================================
-        // ===== ACCOUNT RESOLUTION (SIMPLIFIED) =====
+        // ===== ACCOUNT RESOLUTION & AUTOFILL =====
         // ================================================================
 
-        // Bank code mapping for Monnify
         const bankCodeMap = {
             'Moniepoint': '030',
             'OPay': '038',
@@ -1925,29 +2229,98 @@
             'Stanbic IBTC': '221'
         };
 
+        const bankLogos = {
+            'Moniepoint': 'https://eu-west-2.graphassets.com/AxQ8YTi9LTCrOeR0pPuwfz/output=format:webp/smVMgMNtRzGjBLBiQgXP',
+            'OPay': 'https://substackcdn.com/image/fetch/$s_!wf5f!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8ac7aa82-fb74-4a4c-97d8-1522c056c539_1024x576.jpeg',
+            'PalmPay': 'https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png'
+        };
+
         let selectedBank = '';
         let selectedBankCode = '';
         let resolvedAccountName = '';
         let isResolving = false;
+        let manualOverride = false;
 
-        // Local mock database for fallback
-        const mockAccountDB = {
-            '8201633275': { name: 'IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise', bank: 'Moniepoint' },
-            '8134013878': { name: 'AYOTOLA OLUWATOBILOBA ALAMU', bank: 'OPay' },
-            '8058746952': { name: 'FAVOUR STEVE -EMOKINIOVO', bank: 'OPay' },
-            '8052241166': { name: 'PHILO OGHENEOVO EVENT', bank: 'OPay' },
-            '8454383041': { name: 'CNL/CODAPAYMENTSNGBANKTR', bank: 'Wema Bank' },
-            '9153307641': { name: 'FLORENCE OGHENEMUDIAKEWVE OYIBOCHA', bank: 'Moniepoint' },
-            '1234567890': { name: 'TEST ACCOUNT HOLDER', bank: 'GTBank' },
-            '9061234567': { name: 'CHIZOBA ONYEMA', bank: 'PalmPay' },
-        };
+        // Update recent transfers list
+        function updateRecentTransfersList() {
+            const container = document.getElementById('transfer-recent-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const recent = appState.currentUser?.recentTransfers || [];
+            const transactions = appState.currentUser?.transactions || [];
+            const transferTxs = transactions.filter(t => t.type === 'transfer' || t.type === 'airtime');
+
+            const allRecent = [...recent];
+            transferTxs.forEach(t => {
+                if (t.recipient || t.bank) {
+                    const exists = allRecent.some(r => r.account === t.account && r.bank === t.bank);
+                    if (!exists && t.account) {
+                        allRecent.push({
+                            bank: t.bank || 'Unknown',
+                            account: t.account || '',
+                            name: t.recipient || t.title || 'Unknown',
+                            date: t.date || new Date().toLocaleDateString(),
+                            amount: t.amount || 0
+                        });
+                    }
+                }
+            });
+
+            if (allRecent.length === 0) {
+                container.innerHTML =
+                    `<div class="p-4 text-center text-brand-textGray text-sm">No recent transfers. Your transactions will appear here.</div>`;
+                return;
+            }
+
+            allRecent.slice(0, 5).forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'recent-item px-3';
+                const bankLogo = bankLogos[item.bank] || '';
+                const initial = item.bank ? item.bank.charAt(0).toUpperCase() : '?';
+                const colors = {
+                    'Moniepoint': '#6B4C9A',
+                    'OPay': '#E67E22',
+                    'PalmPay': '#5F259F',
+                    'GTBank': '#E31837',
+                    'Access Bank': '#0066B3',
+                    'First Bank': '#003366',
+                    'UBA': '#004C97',
+                    'Zenith Bank': '#1A3A5C',
+                    'Wema Bank': '#2E86C1',
+                    'Sterling Bank': '#006600',
+                    'FCMB': '#0055A4',
+                    'Union Bank': '#003399',
+                    'Ecobank': '#006633',
+                    'Fidelity Bank': '#0066CC',
+                    'Stanbic IBTC': '#003366'
+                };
+                const bgColor = colors[item.bank] || '#6B4C9A';
+
+                div.innerHTML = `
+                    <div class="bank-logo">
+                        ${bankLogo ? `<img src="${bankLogo}" alt="${item.bank}" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=\\'fallback\\' style=\\'background:${bgColor};\\'>${initial}</span>';">` : `<span class="fallback" style="background:${bgColor};">${initial}</span>`}
+                    </div>
+                    <div class="info">
+                        <div class="name">${item.name}</div>
+                        <div class="details">${item.account} • ${item.bank}</div>
+                        <div class="date">${item.date}</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
+                `;
+                div.addEventListener('click', function() {
+                    fillRecentAccount(item.bank, item.name, item.account);
+                });
+                container.appendChild(div);
+            });
+        }
 
         function toggleBankDropdown() {
             const dd = document.getElementById('bank-dropdown');
             dd.classList.toggle('hidden');
         }
 
-        // Bank selection
+        // Bank selection from dropdown (no images)
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.bank-option[data-bank]').forEach(el => {
                 el.addEventListener('click', function() {
@@ -1958,7 +2331,6 @@
                     document.getElementById('selected-bank-label').textContent = bank;
                     document.getElementById('selected-bank-label').className = 'text-brand-textDark font-semibold';
                     document.getElementById('bank-dropdown').classList.add('hidden');
-                    // Trigger resolution if account is entered
                     const account = document.getElementById('transfer-account').value.trim();
                     if (account.length === 10) {
                         resolveAccount(account, bank, code);
@@ -1966,16 +2338,69 @@
                 });
             });
 
-            // Account input listener
+            // Account input with smart autofill
             const accInput = document.getElementById('transfer-account');
             if (accInput) {
                 accInput.addEventListener('input', function() {
                     this.value = this.value.replace(/\D/g, '').slice(0, 10);
                     const account = this.value.trim();
+                    const suggestedBanks = document.getElementById('suggested-banks');
+                    const suggestedList = document.getElementById('suggested-banks-list');
+
+                    // Check for saved accounts in JSONBin
+                    const matches = appState.currentUser?.recentTransfers?.filter(r => r.account === account) || [];
+
+                    if (account.length === 10 && matches.length > 0) {
+                        suggestedList.innerHTML = '';
+                        matches.forEach(match => {
+                            const item = document.createElement('div');
+                            item.className = 'suggested-bank-item';
+                            const logo = bankLogos[match.bank] || '';
+                            const initial = match.bank ? match.bank.charAt(0).toUpperCase() : '?';
+                            const colors = {
+                                'Moniepoint': '#6B4C9A',
+                                'OPay': '#E67E22',
+                                'PalmPay': '#5F259F',
+                                'GTBank': '#E31837',
+                                'Access Bank': '#0066B3',
+                                'First Bank': '#003366',
+                                'UBA': '#004C97',
+                                'Zenith Bank': '#1A3A5C',
+                                'Wema Bank': '#2E86C1',
+                                'Sterling Bank': '#006600',
+                                'FCMB': '#0055A4',
+                                'Union Bank': '#003399',
+                                'Ecobank': '#006633',
+                                'Fidelity Bank': '#0066CC',
+                                'Stanbic IBTC': '#003366'
+                            };
+                            const bgColor = colors[match.bank] || '#6B4C9A';
+                            item.innerHTML = `
+                                <div class="suggested-logo">
+                                    ${logo ? `<img src="${logo}" alt="${match.bank}" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=\\'fallback\\' style=\\'background:${bgColor};\\'>${initial}</span>';">` : `<span class="fallback" style="background:${bgColor};">${initial}</span>`}
+                                </div>
+                                <div class="suggested-info">
+                                    <div class="name">${match.name}</div>
+                                    <div class="bank">${match.bank}</div>
+                                </div>
+                                <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
+                            `;
+                            item.addEventListener('click', function() {
+                                fillRecentAccount(match.bank, match.name, account);
+                                suggestedBanks.classList.add('hidden');
+                            });
+                            suggestedList.appendChild(item);
+                        });
+                        suggestedBanks.classList.remove('hidden');
+                    } else {
+                        suggestedBanks.classList.add('hidden');
+                    }
+
+                    // Trigger Monnify if bank is manually selected
                     if (account.length === 10 && selectedBank) {
+                        manualOverride = false;
                         resolveAccount(account, selectedBank, selectedBankCode);
                     } else if (account.length < 10) {
-                        // Hide results
                         document.getElementById('resolution-success').classList.add('hidden');
                         document.getElementById('resolution-error').classList.add('hidden');
                         document.getElementById('resolution-status').classList.add('hidden');
@@ -1986,21 +2411,57 @@
             }
         });
 
-        // Manual account name entry
         function confirmManualAccount() {
             const name = document.getElementById('manual-account-name').value.trim();
             if (name.length > 2) {
                 resolvedAccountName = name;
+                manualOverride = true;
                 const account = document.getElementById('transfer-account').value.trim();
                 document.getElementById('resolved-account-name').textContent = name;
                 document.getElementById('resolved-account-number').textContent = account;
                 document.getElementById('resolved-bank-name').textContent = selectedBank;
+
+                const logo = bankLogos[selectedBank] || '';
+                const logoImg = document.getElementById('resolved-bank-logo');
+                if (logo) {
+                    logoImg.src = logo;
+                    logoImg.style.display = 'block';
+                    logoImg.parentElement.innerHTML =
+                        `<img src="${logo}" alt="${selectedBank}" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=\\'fallback\\' style=\\'background:#6B4C9A;\\'>${selectedBank.charAt(0)}</span>';">`;
+                } else {
+                    logoImg.style.display = 'none';
+                    logoImg.parentElement.innerHTML =
+                        `<span class="fallback" style="background:#6B4C9A;">${selectedBank.charAt(0)}</span>`;
+                }
+
                 document.getElementById('resolution-success').classList.remove('hidden');
                 document.getElementById('manual-entry-area').classList.add('hidden');
                 document.getElementById('transfer-next-1').disabled = false;
+                saveToRecentTransfers(selectedBank, account, name);
+                document.getElementById('suggested-banks').classList.add('hidden');
                 showToast('Account name confirmed manually.', 'success');
             } else {
                 showToast('Please enter a valid account name.', 'error');
+            }
+        }
+
+        function saveToRecentTransfers(bank, account, name) {
+            if (!appState.currentUser) return;
+            if (!appState.currentUser.recentTransfers) {
+                appState.currentUser.recentTransfers = [];
+            }
+            const exists = appState.currentUser.recentTransfers.some(r => r.account === account && r.bank === bank);
+            if (!exists) {
+                appState.currentUser.recentTransfers.unshift({
+                    bank: bank,
+                    account: account,
+                    name: name,
+                    date: new Date().toLocaleDateString()
+                });
+                if (appState.currentUser.recentTransfers.length > 20) {
+                    appState.currentUser.recentTransfers = appState.currentUser.recentTransfers.slice(0, 20);
+                }
+                syncUsers().then(() => { updateRecentTransfersList(); });
             }
         }
 
@@ -2021,10 +2482,9 @@
             document.getElementById('transfer-next-1').disabled = true;
 
             try {
-                // First try Monnify API
-                const token = await getMonnifyToken();
                 let accountName = null;
 
+                const token = await getMonnifyToken();
                 if (token) {
                     try {
                         const res = await fetch('https://sandbox.monnify.com/api/v1/merchant/bank-accounts/resolve', {
@@ -2035,41 +2495,42 @@
                             },
                             body: JSON.stringify({ accountNumber: account, bankCode: code })
                         });
-
                         if (res.ok) {
                             const data = await res.json();
                             if (data.responseBody && data.responseBody.accountName) {
                                 accountName = data.responseBody.accountName;
                             }
                         }
-                    } catch (e) {
-                        console.warn('Monnify resolve failed:', e);
-                    }
-                }
-
-                // Fallback to mock database
-                if (!accountName) {
-                    const mock = mockAccountDB[account];
-                    if (mock) {
-                        accountName = mock.name;
-                        // If the mock bank doesn't match selected, still use it but show warning
-                        if (mock.bank !== bank) {
-                            showToast(`Note: Account found under ${mock.bank}`, 'success');
-                        }
-                    }
+                    } catch (e) { console.warn('Monnify resolve failed:', e); }
                 }
 
                 if (accountName) {
                     resolvedAccountName = accountName;
+                    manualOverride = false;
                     document.getElementById('resolved-account-name').textContent = accountName;
                     document.getElementById('resolved-account-number').textContent = account;
                     document.getElementById('resolved-bank-name').textContent = bank;
+
+                    const logo = bankLogos[bank] || '';
+                    const logoImg = document.getElementById('resolved-bank-logo');
+                    if (logo) {
+                        logoImg.src = logo;
+                        logoImg.style.display = 'block';
+                        logoImg.parentElement.innerHTML =
+                            `<img src="${logo}" alt="${bank}" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=\\'fallback\\' style=\\'background:#6B4C9A;\\'>${bank.charAt(0)}</span>';">`;
+                    } else {
+                        logoImg.style.display = 'none';
+                        logoImg.parentElement.innerHTML =
+                            `<span class="fallback" style="background:#6B4C9A;">${bank.charAt(0)}</span>`;
+                    }
+
                     successEl.classList.remove('hidden');
                     statusEl.classList.add('hidden');
                     document.getElementById('transfer-next-1').disabled = false;
+                    saveToRecentTransfers(bank, account, accountName);
+                    document.getElementById('suggested-banks').classList.add('hidden');
                     showToast(`Account resolved: ${accountName}`, 'success');
                 } else {
-                    // Show manual entry
                     errorText.textContent = 'Could not resolve account automatically. Please enter the account name manually.';
                     errorEl.classList.remove('hidden');
                     statusEl.classList.add('hidden');
@@ -2087,7 +2548,6 @@
             }
         }
 
-        // Monnify token cache
         let monnifyToken = null;
         let tokenExpiry = 0;
 
@@ -2107,9 +2567,7 @@
                     return monnifyToken;
                 }
                 return null;
-            } catch (e) {
-                return null;
-            }
+            } catch (e) { return null; }
         }
 
         // ================================================================
@@ -2135,6 +2593,7 @@
             document.getElementById('resolution-error').classList.add('hidden');
             document.getElementById('resolution-status').classList.add('hidden');
             document.getElementById('manual-entry-area').classList.add('hidden');
+            document.getElementById('suggested-banks').classList.add('hidden');
             document.getElementById('transfer-next-1').disabled = true;
             document.getElementById('transfer-amount-input').value = '';
             document.getElementById('transfer-note').value = '';
@@ -2142,10 +2601,12 @@
             selectedBank = '';
             selectedBankCode = '';
             resolvedAccountName = '';
+            manualOverride = false;
             showPage('page-transfer');
             goToTransferStep(1);
             updateBalanceUI();
             document.getElementById('bank-dropdown').classList.add('hidden');
+            updateRecentTransfersList();
         }
 
         function closeTransferFlow() {
@@ -2154,7 +2615,6 @@
         }
 
         function goToTransferStep(step) {
-            // Validate before proceeding
             if (step === 2) {
                 const account = document.getElementById('transfer-account').value.trim();
                 if (account.length !== 10 || !selectedBank || !resolvedAccountName) {
@@ -2165,6 +2625,19 @@
                 transferData.bank = selectedBank;
                 transferData.bankCode = selectedBankCode;
                 transferData.accountName = resolvedAccountName;
+
+                const logo = bankLogos[selectedBank] || '';
+                const logoImg2 = document.getElementById('step2-bank-logo');
+                if (logo) {
+                    logoImg2.src = logo;
+                    logoImg2.style.display = 'block';
+                    logoImg2.parentElement.innerHTML =
+                        `<img src="${logo}" alt="${selectedBank}" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=\\'fallback\\' style=\\'background:#6B4C9A;\\'>${selectedBank.charAt(0)}</span>';">`;
+                } else {
+                    logoImg2.style.display = 'none';
+                    logoImg2.parentElement.innerHTML =
+                        `<span class="fallback" style="background:#6B4C9A;">${selectedBank.charAt(0)}</span>`;
+                }
             }
 
             for (let i = 1; i <= 3; i++) {
@@ -2187,6 +2660,20 @@
                 document.getElementById('step3-account-name').textContent = transferData.accountName;
                 document.getElementById('step3-account-number').textContent = transferData.account;
                 document.getElementById('step3-bank-name').textContent = transferData.bank;
+
+                const logo = bankLogos[transferData.bank] || '';
+                const logoImg3 = document.getElementById('step3-bank-logo');
+                if (logo) {
+                    logoImg3.src = logo;
+                    logoImg3.style.display = 'block';
+                    logoImg3.parentElement.innerHTML =
+                        `<img src="${logo}" alt="${transferData.bank}" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=\\'fallback\\' style=\\'background:#6B4C9A;\\'>${transferData.bank.charAt(0)}</span>';">`;
+                } else {
+                    logoImg3.style.display = 'none';
+                    logoImg3.parentElement.innerHTML =
+                        `<span class="fallback" style="background:#6B4C9A;">${transferData.bank.charAt(0)}</span>`;
+                }
+
                 const bal = appState.currentUser ? appState.currentUser.balance : 0;
                 document.getElementById('step3-balance').textContent =
                     `₦${bal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -2203,6 +2690,7 @@
             selectedBank = bank;
             selectedBankCode = bankCodeMap[bank] || '030';
             resolvedAccountName = name;
+            manualOverride = true;
             transferData.account = account;
             document.getElementById('transfer-account').value = account;
             document.getElementById('selected-bank-label').textContent = bank;
@@ -2210,27 +2698,31 @@
             document.getElementById('resolved-account-name').textContent = name;
             document.getElementById('resolved-account-number').textContent = account;
             document.getElementById('resolved-bank-name').textContent = bank;
+
+            const logo = bankLogos[bank] || '';
+            const logoImg = document.getElementById('resolved-bank-logo');
+            if (logo) {
+                logoImg.src = logo;
+                logoImg.style.display = 'block';
+                logoImg.parentElement.innerHTML =
+                    `<img src="${logo}" alt="${bank}" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=\\'fallback\\' style=\\'background:#6B4C9A;\\'>${bank.charAt(0)}</span>';">`;
+            } else {
+                logoImg.style.display = 'none';
+                logoImg.parentElement.innerHTML =
+                    `<span class="fallback" style="background:#6B4C9A;">${bank.charAt(0)}</span>`;
+            }
+
             document.getElementById('resolution-success').classList.remove('hidden');
             document.getElementById('resolution-error').classList.add('hidden');
             document.getElementById('resolution-status').classList.add('hidden');
             document.getElementById('manual-entry-area').classList.add('hidden');
+            document.getElementById('suggested-banks').classList.add('hidden');
             document.getElementById('transfer-next-1').disabled = false;
             document.getElementById('bank-dropdown').classList.add('hidden');
-            switchTransferTab('recent', document.querySelector('.tab-bar .tab-btn.active'));
             showToast(`Selected: ${name}`, 'success');
         }
 
-        function switchTransferTab(tab, btn) {
-            const tabs = document.querySelectorAll('.tab-bar .tab-btn');
-            tabs.forEach(t => t.classList.remove('active'));
-            if (btn) btn.classList.add('active');
-            else { document.querySelector('.tab-bar .tab-btn:first-child').classList.add('active'); }
-            document.getElementById('transfer-recent-list').classList.toggle('hidden', tab !== 'recent');
-            document.getElementById('transfer-favorites-list').classList.toggle('hidden', tab !== 'favorites');
-            document.getElementById('transfer-contacts-list').classList.toggle('hidden', tab !== 'contacts');
-        }
-
-        // ----- Amount Entry -----
+        // ===== AMOUNT ENTRY =====
         function setTransferAmount(amount, btn) {
             transferData.amount = amount;
             document.getElementById('transfer-amount-input').value = amount.toLocaleString();
@@ -2379,7 +2871,9 @@
             const sessionId = generateSessionId();
             const dateStr = formatDate(now);
 
-            appState.currentUser.transactions.unshift({
+            saveToRecentTransfers(transferData.bank, transferData.account, transferData.accountName);
+
+            const tx = {
                 id: 'TX-' + Date.now(),
                 type: 'transfer',
                 amount: amt,
@@ -2390,11 +2884,15 @@
                 bank: transferData.bank,
                 account: transferData.account,
                 txId: txId,
-                sessionId: sessionId
-            });
+                sessionId: sessionId,
+                status: 'Successful'
+            };
+
+            appState.currentUser.transactions.unshift(tx);
 
             syncUsers().then(() => {
                 updateBalanceUI();
+                updateRecentTransfersList();
                 showReceipt(amt, transferData.accountName, transferData.bank, transferData.account, txId, sessionId,
                     dateStr);
                 showToast(`₦${amt.toLocaleString()} sent to ${transferData.accountName.slice(0, 15)}...`, 'success');
@@ -2501,7 +2999,7 @@
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     const sw =
-                        `const C='palmpay-v11';const U=['/','index.html'];self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(U))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
+                        `const C='palmpay-v14';const U=['/','index.html'];self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(U))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
                     const b2 = new Blob([sw], { type: 'application/javascript' });
                     navigator.serviceWorker.register(URL.createObjectURL(b2)).catch(() => {});
                 });
@@ -2515,4 +3013,4 @@
     </script>
 
 </body>
-</html>
+                                    </html>
