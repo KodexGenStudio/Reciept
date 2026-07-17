@@ -710,7 +710,6 @@
             color: #9e9e9e;
         }
 
-        /* Bank dropdown without images - text only */
         .bank-dropdown {
             max-height: 200px;
             overflow-y: auto;
@@ -734,7 +733,6 @@
         .bank-dropdown .bank-option:last-child {
             border-bottom: none;
         }
-        /* No logo images in dropdown */
 
         .pin-verify-container {
             background: rgba(0, 0, 0, 0.75);
@@ -1043,6 +1041,10 @@
             font-size: 11px;
             color: #757575;
         }
+        .suggested-bank-item .suggested-info .account {
+            font-size: 10px;
+            color: #9e9e9e;
+        }
     </style>
 </head>
 <body>
@@ -1350,7 +1352,7 @@
                 </div>
             </div>
 
-            <!-- ===== PAGE: TRANSFER FLOW (FIXED LAYOUT - NO IMAGES IN DROPDOWN) ===== -->
+            <!-- ===== PAGE: TRANSFER FLOW (SHARED RECIPIENTS) ===== -->
             <div id="page-transfer" class="page-layer">
                 <div class="flex flex-col h-full" style="background:#F6F7FB;">
                     <div class="bg-white px-4 pt-5 pb-3 border-b border-slate-50 flex items-center gap-3 flex-shrink-0 safe-top">
@@ -1374,11 +1376,11 @@
                                         <input type="text" id="transfer-account" maxlength="10" inputmode="numeric" pattern="[0-9]*" placeholder="8201633275" class="w-full mt-1 px-3 py-3 bg-brand-bgGray border-0 rounded-lg text-sm focus:ring-2 focus:ring-brand-purple outline-none font-semibold" />
                                     </div>
 
-                                    <!-- Suggested Banks (Auto-populated from JSONBin) -->
+                                    <!-- Suggested Banks from Global Recipients -->
                                     <div id="suggested-banks" class="mb-3 hidden">
                                         <label class="text-xs font-semibold text-brand-textGray">Select linked bank</label>
                                         <div id="suggested-banks-list" class="mt-2 space-y-2">
-                                            <!-- Populated by JavaScript -->
+                                            <!-- Populated by JavaScript from global recipients -->
                                         </div>
                                     </div>
 
@@ -1702,6 +1704,9 @@
             reauthPin: ""
         };
 
+        // Global recipients database - shared across all users
+        let globalRecipients = [];
+
         const DEFAULT_USER = {
             name: 'PungyOnYT',
             phone: '8012345678',
@@ -1717,32 +1722,70 @@
                 const res = await fetch(API_URL, { headers: { 'X-Master-Key': API_KEY } });
                 if (!res.ok) throw new Error('API error');
                 const data = await res.json();
-                const users = data.record?.users || [];
+                const record = data.record || {};
+                const users = record.users || [];
+                globalRecipients = record.recipients || [];
+
                 if (users.length === 0) { appState.users = [DEFAULT_USER];
                     await syncUsers(); } else { appState.users = users; }
                 localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users));
+                localStorage.setItem('palmpay_recipients_backup', JSON.stringify(globalRecipients));
                 return true;
             } catch (err) {
                 const backup = localStorage.getItem('palmpay_users_backup');
                 if (backup) { try { appState.users = JSON.parse(backup); if (appState.users.length === 0) { appState.users = [
                             DEFAULT_USER];
-                        localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users)); } return true; } catch (
-                    _) { appState.users = [DEFAULT_USER];
-                    localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users)); return true; } } else { appState
-                        .users = [DEFAULT_USER];
-                    localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users)); return true; }
+                        localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users)); } } catch (_) { appState
+                            .users = [DEFAULT_USER];
+                        localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users)); } } else { appState.users = [
+                        DEFAULT_USER];
+                    localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users)); }
+
+                const recipBackup = localStorage.getItem('palmpay_recipients_backup');
+                if (recipBackup) { try { globalRecipients = JSON.parse(recipBackup); } catch (_) { globalRecipients = []; } }
+                return true;
             } finally { showLoading(false); }
         }
 
         async function syncUsers() {
             try {
                 showLoading(true);
-                const res = await fetch(API_URL, { method: 'PUT', headers: { 'X-Master-Key': API_KEY,
-                        'Content-Type': 'application/json' }, body: JSON.stringify({ users: appState.users }) });
-                if (res.ok) { localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users)); return true; }
+                const res = await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: { 'X-Master-Key': API_KEY, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ users: appState.users, recipients: globalRecipients })
+                });
+                if (res.ok) {
+                    localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users));
+                    localStorage.setItem('palmpay_recipients_backup', JSON.stringify(globalRecipients));
+                    return true;
+                }
                 throw new Error('Sync failed');
-            } catch (_) { localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users));
-                showToast('Synced locally (offline mode).', 'success'); return true; } finally { showLoading(false); }
+            } catch (_) {
+                localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users));
+                localStorage.setItem('palmpay_recipients_backup', JSON.stringify(globalRecipients));
+                showToast('Synced locally (offline mode).', 'success');
+                return true;
+            } finally { showLoading(false); }
+        }
+
+        async function syncRecipients() {
+            try {
+                showLoading(true);
+                const res = await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: { 'X-Master-Key': API_KEY, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ users: appState.users, recipients: globalRecipients })
+                });
+                if (res.ok) {
+                    localStorage.setItem('palmpay_recipients_backup', JSON.stringify(globalRecipients));
+                    return true;
+                }
+                return false;
+            } catch (_) {
+                localStorage.setItem('palmpay_recipients_backup', JSON.stringify(globalRecipients));
+                return true;
+            } finally { showLoading(false); }
         }
 
         // ===== PAGE NAVIGATION =====
@@ -1858,7 +1901,7 @@
             hideReauthOverlay();
         }
 
-        // ===== RE-AUTHENTICATION (App Resume) =====
+        // ===== RE-AUTHENTICATION =====
         let reauthPin = '';
 
         function showReauthOverlay() {
@@ -1934,7 +1977,6 @@
                 'pin-dot'; });
         }
 
-        // ===== VISIBILITY CHANGE (App Minimize) =====
         document.addEventListener('visibilitychange', function() {
             if (document.hidden && appState.currentUser) {
                 setTimeout(() => { showReauthOverlay(); }, 300);
@@ -2208,6 +2250,34 @@
         });
 
         // ================================================================
+        // ===== GLOBAL RECIPIENTS MANAGEMENT =====
+        // ================================================================
+
+        function addRecipientToGlobal(account, bank, name) {
+            // Check if already exists
+            const exists = globalRecipients.some(r => r.account === account && r.bank === bank);
+            if (!exists) {
+                globalRecipients.push({
+                    account: account,
+                    bank: bank,
+                    name: name,
+                    createdAt: new Date().toISOString()
+                });
+                syncRecipients();
+                return true;
+            }
+            return false;
+        }
+
+        function getRecipientsByAccount(account) {
+            return globalRecipients.filter(r => r.account === account);
+        }
+
+        function getRecipientByAccountAndBank(account, bank) {
+            return globalRecipients.find(r => r.account === account && r.bank === bank);
+        }
+
+        // ================================================================
         // ===== ACCOUNT RESOLUTION & AUTOFILL =====
         // ================================================================
 
@@ -2241,7 +2311,6 @@
         let isResolving = false;
         let manualOverride = false;
 
-        // Update recent transfers list
         function updateRecentTransfersList() {
             const container = document.getElementById('transfer-recent-list');
             if (!container) return;
@@ -2338,7 +2407,7 @@
                 });
             });
 
-            // Account input with smart autofill
+            // Account input with smart autofill from GLOBAL recipients
             const accInput = document.getElementById('transfer-account');
             if (accInput) {
                 accInput.addEventListener('input', function() {
@@ -2347,8 +2416,8 @@
                     const suggestedBanks = document.getElementById('suggested-banks');
                     const suggestedList = document.getElementById('suggested-banks-list');
 
-                    // Check for saved accounts in JSONBin
-                    const matches = appState.currentUser?.recentTransfers?.filter(r => r.account === account) || [];
+                    // Check GLOBAL recipients
+                    const matches = getRecipientsByAccount(account);
 
                     if (account.length === 10 && matches.length > 0) {
                         suggestedList.innerHTML = '';
@@ -2382,6 +2451,7 @@
                                 <div class="suggested-info">
                                     <div class="name">${match.name}</div>
                                     <div class="bank">${match.bank}</div>
+                                    <div class="account">${match.account}</div>
                                 </div>
                                 <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
                             `;
@@ -2396,7 +2466,6 @@
                         suggestedBanks.classList.add('hidden');
                     }
 
-                    // Trigger Monnify if bank is manually selected
                     if (account.length === 10 && selectedBank) {
                         manualOverride = false;
                         resolveAccount(account, selectedBank, selectedBankCode);
@@ -2437,9 +2506,13 @@
                 document.getElementById('resolution-success').classList.remove('hidden');
                 document.getElementById('manual-entry-area').classList.add('hidden');
                 document.getElementById('transfer-next-1').disabled = false;
+
+                // Add to GLOBAL recipients
+                addRecipientToGlobal(account, selectedBank, name);
+                // Also save to user's recent
                 saveToRecentTransfers(selectedBank, account, name);
                 document.getElementById('suggested-banks').classList.add('hidden');
-                showToast('Account name confirmed manually.', 'success');
+                showToast('Account name confirmed and saved globally.', 'success');
             } else {
                 showToast('Please enter a valid account name.', 'error');
             }
@@ -2484,24 +2557,35 @@
             try {
                 let accountName = null;
 
-                const token = await getMonnifyToken();
-                if (token) {
-                    try {
-                        const res = await fetch('https://sandbox.monnify.com/api/v1/merchant/bank-accounts/resolve', {
-                            method: 'POST',
-                            headers: {
-                                'Authorization': `Bearer ${token}`,
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ accountNumber: account, bankCode: code })
-                        });
-                        if (res.ok) {
-                            const data = await res.json();
-                            if (data.responseBody && data.responseBody.accountName) {
-                                accountName = data.responseBody.accountName;
+                // First check GLOBAL recipients
+                const existing = getRecipientByAccountAndBank(account, bank);
+                if (existing) {
+                    accountName = existing.name;
+                }
+
+                // If not in global, try Monnify
+                if (!accountName) {
+                    const token = await getMonnifyToken();
+                    if (token) {
+                        try {
+                            const res = await fetch('https://sandbox.monnify.com/api/v1/merchant/bank-accounts/resolve', {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ accountNumber: account, bankCode: code })
+                            });
+                            if (res.ok) {
+                                const data = await res.json();
+                                if (data.responseBody && data.responseBody.accountName) {
+                                    accountName = data.responseBody.accountName;
+                                    // Add to GLOBAL recipients
+                                    addRecipientToGlobal(account, bank, accountName);
+                                }
                             }
-                        }
-                    } catch (e) { console.warn('Monnify resolve failed:', e); }
+                        } catch (e) { console.warn('Monnify resolve failed:', e); }
+                    }
                 }
 
                 if (accountName) {
@@ -2871,6 +2955,8 @@
             const sessionId = generateSessionId();
             const dateStr = formatDate(now);
 
+            // Add to GLOBAL recipients if not already
+            addRecipientToGlobal(transferData.account, transferData.bank, transferData.accountName);
             saveToRecentTransfers(transferData.bank, transferData.account, transferData.accountName);
 
             const tx = {
@@ -2999,7 +3085,7 @@
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     const sw =
-                        `const C='palmpay-v14';const U=['/','index.html'];self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(U))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
+                        `const C='palmpay-v15';const U=['/','index.html'];self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(U))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
                     const b2 = new Blob([sw], { type: 'application/javascript' });
                     navigator.serviceWorker.register(URL.createObjectURL(b2)).catch(() => {});
                 });
@@ -3013,4 +3099,4 @@
     </script>
 
 </body>
-                                    </html>
+                                                    </html>
