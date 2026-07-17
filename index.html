@@ -9,12 +9,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-    <!-- ===== LOGO ===== -->
-    <!-- Replace the URL below with your actual logo URL -->
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png" />
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png" />
 
-    <!-- Tailwind & FontAwesome -->
     <script src="https://cdn.tailwindcss.com">
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -33,6 +30,9 @@
                             textDark: '#1A1A1A',
                             textGray: '#757575',
                             bgGray: '#F6F7FB',
+                            green: '#10B981',
+                            red: '#EF4444',
+                            orange: '#F59E0B',
                         }
                     },
                     fontFamily: { sans: ['Inter', 'sans-serif'] }
@@ -42,7 +42,7 @@
     </script>
 
     <style>
-        /* FULL SCREEN RESET */
+        /* RESET & FULLSCREEN */
         * {
             margin: 0;
             padding: 0;
@@ -52,7 +52,6 @@
             -webkit-user-select: none;
             user-select: none;
         }
-
         html,
         body {
             width: 100%;
@@ -62,13 +61,10 @@
             font-family: 'Inter', sans-serif;
             touch-action: manipulation;
         }
-
         ::-webkit-scrollbar {
             width: 0px;
             background: transparent;
         }
-
-        /* APP SHELL */
         #app-shell {
             position: fixed;
             top: 0;
@@ -83,7 +79,6 @@
             display: flex;
             flex-direction: column;
         }
-
         @media (min-width: 641px) {
             #app-shell {
                 max-width: 420px;
@@ -95,8 +90,6 @@
                 transform: translate(-50%, -50%);
             }
         }
-
-        /* PAGE STACK */
         .page-stack {
             position: relative;
             width: 100%;
@@ -104,8 +97,6 @@
             overflow: hidden;
             flex: 1;
         }
-
-        /* PAGE LAYER */
         .page-layer {
             position: absolute;
             top: 0;
@@ -123,7 +114,6 @@
             opacity: 0;
             transform: translateX(100%);
         }
-
         .page-layer.page-visible {
             pointer-events: auto !important;
             opacity: 1 !important;
@@ -131,38 +121,7 @@
             z-index: 10;
         }
 
-        #page-lockscreen {
-            z-index: 40;
-            background: #5F259F;
-        }
-        #page-lockscreen.page-visible {
-            z-index: 40 !important;
-        }
-
-        #page-dashboard {
-            z-index: 30;
-            background: #F6F7FB;
-        }
-        #page-dashboard.page-visible {
-            z-index: 30 !important;
-        }
-
-        #page-settings {
-            z-index: 60;
-            background: #ffffff;
-        }
-        #page-settings.page-visible {
-            z-index: 60 !important;
-        }
-
-        #page-login-settings {
-            z-index: 70;
-            background: #ffffff;
-        }
-        #page-login-settings.page-visible {
-            z-index: 70 !important;
-        }
-
+        /* PAGE Z-INDEXES */
         #page-gateway {
             z-index: 50;
             background: #ffffff;
@@ -170,8 +129,183 @@
         #page-gateway.page-visible {
             z-index: 50 !important;
         }
+        #page-lockscreen {
+            z-index: 40;
+            background: #5F259F;
+        }
+        #page-lockscreen.page-visible {
+            z-index: 40 !important;
+        }
+        #page-dashboard {
+            z-index: 30;
+            background: #F6F7FB;
+        }
+        #page-dashboard.page-visible {
+            z-index: 30 !important;
+        }
+        #page-settings {
+            z-index: 60;
+            background: #ffffff;
+        }
+        #page-settings.page-visible {
+            z-index: 60 !important;
+        }
+        #page-login-settings {
+            z-index: 70;
+            background: #ffffff;
+        }
+        #page-login-settings.page-visible {
+            z-index: 70 !important;
+        }
+        #page-transfer {
+            z-index: 80;
+            background: #F6F7FB;
+        }
+        #page-transfer.page-visible {
+            z-index: 80 !important;
+        }
+        #page-receipt {
+            z-index: 90;
+            background: #f8f9fa;
+        }
+        #page-receipt.page-visible {
+            z-index: 90 !important;
+        }
+        #page-pin-verify {
+            z-index: 85;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #page-pin-verify.page-visible {
+            z-index: 85 !important;
+            pointer-events: auto !important;
+            opacity: 1 !important;
+            transform: translateX(0) !important;
+        }
 
-        /* PIN DOTS */
+        /* LOCK SCREEN KEYPAD - FIXED ALIGNMENT */
+        .lockscreen-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+        .lockscreen-top {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 24px;
+            text-align: center;
+            color: #fff;
+            padding-top: max(env(safe-area-inset-top), 16px);
+        }
+        .lockscreen-bottom {
+            background: rgba(255, 255, 255, 0.10);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
+            padding: 28px 24px 40px;
+            padding-bottom: max(env(safe-area-inset-bottom), 32px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+        /* Keypad grid - centered, proper phone layout */
+        .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px 24px;
+            max-width: 320px;
+            width: 100%;
+            margin: 0 auto;
+            justify-items: center;
+            align-items: center;
+        }
+        .keypad-grid .key-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            max-width: 72px;
+            border-radius: 50%;
+            font-size: 26px;
+            font-weight: 700;
+            color: #fff;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            touch-action: manipulation;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.12s ease, transform 0.1s ease;
+            padding: 0;
+        }
+        .keypad-grid .key-btn:active {
+            background: rgba(255, 255, 255, 0.18);
+            transform: scale(0.92);
+        }
+        .keypad-grid .key-btn i {
+            font-size: 26px;
+        }
+        .lockscreen-footer {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 280px;
+            padding: 0 4px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .lockscreen-footer button {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            cursor: pointer;
+            padding: 4px 8px;
+            touch-action: manipulation;
+            font-weight: 500;
+        }
+        .lockscreen-footer button:active {
+            color: #fff;
+            transform: scale(0.95);
+        }
+        .lock-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(255, 255, 255, 0.10);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+        .lock-icon i {
+            font-size: 24px;
+            color: #fff;
+        }
+        .lock-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .lock-sub {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 4px;
+        }
+        .pin-dots-row {
+            display: flex;
+            gap: 16px;
+            margin-top: 24px;
+            margin-bottom: 4px;
+        }
         .pin-dot {
             transition: all 0.15s ease-in-out;
             width: 14px;
@@ -185,33 +319,6 @@
             border-color: #ffffff;
             transform: scale(1.15);
             box-shadow: 0 0 16px rgba(255, 255, 255, 0.5);
-        }
-
-        /* KEYPAD BUTTONS */
-        .key-btn {
-            cursor: pointer;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-            outline: none;
-            border: none;
-            background: transparent;
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: #ffffff;
-            padding: 16px 0;
-            border-radius: 50%;
-            transition: background 0.12s ease, transform 0.1s ease;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .key-btn:active {
-            background: rgba(255, 255, 255, 0.18);
-            transform: scale(0.92);
-        }
-        .key-btn i {
-            font-size: 1.6rem;
         }
 
         /* TOGGLE SWITCH */
@@ -247,7 +354,6 @@
             box-shadow: 0 1px 6px rgba(95, 37, 159, 0.3);
         }
 
-        /* SETTINGS ITEMS */
         .settings-item {
             transition: background 0.12s ease;
             cursor: pointer;
@@ -256,16 +362,12 @@
         .settings-item:active {
             background: #f1f1f1;
         }
-
-        /* BOTTOM NAV */
         .bottom-nav {
             flex-shrink: 0;
             background: white;
             border-top: 1px solid #f1f1f1;
             padding-bottom: env(safe-area-inset-bottom, 0px);
         }
-
-        /* SAFE AREAS */
         .safe-top {
             padding-top: max(env(safe-area-inset-top), 8px);
         }
@@ -273,7 +375,6 @@
             padding-bottom: max(env(safe-area-inset-bottom), 8px);
         }
 
-        /* TOAST */
         #toast-container {
             position: absolute;
             bottom: 80px;
@@ -312,7 +413,6 @@
             background: #ef4444;
         }
 
-        /* LOADER */
         #network-loader {
             position: absolute;
             inset: 0;
@@ -350,7 +450,6 @@
             }
         }
 
-        /* MODAL BACKDROP */
         .modal-backdrop {
             position: absolute;
             inset: 0;
@@ -385,119 +484,6 @@
             color: #757575;
         }
 
-        /* LOCK SCREEN */
-        .lockscreen-content {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-        }
-        .lockscreen-top {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 0 32px;
-            text-align: center;
-            color: #fff;
-            padding-top: max(env(safe-area-inset-top), 24px);
-        }
-        .lockscreen-bottom {
-            background: rgba(255, 255, 255, 0.10);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top-left-radius: 40px;
-            border-top-right-radius: 40px;
-            padding: 28px 32px 40px;
-            padding-bottom: max(env(safe-area-inset-bottom), 32px);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .keypad-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px 20px;
-            justify-items: center;
-            align-items: center;
-        }
-        .keypad-grid .key-btn {
-            width: 100%;
-            max-width: 72px;
-            aspect-ratio: 1;
-            border-radius: 50%;
-            font-size: 26px;
-            font-weight: 700;
-            color: #fff;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            touch-action: manipulation;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .keypad-grid .key-btn:active {
-            background: rgba(255, 255, 255, 0.18);
-            transform: scale(0.92);
-        }
-        .keypad-grid .key-btn i {
-            font-size: 26px;
-        }
-        .lockscreen-footer {
-            display: flex;
-            justify-content: space-between;
-            padding: 0 8px;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.5);
-        }
-        .lockscreen-footer button {
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 12px;
-            cursor: pointer;
-            padding: 4px 8px;
-            touch-action: manipulation;
-        }
-        .lockscreen-footer button:active {
-            color: #fff;
-            transform: scale(0.95);
-        }
-
-        .lock-icon {
-            width: 56px;
-            height: 56px;
-            background: rgba(255, 255, 255, 0.10);
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 16px;
-        }
-        .lock-icon i {
-            font-size: 24px;
-            color: #fff;
-        }
-        .lock-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #fff;
-        }
-        .lock-sub {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.6);
-            margin-top: 4px;
-        }
-        .pin-dots-row {
-            display: flex;
-            gap: 16px;
-            margin-top: 28px;
-            margin-bottom: 8px;
-        }
-
-        /* INSTALL BUTTON */
         .install-btn {
             background: #5F259F;
             color: #fff;
@@ -517,14 +503,10 @@
             background: #4a1a7a;
             transform: scale(0.95);
         }
-        .install-btn i {
-            font-size: 14px;
-        }
         .install-btn.hidden {
             display: none !important;
         }
 
-        /* LOGO IMAGE STYLES */
         .app-logo-img {
             width: 100%;
             height: 100%;
@@ -552,14 +534,6 @@
             overflow: hidden;
             flex-shrink: 0;
         }
-        .app-logo-circle {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            overflow: hidden;
-            flex-shrink: 0;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
         .app-logo-placeholder {
             background: #5F259F;
             display: flex;
@@ -570,29 +544,278 @@
             font-size: 24px;
         }
 
-        /* Status bar spacer */
-        .status-spacer {
-            height: env(safe-area-inset-top, 0px);
-            min-height: 8px;
+        /* Transfer flow */
+        .bank-option {
+            transition: background 0.15s ease;
+            cursor: pointer;
+        }
+        .bank-option:active {
+            background: #f1f1f1;
+        }
+        .amount-btn {
+            transition: all 0.15s ease;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        .amount-btn:active {
+            transform: scale(0.94);
+            background: #e8e0f5;
+        }
+        .amount-btn.selected {
+            background: #5F259F;
+            color: white;
+            border-color: #5F259F;
+        }
+        .transfer-step {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+        .transfer-step.active {
+            display: flex;
+        }
+        .step-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .step-footer {
+            padding: 12px 20px 20px;
+            background: #fff;
+            border-top: 1px solid #f1f1f1;
             flex-shrink: 0;
         }
 
-        @supports (padding: max(0px)) {
-            .safe-area-top {
-                padding-top: max(env(safe-area-inset-top), 8px);
-            }
-            .safe-area-bottom {
-                padding-bottom: max(env(safe-area-inset-bottom), 8px);
-            }
+        .receipt-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid #f1f1f1;
+        }
+        .receipt-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 13px;
+        }
+        .receipt-line .label {
+            color: #757575;
+        }
+        .receipt-line .value {
+            font-weight: 600;
+            color: #1A1A1A;
+            text-align: right;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .receipt-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            overflow: hidden;
+            margin: 0 auto 12px;
+        }
+
+        .tab-bar {
+            display: flex;
+            gap: 4px;
+            background: #f5f5f5;
+            padding: 4px;
+            border-radius: 24px;
+            margin-bottom: 12px;
+        }
+        .tab-bar .tab-btn {
+            flex: 1;
+            text-align: center;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: transparent;
+            border: none;
+            color: #757575;
+        }
+        .tab-bar .tab-btn.active {
+            background: #5F259F;
+            color: #fff;
+        }
+        .tab-bar .tab-btn:active {
+            transform: scale(0.95);
+        }
+
+        .recent-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f5f5;
+            cursor: pointer;
+            transition: background 0.1s ease;
+        }
+        .recent-item:active {
+            background: #f8f8f8;
+        }
+        .recent-item:last-child {
+            border-bottom: none;
+        }
+        .recent-item .bank-letter {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .recent-item .info {
+            flex: 1;
+            min-width: 0;
+        }
+        .recent-item .info .name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1A1A1A;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .recent-item .info .details {
+            font-size: 11px;
+            color: #757575;
+        }
+        .recent-item .info .date {
+            font-size: 10px;
+            color: #9e9e9e;
+        }
+
+        .bank-dropdown {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border: 1px solid #f1f1f1;
+        }
+        .bank-dropdown .bank-option {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f5f5f5;
+            cursor: pointer;
+            transition: background 0.1s ease;
+        }
+        .bank-dropdown .bank-option:active {
+            background: #f5f2ff;
+        }
+        .bank-dropdown .bank-option:last-child {
+            border-bottom: none;
+        }
+
+        /* PIN verification overlay */
+        .pin-verify-container {
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+        }
+        .pin-verify-box {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            padding: 32px 24px 40px;
+            width: 100%;
+            max-width: 340px;
+            text-align: center;
+        }
+        .pin-verify-box .lock-icon {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 50%;
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+        .pin-verify-box .lock-icon i {
+            font-size: 28px;
+            color: #fff;
+        }
+        .pin-verify-box h3 {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .pin-verify-box p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+            margin-bottom: 24px;
+        }
+        .pin-verify-box .pin-dots-row {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 32px;
+        }
+        .pin-verify-box .pin-dots-row .pin-dot {
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        .pin-verify-box .pin-dots-row .pin-dot-filled {
+            background: #fff;
+            border-color: #fff;
+        }
+        .pin-verify-box .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px 16px;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+        .pin-verify-box .keypad-grid .key-btn {
+            color: #fff;
+            font-size: 24px;
+            padding: 12px 0;
+        }
+        .pin-verify-box .keypad-grid .key-btn:active {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .pin-verify-box .cancel-btn {
+            color: rgba(255, 255, 255, 0.5);
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 16px;
+            cursor: pointer;
+            padding: 8px 16px;
+        }
+        .pin-verify-box .cancel-btn:active {
+            color: #fff;
         }
     </style>
 </head>
 <body>
 
-    <!-- ===== APP SHELL ===== -->
     <div id="app-shell">
 
-        <!-- NETWORK LOADER -->
         <div id="network-loader">
             <div class="loader-box">
                 <div class="spinner"></div>
@@ -600,36 +823,24 @@
             </div>
         </div>
 
-        <!-- TOAST CONTAINER -->
         <div id="toast-container"></div>
 
-        <!-- ===== PAGE STACK ===== -->
         <div class="page-stack">
 
-            <!-- ========================================== -->
-            <!-- PAGE: GATEWAY                              -->
-            <!-- ========================================== -->
+            <!-- ===== PAGE: GATEWAY ===== -->
             <div id="page-gateway" class="page-layer page-visible">
                 <div class="flex flex-col h-full overflow-y-auto px-6 pt-8 pb-6 safe-top" style="background:#fff;">
                     <div class="flex flex-col items-center mt-8 mb-6">
-                        <!-- Logo -->
                         <div class="app-logo-lg shadow-lg shadow-brand-purple/20 mb-3">
-                            <img
-                                src="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png"
-                                alt="PalmPay Logo"
-                                class="app-logo-img"
-                                onerror="this.style.display='none'; this.parentElement.classList.add('app-logo-placeholder'); this.parentElement.textContent='P';"
-                            />
+                            <img src="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png" alt="PalmPay Logo" class="app-logo-img" onerror="this.style.display='none'; this.parentElement.classList.add('app-logo-placeholder'); this.parentElement.textContent='P';" />
                         </div>
                         <h1 class="text-2xl font-bold text-brand-purple">PalmPay Replica</h1>
                         <p class="text-xs text-brand-textGray mt-1">Secure Mobile Financial Gateway</p>
                     </div>
-
                     <div class="flex bg-brand-lightPurple p-1 rounded-xl mb-5">
                         <button onclick="toggleAuthTab('login')" id="btn-tab-login" class="flex-1 py-3 text-sm font-bold rounded-lg transition-all bg-white text-brand-purple shadow-sm">Log In</button>
                         <button onclick="toggleAuthTab('signup')" id="btn-tab-signup" class="flex-1 py-3 text-sm font-bold rounded-lg transition-all text-brand-textGray">Sign Up</button>
                     </div>
-
                     <form id="form-login" class="flex flex-col gap-4">
                         <div class="flex flex-col gap-1.5">
                             <label class="text-xs font-semibold text-brand-textGray">Mobile Number</label>
@@ -644,7 +855,6 @@
                         </div>
                         <button type="submit" class="w-full bg-brand-btnPurple text-white py-4 rounded-xl font-bold text-sm mt-2 shadow-md shadow-brand-purple/20 hover:bg-brand-purple transition-all">Sign In</button>
                     </form>
-
                     <form id="form-signup" class="flex flex-col gap-4 hidden">
                         <div class="flex flex-col gap-1.5">
                             <label class="text-xs font-semibold text-brand-textGray">Full Name</label>
@@ -667,31 +877,20 @@
                         </div>
                         <button type="submit" class="w-full bg-brand-btnPurple text-white py-4 rounded-xl font-bold text-sm mt-2 shadow-md shadow-brand-purple/20 hover:bg-brand-purple transition-all">Create Account</button>
                     </form>
-
-                    <!-- Install App Button -->
                     <div class="mt-4 flex justify-center">
-                        <button id="installAppBtn" class="install-btn hidden">
-                            <i class="fa-solid fa-download"></i> Install App
-                        </button>
+                        <button id="installAppBtn" class="install-btn hidden"><i class="fa-solid fa-download"></i> Install App</button>
                     </div>
                 </div>
             </div>
 
-            <!-- ========================================== -->
-            <!-- PAGE: LOCK SCREEN                         -->
-            <!-- ========================================== -->
+            <!-- ===== PAGE: LOCK SCREEN (FIXED ALIGNMENT) ===== -->
             <div id="page-lockscreen" class="page-layer">
                 <div class="lockscreen-content">
                     <div class="lockscreen-top">
                         <div class="lock-icon">
-                            <img
-                                src="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png"
-                                alt="PalmPay"
-                                class="w-8 h-8 rounded-full object-cover"
-                                onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-solid fa-lock text-white text-2xl\'></i>';"
-                            />
+                            <i class="fa-solid fa-lock"></i>
                         </div>
-                        <div class="lock-title" id="lockscreen-username">Welcome Back, Somtochukwu</div>
+                        <div class="lock-title" id="lockscreen-username">Welcome Back, PungyOnYT</div>
                         <div class="lock-sub">Verify security credentials to continue</div>
                         <div class="pin-dots-row" id="pinDotsRow">
                             <div class="pin-dot"></div>
@@ -700,7 +899,6 @@
                             <div class="pin-dot"></div>
                         </div>
                     </div>
-
                     <div class="lockscreen-bottom">
                         <div class="keypad-grid">
                             <button class="key-btn" data-key="1">1</button>
@@ -728,23 +926,14 @@
                 </div>
             </div>
 
-            <!-- ========================================== -->
-            <!-- PAGE: DASHBOARD                           -->
-            <!-- ========================================== -->
+            <!-- ===== PAGE: DASHBOARD ===== -->
             <div id="page-dashboard" class="page-layer">
                 <div class="flex flex-col h-full" style="background:#F6F7FB;">
-
-                    <!-- TAB: HOME -->
                     <div id="tab-home" class="flex-grow flex flex-col overflow-hidden">
                         <div class="bg-white px-4 pt-4 pb-2 flex justify-between items-center flex-shrink-0">
                             <div class="flex items-center gap-3">
                                 <div class="app-logo-sm border-2 border-brand-lightPurple shadow-sm">
-                                    <img
-                                        src="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png"
-                                        alt="PalmPay"
-                                        class="app-logo-img"
-                                        onerror="this.style.display='none'; this.parentElement.classList.add('app-logo-placeholder'); this.parentElement.textContent='P';"
-                                    />
+                                    <img src="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png" alt="PalmPay" class="app-logo-img" onerror="this.style.display='none'; this.parentElement.classList.add('app-logo-placeholder'); this.parentElement.textContent='P';" />
                                 </div>
                                 <div>
                                     <p class="text-[10px] text-brand-textGray font-medium leading-none">Welcome back</p>
@@ -752,17 +941,11 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap-3">
-                                <button id="installBtnHeader" class="install-btn hidden text-xs px-3 py-1.5">
-                                    <i class="fa-solid fa-download"></i> Install
-                                </button>
+                                <button id="installBtnHeader" class="install-btn hidden text-xs px-3 py-1.5"><i class="fa-solid fa-download"></i> Install</button>
                                 <button class="relative hover:opacity-80"><i class="fa-solid fa-headset text-lg"></i></button>
-                                <button class="relative hover:opacity-80">
-                                    <i class="fa-regular fa-bell text-lg"></i>
-                                    <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-[9px] text-white font-bold w-4 h-4 rounded-full flex items-center justify-center">42</span>
-                                </button>
+                                <button class="relative hover:opacity-80"><i class="fa-regular fa-bell text-lg"></i><span class="absolute -top-1.5 -right-1.5 bg-red-500 text-[9px] text-white font-bold w-4 h-4 rounded-full flex items-center justify-center">42</span></button>
                             </div>
                         </div>
-
                         <div class="flex-1 overflow-y-auto pb-24">
                             <div class="mx-4 mt-3 bg-gradient-to-br from-[#EBE3FF] to-[#F5F2FF] rounded-2xl p-4 shadow-sm border border-brand-purple/10">
                                 <div class="flex justify-between items-center text-brand-purple mb-3">
@@ -777,25 +960,16 @@
                                     </button>
                                 </div>
                                 <div class="flex justify-between items-end">
-                                    <div>
-                                        <h2 id="dashboard-balance" class="text-3xl font-extrabold text-brand-purple tracking-tight">₦171.41</h2>
-                                    </div>
-                                    <button onclick="openDepositModal()" class="bg-brand-btnPurple text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-md shadow-brand-purple/20 flex items-center gap-1">
-                                        <i class="fa-solid fa-plus text-[10px]"></i>
-                                        <span>Add Money</span>
-                                    </button>
+                                    <div><h2 id="dashboard-balance" class="text-3xl font-extrabold text-brand-purple tracking-tight">₦171.41</h2></div>
+                                    <button onclick="openDepositModal()" class="bg-brand-btnPurple text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-md shadow-brand-purple/20 flex items-center gap-1"><i class="fa-solid fa-plus text-[10px]"></i><span>Add Money</span></button>
                                 </div>
                                 <div class="mt-4 pt-3 border-t border-brand-purple/10 flex justify-between items-center text-[11px] text-brand-purple font-medium">
-                                    <div class="flex items-center gap-1.5">
-                                        <i class="fa-solid fa-wallet"></i>
-                                        <span>Yesterday's Earnings: <b class="text-green-600">+₦0.09</b></span>
-                                    </div>
+                                    <div class="flex items-center gap-1.5"><i class="fa-solid fa-wallet"></i><span>Yesterday's Earnings: <b class="text-green-600">+₦0.09</b></span></div>
                                     <i class="fa-solid fa-chevron-right text-[9px] text-brand-purple/50"></i>
                                 </div>
                             </div>
-
                             <div class="grid grid-cols-4 gap-2.5 mx-4 mt-4">
-                                <button onclick="alert('Interbank transfers offline.')" class="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-2 hover:bg-slate-50 transition-all relative">
+                                <button onclick="openTransferFlow()" class="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-2 hover:bg-slate-50 transition-all relative">
                                     <span class="absolute -top-1.5 -right-1 px-1.5 py-0.5 bg-orange-500 text-[8px] text-white rounded-full font-extrabold scale-90">0 Fee</span>
                                     <div class="w-10 h-10 rounded-full bg-brand-lightPurple flex items-center justify-center text-brand-purple text-lg"><i class="fa-solid fa-building-columns"></i></div>
                                     <span class="text-[11px] font-bold text-brand-textDark leading-none">To Bank</span>
@@ -813,310 +987,363 @@
                                     <span class="text-[11px] font-bold text-brand-textDark leading-none">Cards</span>
                                 </button>
                             </div>
-
                             <div class="mx-4 mt-4 bg-white rounded-3xl p-4 shadow-sm border border-slate-100">
                                 <div class="grid grid-cols-4 gap-y-5 gap-x-2 text-center">
-                                    <button onclick="openAirtimeModal()" class="flex flex-col items-center gap-1.5">
-                                        <div class="w-11 h-11 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 text-lg"><i class="fa-solid fa-phone"></i></div>
-                                        <span class="text-[11px] font-semibold text-brand-textDark">Airtime</span>
-                                    </button>
-                                    <button onclick="openAirtimeModal()" class="flex flex-col items-center gap-1.5 relative">
-                                        <span class="absolute -top-2 -right-1 px-1.5 py-0.5 bg-amber-500 text-[8px] text-white rounded-full font-bold scale-75">Promo</span>
-                                        <div class="w-11 h-11 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500 text-lg"><i class="fa-solid fa-arrows-rotate"></i></div>
-                                        <span class="text-[11px] font-semibold text-brand-textDark">Data</span>
-                                    </button>
-                                    <button class="flex flex-col items-center gap-1.5">
-                                        <div class="w-11 h-11 rounded-full bg-green-50 flex items-center justify-center text-green-500 text-lg"><i class="fa-solid fa-volleyball"></i></div>
-                                        <span class="text-[11px] font-semibold text-brand-textDark">Betting</span>
-                                    </button>
-                                    <button class="flex flex-col items-center gap-1.5">
-                                        <div class="w-11 h-11 rounded-full bg-teal-50 flex items-center justify-center text-teal-500 text-lg"><i class="fa-solid fa-bolt"></i></div>
-                                        <span class="text-[11px] font-semibold text-brand-textDark">Electricity</span>
-                                    </button>
-                                    <button class="flex flex-col items-center gap-1.5">
-                                        <div class="w-11 h-11 rounded-full bg-purple-50 flex items-center justify-center text-purple-500 text-lg"><i class="fa-solid fa-gift"></i></div>
-                                        <span class="text-[11px] font-semibold text-brand-textDark">Refer & Earn</span>
-                                    </button>
-                                    <button class="flex flex-col items-center gap-1.5">
-                                        <div class="w-11 h-11 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-500 text-lg"><i class="fa-solid fa-shield-heart"></i></div>
-                                        <span class="text-[11px] font-semibold text-brand-textDark">Insurance</span>
-                                    </button>
-                                    <button class="flex flex-col items-center gap-1.5">
-                                        <div class="w-11 h-11 rounded-full bg-teal-50 flex items-center justify-center text-teal-600 text-lg"><i class="fa-solid fa-sack-dollar"></i></div>
-                                        <span class="text-[11px] font-semibold text-brand-textDark">Loan</span>
-                                    </button>
-                                    <button class="flex flex-col items-center gap-1.5">
-                                        <div class="w-11 h-11 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 text-lg"><i class="fa-solid fa-ellipsis"></i></div>
-                                        <span class="text-[11px] font-semibold text-brand-textDark">More</span>
-                                    </button>
+                                    <button onclick="openAirtimeModal()" class="flex flex-col items-center gap-1.5"><div class="w-11 h-11 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 text-lg"><i class="fa-solid fa-phone"></i></div><span class="text-[11px] font-semibold text-brand-textDark">Airtime</span></button>
+                                    <button onclick="openAirtimeModal()" class="flex flex-col items-center gap-1.5 relative"><span class="absolute -top-2 -right-1 px-1.5 py-0.5 bg-amber-500 text-[8px] text-white rounded-full font-bold scale-75">Promo</span><div class="w-11 h-11 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500 text-lg"><i class="fa-solid fa-arrows-rotate"></i></div><span class="text-[11px] font-semibold text-brand-textDark">Data</span></button>
+                                    <button class="flex flex-col items-center gap-1.5"><div class="w-11 h-11 rounded-full bg-green-50 flex items-center justify-center text-green-500 text-lg"><i class="fa-solid fa-volleyball"></i></div><span class="text-[11px] font-semibold text-brand-textDark">Betting</span></button>
+                                    <button class="flex flex-col items-center gap-1.5"><div class="w-11 h-11 rounded-full bg-teal-50 flex items-center justify-center text-teal-500 text-lg"><i class="fa-solid fa-bolt"></i></div><span class="text-[11px] font-semibold text-brand-textDark">Electricity</span></button>
+                                    <button class="flex flex-col items-center gap-1.5"><div class="w-11 h-11 rounded-full bg-purple-50 flex items-center justify-center text-purple-500 text-lg"><i class="fa-solid fa-gift"></i></div><span class="text-[11px] font-semibold text-brand-textDark">Refer & Earn</span></button>
+                                    <button class="flex flex-col items-center gap-1.5"><div class="w-11 h-11 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-500 text-lg"><i class="fa-solid fa-shield-heart"></i></div><span class="text-[11px] font-semibold text-brand-textDark">Insurance</span></button>
+                                    <button class="flex flex-col items-center gap-1.5"><div class="w-11 h-11 rounded-full bg-teal-50 flex items-center justify-center text-teal-600 text-lg"><i class="fa-solid fa-sack-dollar"></i></div><span class="text-[11px] font-semibold text-brand-textDark">Loan</span></button>
+                                    <button class="flex flex-col items-center gap-1.5"><div class="w-11 h-11 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 text-lg"><i class="fa-solid fa-ellipsis"></i></div><span class="text-[11px] font-semibold text-brand-textDark">More</span></button>
                                 </div>
                             </div>
-
                             <div class="mx-4 mt-4 bg-white rounded-2xl p-3 shadow-sm border border-slate-100 flex justify-between items-center gap-3">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-green-800 text-white flex flex-col items-center justify-center leading-none">
-                                        <span class="text-[8px] font-bold">₦2500</span>
-                                        <span class="text-[6px] opacity-80">EACH SHARE</span>
-                                    </div>
-                                    <div>
-                                        <h4 class="text-xs font-bold text-brand-textDark">100% Cash Reward</h4>
-                                        <p class="text-[10px] text-brand-textGray">Earn up to ₦2500 per invite</p>
-                                    </div>
+                                    <div class="w-10 h-10 rounded-full bg-green-800 text-white flex flex-col items-center justify-center leading-none"><span class="text-[8px] font-bold">₦2500</span><span class="text-[6px] opacity-80">EACH SHARE</span></div>
+                                    <div><h4 class="text-xs font-bold text-brand-textDark">100% Cash Reward</h4><p class="text-[10px] text-brand-textGray">Earn up to ₦2500 per invite</p></div>
                                 </div>
                                 <button class="border border-brand-purple text-brand-purple px-4 py-1 rounded-full text-xs font-bold hover:bg-brand-lightPurple transition-all">GO</button>
                             </div>
                         </div>
                     </div>
-
-                    <!-- TAB: ME -->
                     <div id="tab-me" class="flex-grow flex flex-col overflow-hidden hidden">
                         <div class="bg-white px-5 pt-5 pb-3 flex justify-between items-center border-b border-slate-50 flex-shrink-0">
                             <div class="flex items-center gap-3">
-                                <div class="app-logo-sm border border-brand-purple/10">
-                                    <img
-                                        src="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png"
-                                        alt="PalmPay"
-                                        class="app-logo-img"
-                                        onerror="this.style.display='none'; this.parentElement.classList.add('app-logo-placeholder'); this.parentElement.textContent='P';"
-                                    />
-                                </div>
-                                <div>
-                                    <div class="flex items-center gap-2">
-                                        <h3 id="me-user-name" class="font-bold text-base text-brand-textDark">Hi, SOMTOCHUKWU</h3>
-                                        <span class="bg-brand-purple/10 text-brand-purple text-[9px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1">
-                                            <i class="fa-solid fa-shield text-[7px]"></i> Tier 1
-                                        </span>
-                                    </div>
-                                    <p id="me-user-phone" class="text-[10px] text-brand-textGray font-semibold mt-0.5">+234 801 234 5678</p>
-                                </div>
+                                <div class="app-logo-sm border border-brand-purple/10"><img src="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png" alt="PalmPay" class="app-logo-img" onerror="this.style.display='none'; this.parentElement.classList.add('app-logo-placeholder'); this.parentElement.textContent='P';" /></div>
+                                <div><div class="flex items-center gap-2"><h3 id="me-user-name" class="font-bold text-base text-brand-textDark">Hi, SOMTOCHUKWU</h3><span class="bg-brand-purple/10 text-brand-purple text-[9px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1"><i class="fa-solid fa-shield text-[7px]"></i> Tier 1</span></div><p id="me-user-phone" class="text-[10px] text-brand-textGray font-semibold mt-0.5">+234 801 234 5678</p></div>
                             </div>
                             <div class="flex items-center gap-4 text-brand-textDark">
                                 <button class="hover:opacity-75"><i class="fa-solid fa-expand text-lg"></i></button>
                                 <button onclick="navigateToSettings()" class="hover:opacity-75 text-brand-textDark"><i class="fa-solid fa-gear text-xl"></i></button>
                             </div>
                         </div>
-
                         <div class="flex-1 overflow-y-auto px-4 pb-24 pt-3 space-y-3.5">
                             <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
-                                <div class="flex justify-between items-center text-xs text-brand-textGray font-medium mb-1">
-                                    <span class="flex items-center gap-1">Total Assets <i class="fa-regular fa-eye-slash text-[10px]"></i></span>
-                                    <span class="flex items-center gap-1">Yesterday's Earnings <i class="fa-solid fa-chevron-right text-[8px]"></i></span>
-                                </div>
-                                <div class="flex justify-between items-center mb-4">
-                                    <h2 id="me-assets-balance" class="text-2xl font-black text-brand-textDark tracking-tight">₦171.41</h2>
-                                    <span class="text-emerald-500 font-bold text-sm">+₦0.09</span>
-                                </div>
+                                <div class="flex justify-between items-center text-xs text-brand-textGray font-medium mb-1"><span class="flex items-center gap-1">Total Assets <i class="fa-regular fa-eye-slash text-[10px]"></i></span><span class="flex items-center gap-1">Yesterday's Earnings <i class="fa-solid fa-chevron-right text-[8px]"></i></span></div>
+                                <div class="flex justify-between items-center mb-4"><h2 id="me-assets-balance" class="text-2xl font-black text-brand-textDark tracking-tight">₦171.41</h2><span class="text-emerald-500 font-bold text-sm">+₦0.09</span></div>
                                 <div class="border-t border-slate-100 pt-3">
-                                    <div class="flex justify-between items-center mb-2.5">
-                                        <span class="text-[11px] font-bold text-brand-textGray">Transaction History</span>
-                                        <button class="text-[10px] text-brand-purple font-extrabold bg-brand-lightPurple px-2.5 py-1 rounded-full">Monthly Overview</button>
-                                    </div>
+                                    <div class="flex justify-between items-center mb-2.5"><span class="text-[11px] font-bold text-brand-textGray">Transaction History</span><button class="text-[10px] text-brand-purple font-extrabold bg-brand-lightPurple px-2.5 py-1 rounded-full">Monthly Overview</button></div>
                                     <div id="me-mini-transactions" class="space-y-3"></div>
                                 </div>
                             </div>
-
                             <div class="bg-brand-lightPurple/50 rounded-xl p-3 border border-brand-purple/10 flex justify-between items-center">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-full bg-brand-lightPurple flex items-center justify-center text-brand-purple text-xs"><i class="fa-solid fa-envelope"></i></div>
-                                    <div>
-                                        <h4 class="text-xs font-bold text-brand-textDark">Add Your Email</h4>
-                                        <p class="text-[9px] text-brand-textGray">Link your email for safer account backups</p>
-                                    </div>
-                                </div>
+                                <div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-full bg-brand-lightPurple flex items-center justify-center text-brand-purple text-xs"><i class="fa-solid fa-envelope"></i></div><div><h4 class="text-xs font-bold text-brand-textDark">Add Your Email</h4><p class="text-[9px] text-brand-textGray">Link your email for safer account backups</p></div></div>
                                 <button class="bg-brand-btnPurple text-white px-3 py-1 rounded-full text-[10px] font-bold">Add Now</button>
                             </div>
-
-                            <div>
-                                <h4 class="text-xs font-bold text-brand-textGray uppercase tracking-wider mb-2 px-1">Quick Access</h4>
-                                <div class="grid grid-cols-2 gap-3">
-                                    <div class="bg-white rounded-xl p-3 shadow-sm border border-slate-100 flex items-start gap-2.5">
-                                        <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-500 flex items-center justify-center text-sm"><i class="fa-solid fa-wallet"></i></div>
-                                        <div>
-                                            <h5 class="text-xs font-bold text-brand-textDark">CashBox</h5>
-                                            <p class="text-[9px] text-brand-textGray leading-normal mt-0.5">Available balance with daily interest</p>
-                                        </div>
-                                    </div>
-                                    <div class="bg-white rounded-xl p-3 shadow-sm border border-slate-100 flex items-start gap-2.5">
-                                        <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-500 flex items-center justify-center text-sm"><i class="fa-solid fa-credit-card"></i></div>
-                                        <div>
-                                            <h5 class="text-xs font-bold text-brand-textDark">Cards</h5>
-                                            <p class="text-[9px] text-brand-textGray leading-normal mt-0.5">Enjoy seamless balance flexibility</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
+                            <div><h4 class="text-xs font-bold text-brand-textGray uppercase tracking-wider mb-2 px-1">Quick Access</h4><div class="grid grid-cols-2 gap-3"><div class="bg-white rounded-xl p-3 shadow-sm border border-slate-100 flex items-start gap-2.5"><div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-500 flex items-center justify-center text-sm"><i class="fa-solid fa-wallet"></i></div><div><h5 class="text-xs font-bold text-brand-textDark">CashBox</h5><p class="text-[9px] text-brand-textGray leading-normal mt-0.5">Available balance with daily interest</p></div></div><div class="bg-white rounded-xl p-3 shadow-sm border border-slate-100 flex items-start gap-2.5"><div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-500 flex items-center justify-center text-sm"><i class="fa-solid fa-credit-card"></i></div><div><h5 class="text-xs font-bold text-brand-textDark">Cards</h5><p class="text-[9px] text-brand-textGray leading-normal mt-0.5">Enjoy seamless balance flexibility</p></div></div></div></div>
                             <div class="bg-white rounded-2xl p-2 shadow-sm border border-slate-100 divide-y divide-slate-50">
-                                <button class="w-full flex justify-between items-center py-3.5 px-3 text-left settings-item">
-                                    <div class="flex items-center gap-3">
-                                        <i class="fa-solid fa-shop text-brand-textGray text-sm"></i>
-                                        <span class="text-xs font-bold text-brand-textDark">My Business Hub</span>
-                                    </div>
-                                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
-                                </button>
-                                <button class="w-full flex justify-between items-center py-3.5 px-3 text-left settings-item">
-                                    <div class="flex items-center gap-3">
-                                        <i class="fa-solid fa-phone-square text-brand-textGray text-sm"></i>
-                                        <span class="text-xs font-bold text-brand-textDark">USSD Service</span>
-                                    </div>
-                                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
-                                </button>
-                                <button class="w-full flex justify-between items-center py-3.5 px-3 text-left settings-item">
-                                    <div class="flex items-center gap-3">
-                                        <i class="fa-solid fa-shield-halved text-brand-textGray text-sm"></i>
-                                        <span class="text-xs font-bold text-brand-textDark">Security Center</span>
-                                    </div>
-                                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
-                                </button>
-                                <button class="w-full flex justify-between items-center py-3.5 px-3 text-left settings-item">
-                                    <div class="flex items-center gap-3">
-                                        <i class="fa-solid fa-moon text-brand-textGray text-sm"></i>
-                                        <span class="text-xs font-bold text-brand-textDark">Dark Mode</span>
-                                    </div>
-                                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
-                                </button>
-                                <button class="w-full flex justify-between items-center py-3.5 px-3 text-left settings-item">
-                                    <div class="flex items-center gap-3">
-                                        <i class="fa-solid fa-university text-brand-textGray text-sm"></i>
-                                        <span class="text-xs font-bold text-brand-textDark">Banks And Cards</span>
-                                    </div>
-                                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
-                                </button>
-                                <button class="w-full flex justify-between items-center py-3.5 px-3 text-left settings-item">
-                                    <div class="flex items-center gap-3">
-                                        <i class="fa-solid fa-headset text-brand-textGray text-sm"></i>
-                                        <span class="text-xs font-bold text-brand-textDark">Customer Service</span>
-                                    </div>
-                                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
-                                </button>
+                                <button class="w-full flex justify-between items-center py-3.5 px-3 text-left settings-item"><div class="flex items-center gap-3"><i class="fa-solid fa-shop text-brand-textGray text-sm"></i><span class="text-xs font-bold text-brand-textDark">My Business Hub</span></div><i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i></button>
+                                <button class="w-full flex justify-between items-center py-3.5 px-3 text-left settings-item"><div class="flex items-center gap-3"><i class="fa-solid fa-phone-square text-brand-textGray text-sm"></i><span class="text-xs font-bold text-brand-textDark">USSD Service</span></div><i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i></button>
+                                <button class="w-full flex justify-between items-center py-3.5 px-3 text-left settings-item"><div class="flex items-center gap-3"><i class="fa-solid fa-shield-halved text-brand-textGray text-sm"></i><span class="text-xs font-bold text-brand-textDark">Security Center</span></div><i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i></button>
+                                <button class="w-full flex justify-between items-center py-3.5 px-3 text-left settings-item"><div class="flex items-center gap-3"><i class="fa-solid fa-moon text-brand-textGray text-sm"></i><span class="text-xs font-bold text-brand-textDark">Dark Mode</span></div><i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i></button>
+                                <button class="w-full flex justify-between items-center py-3.5 px-3 text-left settings-item"><div class="flex items-center gap-3"><i class="fa-solid fa-university text-brand-textGray text-sm"></i><span class="text-xs font-bold text-brand-textDark">Banks And Cards</span></div><i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i></button>
+                                <button class="w-full flex justify-between items-center py-3.5 px-3 text-left settings-item"><div class="flex items-center gap-3"><i class="fa-solid fa-headset text-brand-textGray text-sm"></i><span class="text-xs font-bold text-brand-textDark">Customer Service</span></div><i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i></button>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Bottom Nav -->
                     <div class="bottom-nav flex px-3 py-2 justify-between items-center">
-                        <button onclick="switchTab('home')" id="nav-btn-home" class="flex-1 flex flex-col items-center gap-1 text-brand-purple">
-                            <i class="fa-solid fa-house text-lg"></i>
-                            <span class="text-[10px] font-bold">Home</span>
-                        </button>
-                        <button onclick="alert('Direct application processing...')" class="flex-1 flex flex-col items-center gap-1 text-brand-textGray relative">
-                            <span class="absolute top-0 right-6 w-2 h-2 bg-red-500 rounded-full"></span>
-                            <i class="fa-solid fa-wallet text-lg"></i>
-                            <span class="text-[10px] font-medium">Loan</span>
-                        </button>
-                        <button onclick="alert('Analyzing financial yield portfolios...')" class="flex-1 flex flex-col items-center gap-1 text-brand-textGray relative">
-                            <span class="absolute -top-1.5 bg-amber-500 text-white font-extrabold text-[6px] px-1 rounded-full scale-90 uppercase">NEW</span>
-                            <i class="fa-solid fa-chart-line text-lg"></i>
-                            <span class="text-[10px] font-medium">Wealth</span>
-                        </button>
-                        <button onclick="alert('Accessing dynamic gift inventory...')" class="flex-1 flex flex-col items-center gap-1 text-brand-textGray">
-                            <i class="fa-solid fa-gift text-lg"></i>
-                            <span class="text-[10px] font-medium">Reward</span>
-                        </button>
-                        <button onclick="switchTab('me')" id="nav-btn-me" class="flex-1 flex flex-col items-center gap-1 text-brand-textGray">
-                            <i class="fa-regular fa-user text-lg"></i>
-                            <span class="text-[10px] font-medium">Me</span>
-                        </button>
+                        <button onclick="switchTab('home')" id="nav-btn-home" class="flex-1 flex flex-col items-center gap-1 text-brand-purple"><i class="fa-solid fa-house text-lg"></i><span class="text-[10px] font-bold">Home</span></button>
+                        <button onclick="alert('Direct application processing...')" class="flex-1 flex flex-col items-center gap-1 text-brand-textGray relative"><span class="absolute top-0 right-6 w-2 h-2 bg-red-500 rounded-full"></span><i class="fa-solid fa-wallet text-lg"></i><span class="text-[10px] font-medium">Loan</span></button>
+                        <button onclick="alert('Analyzing financial yield portfolios...')" class="flex-1 flex flex-col items-center gap-1 text-brand-textGray relative"><span class="absolute -top-1.5 bg-amber-500 text-white font-extrabold text-[6px] px-1 rounded-full scale-90 uppercase">NEW</span><i class="fa-solid fa-chart-line text-lg"></i><span class="text-[10px] font-medium">Wealth</span></button>
+                        <button onclick="alert('Accessing dynamic gift inventory...')" class="flex-1 flex flex-col items-center gap-1 text-brand-textGray"><i class="fa-solid fa-gift text-lg"></i><span class="text-[10px] font-medium">Reward</span></button>
+                        <button onclick="switchTab('me')" id="nav-btn-me" class="flex-1 flex flex-col items-center gap-1 text-brand-textGray"><i class="fa-regular fa-user text-lg"></i><span class="text-[10px] font-medium">Me</span></button>
                     </div>
                 </div>
             </div>
 
-            <!-- ========================================== -->
-            <!-- PAGE: SETTINGS                            -->
-            <!-- ========================================== -->
+            <!-- ===== PAGE: SETTINGS ===== -->
             <div id="page-settings" class="page-layer">
                 <div class="flex flex-col h-full" style="background:#fff;">
                     <div class="bg-white px-5 pt-5 pb-4 border-b border-slate-50 flex items-center justify-between flex-shrink-0 safe-top">
-                        <div class="flex items-center gap-3">
-                            <button onclick="goBackFromSettings()" class="w-10 h-10 rounded-full bg-brand-bgGray flex items-center justify-center text-brand-textDark hover:bg-slate-200 transition-all">
-                                <i class="fa-solid fa-arrow-left text-base"></i>
-                            </button>
-                            <h3 class="font-bold text-lg text-brand-textDark">Settings</h3>
-                        </div>
-                        <button id="installBtnSettings" class="install-btn text-xs px-3 py-1.5 hidden">
-                            <i class="fa-solid fa-download"></i> Install
-                        </button>
+                        <div class="flex items-center gap-3"><button onclick="goBackFromSettings()" class="w-10 h-10 rounded-full bg-brand-bgGray flex items-center justify-center text-brand-textDark hover:bg-slate-200 transition-all"><i class="fa-solid fa-arrow-left text-base"></i></button><h3 class="font-bold text-lg text-brand-textDark">Settings</h3></div>
+                        <button id="installBtnSettings" class="install-btn text-xs px-3 py-1.5 hidden"><i class="fa-solid fa-download"></i> Install</button>
                     </div>
-
                     <div class="flex-1 overflow-y-auto px-4 py-3 divide-y divide-slate-50">
-                        <div class="settings-item flex justify-between items-center py-3.5" onclick="navigateToLoginSettings()">
-                            <span class="text-sm font-medium text-brand-textDark">Login Settings</span>
-                            <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
-                        </div>
-                        <div class="settings-item flex justify-between items-center py-3.5" onclick="showToast('Payment Settings', 'success')">
-                            <span class="text-sm font-medium text-brand-textDark">Payment Settings</span>
-                            <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
-                        </div>
-                        <div class="settings-item flex justify-between items-center py-3.5">
-                            <span class="text-sm font-medium text-brand-textDark">Dark Mode</span>
-                            <div class="toggle-track" id="toggle-darkmode" onclick="toggleSwitch(this, 'darkmode')">
-                                <div class="toggle-thumb"></div>
-                            </div>
-                        </div>
-                        <div class="settings-item flex justify-between items-center py-3.5">
-                            <span class="text-sm font-medium text-brand-textDark">SMS Alert Subscribe</span>
-                            <div class="toggle-track" id="toggle-sms" onclick="toggleSwitch(this, 'sms')">
-                                <div class="toggle-thumb"></div>
-                            </div>
-                        </div>
-                        <div class="settings-item flex justify-between items-center py-3.5" onclick="showToast('Email Notification Settings', 'success')">
-                            <span class="text-sm font-medium text-brand-textDark">Email Notification Settings</span>
-                            <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
-                        </div>
-                        <div class="settings-item flex justify-between items-center py-3.5">
-                            <span class="text-sm font-medium text-brand-textDark">Speaker on</span>
-                            <div class="toggle-track active" id="toggle-speaker" onclick="toggleSwitch(this, 'speaker')">
-                                <div class="toggle-thumb"></div>
-                            </div>
-                        </div>
-                        <div class="settings-item flex justify-between items-center py-3.5" onclick="showToast('About PalmPay', 'success')">
-                            <span class="text-sm font-medium text-brand-textDark">About PalmPay</span>
-                            <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
-                        </div>
-                        <div class="settings-item flex justify-between items-center py-3.5" onclick="if(confirm('Are you sure you want to close your PalmPay account? This action is irreversible.')){showToast('Account closure requested.','success');}">
-                            <span class="text-sm font-medium text-red-500">Close PalmPay Account</span>
-                            <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
-                        </div>
+                        <div class="settings-item flex justify-between items-center py-3.5" onclick="navigateToLoginSettings()"><span class="text-sm font-medium text-brand-textDark">Login Settings</span><i class="fa-solid fa-chevron-right text-xs text-slate-300"></i></div>
+                        <div class="settings-item flex justify-between items-center py-3.5" onclick="showToast('Payment Settings', 'success')"><span class="text-sm font-medium text-brand-textDark">Payment Settings</span><i class="fa-solid fa-chevron-right text-xs text-slate-300"></i></div>
+                        <div class="settings-item flex justify-between items-center py-3.5"><span class="text-sm font-medium text-brand-textDark">Dark Mode</span><div class="toggle-track" id="toggle-darkmode" onclick="toggleSwitch(this, 'darkmode')"><div class="toggle-thumb"></div></div></div>
+                        <div class="settings-item flex justify-between items-center py-3.5"><span class="text-sm font-medium text-brand-textDark">SMS Alert Subscribe</span><div class="toggle-track" id="toggle-sms" onclick="toggleSwitch(this, 'sms')"><div class="toggle-thumb"></div></div></div>
+                        <div class="settings-item flex justify-between items-center py-3.5" onclick="showToast('Email Notification Settings', 'success')"><span class="text-sm font-medium text-brand-textDark">Email Notification Settings</span><i class="fa-solid fa-chevron-right text-xs text-slate-300"></i></div>
+                        <div class="settings-item flex justify-between items-center py-3.5"><span class="text-sm font-medium text-brand-textDark">Speaker on</span><div class="toggle-track active" id="toggle-speaker" onclick="toggleSwitch(this, 'speaker')"><div class="toggle-thumb"></div></div></div>
+                        <div class="settings-item flex justify-between items-center py-3.5" onclick="showToast('About PalmPay', 'success')"><span class="text-sm font-medium text-brand-textDark">About PalmPay</span><i class="fa-solid fa-chevron-right text-xs text-slate-300"></i></div>
+                        <div class="settings-item flex justify-between items-center py-3.5" onclick="if(confirm('Are you sure you want to close your PalmPay account? This action is irreversible.')){showToast('Account closure requested.','success');}"><span class="text-sm font-medium text-red-500">Close PalmPay Account</span><i class="fa-solid fa-chevron-right text-xs text-slate-300"></i></div>
                     </div>
+                    <div class="px-5 py-5 border-t border-slate-100 flex-shrink-0 safe-bottom"><button onclick="logout()" class="w-full bg-red-50 text-red-600 border border-red-200 py-3.5 rounded-xl font-extrabold text-sm flex items-center justify-center gap-2 hover:bg-red-100/60 transition-all"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out</button></div>
+                </div>
+            </div>
 
-                    <div class="px-5 py-5 border-t border-slate-100 flex-shrink-0 safe-bottom">
-                        <button onclick="logout()" class="w-full bg-red-50 text-red-600 border border-red-200 py-3.5 rounded-xl font-extrabold text-sm flex items-center justify-center gap-2 hover:bg-red-100/60 transition-all">
-                            <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
-                        </button>
+            <!-- ===== PAGE: LOGIN SETTINGS ===== -->
+            <div id="page-login-settings" class="page-layer">
+                <div class="flex flex-col h-full" style="background:#fff;">
+                    <div class="bg-white px-5 pt-5 pb-4 border-b border-slate-50 flex items-center gap-3 flex-shrink-0 safe-top"><button onclick="goBackFromLoginSettings()" class="w-10 h-10 rounded-full bg-brand-bgGray flex items-center justify-center text-brand-textDark hover:bg-slate-200 transition-all"><i class="fa-solid fa-arrow-left text-base"></i></button><h3 class="font-bold text-lg text-brand-textDark">Login Settings</h3></div>
+                    <div class="flex-1 overflow-y-auto px-4 py-3 divide-y divide-slate-50">
+                        <div class="settings-item flex justify-between items-center py-3.5" onclick="showToast('Set Password', 'success')"><span class="text-sm font-medium text-brand-textDark">Set Password</span><i class="fa-solid fa-chevron-right text-xs text-slate-300"></i></div>
+                        <div class="settings-item flex justify-between items-center py-3.5" onclick="showToast('Auto-Logout Setting', 'success')"><span class="text-sm font-medium text-brand-textDark">Auto-Logout Setting</span><i class="fa-solid fa-chevron-right text-xs text-slate-300"></i></div>
+                        <div class="settings-item flex justify-between items-center py-3.5"><span class="text-sm font-medium text-brand-textDark">Touch ID Login</span><div class="toggle-track" id="toggle-biometric" onclick="toggleSwitch(this, 'biometric')"><div class="toggle-thumb"></div></div></div>
+                        <div class="settings-item flex justify-between items-center py-3.5" onclick="showToast('Device Management', 'success')"><span class="text-sm font-medium text-brand-textDark">Device Management</span><i class="fa-solid fa-chevron-right text-xs text-slate-300"></i></div>
                     </div>
                 </div>
             </div>
 
-            <!-- ========================================== -->
-            <!-- PAGE: LOGIN SETTINGS                      -->
-            <!-- ========================================== -->
-            <div id="page-login-settings" class="page-layer">
-                <div class="flex flex-col h-full" style="background:#fff;">
-                    <div class="bg-white px-5 pt-5 pb-4 border-b border-slate-50 flex items-center gap-3 flex-shrink-0 safe-top">
-                        <button onclick="goBackFromLoginSettings()" class="w-10 h-10 rounded-full bg-brand-bgGray flex items-center justify-center text-brand-textDark hover:bg-slate-200 transition-all">
-                            <i class="fa-solid fa-arrow-left text-base"></i>
-                        </button>
-                        <h3 class="font-bold text-lg text-brand-textDark">Login Settings</h3>
+            <!-- ===== PAGE: TRANSFER FLOW ===== -->
+            <div id="page-transfer" class="page-layer">
+                <div class="flex flex-col h-full" style="background:#F6F7FB;">
+                    <div class="bg-white px-4 pt-5 pb-3 border-b border-slate-50 flex items-center gap-3 flex-shrink-0 safe-top">
+                        <button onclick="closeTransferFlow()" class="w-9 h-9 rounded-full bg-brand-bgGray flex items-center justify-center text-brand-textDark hover:bg-slate-200 transition-all"><i class="fa-solid fa-arrow-left text-sm"></i></button>
+                        <h3 class="font-bold text-base text-brand-textDark">Transfer to Bank</h3>
                     </div>
 
-                    <div class="flex-1 overflow-y-auto px-4 py-3 divide-y divide-slate-50">
-                        <div class="settings-item flex justify-between items-center py-3.5" onclick="showToast('Set Password', 'success')">
-                            <span class="text-sm font-medium text-brand-textDark">Set Password</span>
-                            <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
-                        </div>
-                        <div class="settings-item flex justify-between items-center py-3.5" onclick="showToast('Auto-Logout Setting', 'success')">
-                            <span class="text-sm font-medium text-brand-textDark">Auto-Logout Setting</span>
-                            <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
-                        </div>
-                        <div class="settings-item flex justify-between items-center py-3.5">
-                            <span class="text-sm font-medium text-brand-textDark">Touch ID Login</span>
-                            <div class="toggle-track" id="toggle-biometric" onclick="toggleSwitch(this, 'biometric')">
-                                <div class="toggle-thumb"></div>
+                    <!-- Step 1: Account Entry -->
+                    <div id="transfer-step-1" class="transfer-step active" style="display:flex;">
+                        <div class="step-scroll">
+                            <div class="mb-4">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="text-sm font-bold text-brand-textDark">To Bank</span>
+                                    <span class="bg-green-100 text-green-700 text-[9px] font-extrabold px-2 py-0.5 rounded-full">FREE</span>
+                                    <span class="text-[10px] text-brand-textGray ml-auto">Unlimited transfers with 0 fees ></span>
+                                </div>
+                                <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+                                    <label class="text-xs font-semibold text-brand-textGray">Enter 10-digit Account No.</label>
+                                    <input type="text" id="transfer-account" maxlength="10" inputmode="numeric" pattern="[0-9]*" placeholder="8201633275" class="w-full mt-1 px-3 py-3 bg-brand-bgGray border-0 rounded-lg text-sm focus:ring-2 focus:ring-brand-purple outline-none font-semibold" />
+                                    <div class="mt-3">
+                                        <label class="text-xs font-semibold text-brand-textGray">Select bank</label>
+                                        <div class="relative mt-1">
+                                            <button id="bank-selector-btn" onclick="toggleBankDropdown()" class="w-full px-3 py-3 bg-brand-bgGray border-0 rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-brand-purple outline-none font-semibold text-left">
+                                                <span id="selected-bank-label" class="text-brand-textGray">Select bank</span>
+                                                <i class="fa-solid fa-chevron-down text-xs text-brand-textGray"></i>
+                                            </button>
+                                            <div id="bank-dropdown" class="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-lg border border-slate-100 z-20 hidden max-h-48 overflow-y-auto">
+                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="Moniepoint" data-code="030">Moniepoint</div>
+                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="OPay" data-code="038">OPay</div>
+                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="Wema Bank" data-code="035">Wema Bank</div>
+                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="GTBank" data-code="058">GTBank</div>
+                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="Access Bank" data-code="044">Access Bank</div>
+                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="First Bank" data-code="011">First Bank</div>
+                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="UBA" data-code="033">UBA</div>
+                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="Zenith Bank" data-code="057">Zenith Bank</div>
+                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="PalmPay" data-code="999">PalmPay</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="account-name-preview" class="mt-3 hidden">
+                                        <div class="flex items-center gap-3 p-3 bg-brand-lightPurple/40 rounded-lg border border-brand-purple/10">
+                                            <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple font-bold text-sm"><i class="fa-solid fa-user"></i></div>
+                                            <div>
+                                                <p class="text-xs font-bold text-brand-textDark" id="preview-account-name">Loading...</p>
+                                                <p class="text-[10px] text-brand-textGray"><span id="preview-account-number">---</span> • <span id="preview-bank-name">---</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="account-name-error" class="mt-2 text-xs text-red-500 hidden">Failed to resolve account name. Please check the details.</div>
+                                </div>
+                            </div>
+
+                            <!-- Recent / Favorites / Contacts -->
+                            <div>
+                                <div class="tab-bar">
+                                    <button class="tab-btn active" onclick="switchTransferTab('recent', this)">Recent</button>
+                                    <button class="tab-btn" onclick="switchTransferTab('favorites', this)">Favorites</button>
+                                    <button class="tab-btn" onclick="switchTransferTab('contacts', this)">PalmPay Contacts</button>
+                                </div>
+                                <div id="transfer-recent-list" class="bg-white rounded-xl shadow-sm border border-slate-100 divide-y divide-slate-50">
+                                    <div class="recent-item px-3" onclick="fillRecentAccount('Moniepoint', 'IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise', '8201633275')">
+                                        <div class="bank-letter" style="background:#6B4C9A;">M</div>
+                                        <div class="info"><div class="name">IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise</div><div class="details">8201633275 Moniepoint</div><div class="date">Last transfer on Jul 16, 2026</div></div>
+                                    </div>
+                                    <div class="recent-item px-3" onclick="fillRecentAccount('OPay', 'AYOTOLA OLUWATOBILOBA ALAMU', '8134013878')">
+                                        <div class="bank-letter" style="background:#E67E22;">O</div>
+                                        <div class="info"><div class="name">AYOTOLA OLUWATOBILOBA ALAMU</div><div class="details">8134013878 OPay</div><div class="date">Last transfer on Jul 15, 2026</div></div>
+                                    </div>
+                                    <div class="recent-item px-3" onclick="fillRecentAccount('OPay', 'FAVOUR STEVE -EMOKINIOVO', '8058746952')">
+                                        <div class="bank-letter" style="background:#E67E22;">O</div>
+                                        <div class="info"><div class="name">FAVOUR STEVE -EMOKINIOVO</div><div class="details">8058746952 OPay</div><div class="date">Last transfer on Jul 15, 2026</div></div>
+                                    </div>
+                                    <div class="recent-item px-3" onclick="fillRecentAccount('OPay', 'PHILO OGHENEOVO EVENT', '8052241166')">
+                                        <div class="bank-letter" style="background:#E67E22;">O</div>
+                                        <div class="info"><div class="name">PHILO OGHENEOVO EVENT</div><div class="details">8052241166 OPay</div><div class="date">Last transfer on Jul 15, 2026</div></div>
+                                    </div>
+                                    <div class="recent-item px-3" onclick="fillRecentAccount('Wema Bank', 'CNL/CODAPAYMENTSNGBANKTR', '8454383041')">
+                                        <div class="bank-letter" style="background:#2E86C1;">W</div>
+                                        <div class="info"><div class="name">CNL/CODAPAYMENTSNGBANKTR</div><div class="details">8454383041 Wema Bank</div><div class="date">Last transfer on Jul 14, 2026</div></div>
+                                    </div>
+                                    <div class="recent-item px-3" onclick="fillRecentAccount('Moniepoint', 'FLORENCE OGHENEMUDIAKEWVE OYIBOCHA', '9153307641')">
+                                        <div class="bank-letter" style="background:#6B4C9A;">M</div>
+                                        <div class="info"><div class="name">FLORENCE OGHENEMUDIAKEWVE OYIBOCHA</div><div class="details">9153307641 Moniepoint</div><div class="date">Last transfer on Jul 14, 2026</div></div>
+                                    </div>
+                                </div>
+                                <div id="transfer-favorites-list" class="bg-white rounded-xl shadow-sm border border-slate-100 divide-y divide-slate-50 hidden">
+                                    <div class="p-4 text-center text-brand-textGray text-sm">No favorites yet. Tap the star on a recent contact.</div>
+                                </div>
+                                <div id="transfer-contacts-list" class="bg-white rounded-xl shadow-sm border border-slate-100 divide-y divide-slate-50 hidden">
+                                    <div class="p-4 text-center text-brand-textGray text-sm">Your PalmPay contacts will appear here.</div>
+                                </div>
                             </div>
                         </div>
-                        <div class="settings-item flex justify-between items-center py-3.5" onclick="showToast('Device Management', 'success')">
-                            <span class="text-sm font-medium text-brand-textDark">Device Management</span>
-                            <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
+                        <div class="step-footer">
+                            <button id="transfer-next-1" onclick="goToTransferStep(2)" disabled class="w-full bg-brand-btnPurple text-white py-3.5 rounded-xl font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Amount Entry -->
+                    <div id="transfer-step-2" class="transfer-step" style="display:none;">
+                        <div class="step-scroll">
+                            <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100 mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple font-bold text-sm"><i class="fa-solid fa-user"></i></div>
+                                    <div>
+                                        <p class="text-xs font-bold text-brand-textDark" id="step2-account-name">IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise</p>
+                                        <p class="text-[10px] text-brand-textGray"><span id="step2-account-number">8201633275</span> • <span id="step2-bank-name">Moniepoint</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="text-xs font-semibold text-brand-textGray">Amount</label>
+                                <p class="text-[10px] text-brand-textGray">₦ 10.00 - 50,000.00</p>
+                                <div class="grid grid-cols-3 gap-2 mt-2">
+                                    <button class="amount-btn py-2 bg-brand-bgGray rounded-lg text-xs font-bold text-brand-textDark border border-transparent" onclick="setTransferAmount(500, this)">500</button>
+                                    <button class="amount-btn py-2 bg-brand-bgGray rounded-lg text-xs font-bold text-brand-textDark border border-transparent" onclick="setTransferAmount(1000, this)">1,000</button>
+                                    <button class="amount-btn py-2 bg-brand-bgGray rounded-lg text-xs font-bold text-brand-textDark border border-transparent" onclick="setTransferAmount(2000, this)">2,000</button>
+                                    <button class="amount-btn py-2 bg-brand-bgGray rounded-lg text-xs font-bold text-brand-textDark border border-transparent" onclick="setTransferAmount(5000, this)">5,000</button>
+                                    <button class="amount-btn py-2 bg-brand-bgGray rounded-lg text-xs font-bold text-brand-textDark border border-transparent" onclick="setTransferAmount(9999, this)">9,999</button>
+                                    <button class="amount-btn py-2 bg-brand-bgGray rounded-lg text-xs font-bold text-brand-textDark border border-transparent" onclick="setTransferAmount(10000, this)">10,000</button>
+                                </div>
+                                <div class="relative mt-3">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold text-brand-purple">₦</span>
+                                    <input type="text" id="transfer-amount-input" placeholder="0.00" class="w-full pl-10 pr-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-bold text-lg" />
+                                </div>
+                                <div class="flex justify-between text-xs text-brand-textGray mt-2">
+                                    <span>Balance: <span id="transfer-balance-display">₦171.41</span></span>
+                                    <span>CashBox: ₦0.46</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-brand-textGray">Note</label>
+                                <p class="text-[10px] text-brand-textGray">What's this for? (optional)</p>
+                                <input type="text" id="transfer-note" placeholder="e.g. rent, salary" class="w-full mt-1 px-3 py-3 bg-brand-bgGray border-0 rounded-lg text-sm focus:ring-2 focus:ring-brand-purple outline-none" />
+                            </div>
+                        </div>
+                        <div class="step-footer">
+                            <button onclick="goToTransferStep(3)" class="w-full bg-brand-btnPurple text-white py-3.5 rounded-xl font-bold text-sm transition-all">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Confirmation -->
+                    <div id="transfer-step-3" class="transfer-step" style="display:none;">
+                        <div class="step-scroll">
+                            <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100 mb-4">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple font-bold text-sm"><i class="fa-solid fa-user"></i></div>
+                                    <div>
+                                        <p class="text-xs font-bold text-brand-textDark" id="step3-account-name">IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise</p>
+                                        <p class="text-[10px] text-brand-textGray"><span id="step3-account-number">8201633275</span> • <span id="step3-bank-name">Moniepoint</span></p>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between items-center py-2 border-t border-slate-100">
+                                    <span class="text-sm text-brand-textGray">Amount</span>
+                                    <span class="text-sm font-bold text-brand-textDark" id="step3-amount">₦1,000.00</span>
+                                </div>
+                                <div class="flex justify-between items-center py-2 border-t border-slate-100">
+                                    <span class="text-sm text-brand-textGray">Fee</span>
+                                    <span class="text-sm font-bold text-green-600" id="step3-fee">₦10.00  <span class="text-green-600 line-through text-xs opacity-60">₦0.00</span></span>
+                                </div>
+                                <div class="flex justify-between items-center py-2 border-t border-slate-100">
+                                    <span class="text-sm text-brand-textGray">Account Number</span>
+                                    <span class="text-sm font-bold text-brand-textDark" id="step3-acc-num">8201633275</span>
+                                </div>
+                                <div class="flex justify-between items-center py-2 border-t border-slate-100">
+                                    <span class="text-sm text-brand-textGray">Name</span>
+                                    <span class="text-sm font-bold text-brand-textDark text-right max-w-[60%]" id="step3-acc-name">IJE-DIJI VIVIAN ENTERPRISES - Vivian enter...</span>
+                                </div>
+                                <div class="flex justify-between items-center py-2 border-t border-slate-100">
+                                    <span class="text-sm text-brand-textGray">Bank</span>
+                                    <span class="text-sm font-bold text-brand-textDark" id="step3-bank">Moniepoint</span>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100 mb-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-brand-textGray">Payment Method</span>
+                                    <span class="text-sm font-bold text-brand-textDark">All</span>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100 mb-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-brand-textGray">Balance</span>
+                                    <span class="text-sm font-bold text-brand-textDark" id="step3-balance">₦0.00</span>
+                                </div>
+                                <button onclick="openDepositModal()" class="w-full mt-3 bg-brand-btnPurple text-white py-2.5 rounded-lg text-xs font-bold">Add Money</button>
+                            </div>
+                            <button onclick="alert('Use New Bank Card/Bank Account')" class="w-full text-brand-purple text-sm font-bold py-3 text-center">Use New Bank Card/Bank Account</button>
+                        </div>
+                        <div class="step-footer">
+                            <button onclick="confirmTransferWithWebAuthn()" class="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold text-sm transition-all hover:bg-green-700">Confirm to Pay</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== PAGE: PIN VERIFICATION (fallback) ===== -->
+            <div id="page-pin-verify" class="page-layer">
+                <div class="pin-verify-container">
+                    <div class="pin-verify-box">
+                        <div class="lock-icon"><i class="fa-solid fa-lock"></i></div>
+                        <h3>Enter PIN to confirm</h3>
+                        <p>Verify your security PIN to complete transfer</p>
+                        <div class="pin-dots-row" id="verifyPinDotsRow">
+                            <div class="pin-dot"></div>
+                            <div class="pin-dot"></div>
+                            <div class="pin-dot"></div>
+                            <div class="pin-dot"></div>
+                        </div>
+                        <div class="keypad-grid">
+                            <button class="key-btn" onclick="pressVerifyPin('1')">1</button>
+                            <button class="key-btn" onclick="pressVerifyPin('2')">2</button>
+                            <button class="key-btn" onclick="pressVerifyPin('3')">3</button>
+                            <button class="key-btn" onclick="pressVerifyPin('4')">4</button>
+                            <button class="key-btn" onclick="pressVerifyPin('5')">5</button>
+                            <button class="key-btn" onclick="pressVerifyPin('6')">6</button>
+                            <button class="key-btn" onclick="pressVerifyPin('7')">7</button>
+                            <button class="key-btn" onclick="pressVerifyPin('8')">8</button>
+                            <button class="key-btn" onclick="pressVerifyPin('9')">9</button>
+                            <button class="key-btn" onclick="pressVerifyPin('fingerprint')"><i class="fa-solid fa-fingerprint"></i></button>
+                            <button class="key-btn" onclick="pressVerifyPin('0')">0</button>
+                            <button class="key-btn" onclick="pressVerifyPin('backspace')"><i class="fa-solid fa-backspace"></i></button>
+                        </div>
+                        <button class="cancel-btn" onclick="cancelPinVerification()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== PAGE: RECEIPT ===== -->
+            <div id="page-receipt" class="page-layer" style="background:#f8f9fa;">
+                <div class="flex flex-col h-full overflow-y-auto px-4 pt-6 pb-8 safe-top">
+                    <div class="flex justify-between items-center mb-4">
+                        <button onclick="closeReceipt()" class="w-9 h-9 rounded-full bg-white flex items-center justify-center text-brand-textDark shadow-sm"><i class="fa-solid fa-arrow-left text-sm"></i></button>
+                        <button onclick="closeReceipt()" class="text-brand-textGray text-sm font-medium">Done</button>
+                    </div>
+                    <div class="receipt-card text-center">
+                        <div class="receipt-logo mx-auto">
+                            <img src="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png" alt="PalmPay" class="app-logo-img" onerror="this.style.display='none'; this.parentElement.classList.add('app-logo-placeholder'); this.parentElement.textContent='P';" />
+                        </div>
+                        <h2 class="text-2xl font-black text-brand-textDark" id="receipt-amount">₦1,250.00</h2>
+                        <div class="flex items-center justify-center gap-2 mt-1">
+                            <span class="status-badge">Successful Transaction</span>
+                        </div>
+                        <p class="text-xs text-brand-textGray mt-1" id="receipt-date">Jul 16, 2026 11:28:11 AM</p>
+                        <div class="mt-6 text-left">
+                            <div class="receipt-line"><span class="label">Recipient:</span><span class="value" id="receipt-recipient">IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise</span></div>
+                            <div class="receipt-line"><span class="label"></span><span class="value text-sm font-normal text-brand-textGray" id="receipt-recipient-detail">Moniepoint | 820 163 3275</span></div>
+                            <div class="receipt-line mt-3"><span class="label">Sender:</span><span class="value" id="receipt-sender">CHIZOBA ONYEMA</span></div>
+                            <div class="receipt-line"><span class="label"></span><span class="value text-sm font-normal text-brand-textGray" id="receipt-sender-detail">PalmPay | 906***4954</span></div>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-100">
+                            <div class="receipt-line"><span class="label">Transaction Type</span><span class="value">Bank Transfer</span></div>
+                            <div class="receipt-line"><span class="label">Transaction ID</span><span class="value text-xs font-mono" id="receipt-tx-id">03370l5ld103</span></div>
+                            <div class="receipt-line"><span class="label">Session ID</span><span class="value text-xs font-mono" id="receipt-session-id">100033260716102</span></div>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-100">
+                            <p class="text-xs text-brand-textGray">Enjoy Seamless and Unlimited Free Transfers to All Banks.</p>
                         </div>
                     </div>
                 </div>
@@ -1129,19 +1356,9 @@
             <div class="modal-box">
                 <h3>Add Money</h3>
                 <p>Fund your account balance from simulated gateway channels.</p>
-                <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold text-brand-purple">₦</span>
-                    <input type="number" id="deposit-amount" placeholder="2,500" class="w-full pl-10 pr-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-bold" />
-                </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <button onclick="setDepositQuick(1000)" class="py-2 bg-brand-lightPurple rounded-lg text-xs font-bold text-brand-purple">₦1,000</button>
-                    <button onclick="setDepositQuick(5000)" class="py-2 bg-brand-lightPurple rounded-lg text-xs font-bold text-brand-purple">₦5,000</button>
-                    <button onclick="setDepositQuick(10000)" class="py-2 bg-brand-lightPurple rounded-lg text-xs font-bold text-brand-purple">₦10,000</button>
-                </div>
-                <div class="flex gap-3 mt-2">
-                    <button onclick="closeModal('modal-deposit')" class="flex-1 py-3 bg-brand-bgGray rounded-xl text-xs font-bold text-brand-textGray">Cancel</button>
-                    <button onclick="executeDeposit()" class="flex-1 py-3 bg-brand-btnPurple text-white rounded-xl text-xs font-bold">Deposit</button>
-                </div>
+                <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold text-brand-purple">₦</span><input type="number" id="deposit-amount" placeholder="2,500" class="w-full pl-10 pr-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-bold" /></div>
+                <div class="grid grid-cols-3 gap-2"><button onclick="setDepositQuick(1000)" class="py-2 bg-brand-lightPurple rounded-lg text-xs font-bold text-brand-purple">₦1,000</button><button onclick="setDepositQuick(5000)" class="py-2 bg-brand-lightPurple rounded-lg text-xs font-bold text-brand-purple">₦5,000</button><button onclick="setDepositQuick(10000)" class="py-2 bg-brand-lightPurple rounded-lg text-xs font-bold text-brand-purple">₦10,000</button></div>
+                <div class="flex gap-3 mt-2"><button onclick="closeModal('modal-deposit')" class="flex-1 py-3 bg-brand-bgGray rounded-xl text-xs font-bold text-brand-textGray">Cancel</button><button onclick="executeDeposit()" class="flex-1 py-3 bg-brand-btnPurple text-white rounded-xl text-xs font-bold">Deposit</button></div>
             </div>
         </div>
 
@@ -1150,31 +1367,21 @@
                 <h3>Buy Airtime / Data</h3>
                 <p>Recharge networks and save with cash rewards.</p>
                 <input type="tel" id="airtime-phone" placeholder="08012345678" class="w-full px-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-bold" />
-                <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold text-brand-purple">₦</span>
-                    <input type="number" id="airtime-amount" placeholder="500" class="w-full pl-10 pr-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-bold" />
-                </div>
-                <div class="flex gap-3 mt-2">
-                    <button onclick="closeModal('modal-airtime')" class="flex-1 py-3 bg-brand-bgGray rounded-xl text-xs font-bold text-brand-textGray">Cancel</button>
-                    <button onclick="executeAirtimePurchase()" class="flex-1 py-3 bg-brand-btnPurple text-white rounded-xl text-xs font-bold">Purchase</button>
-                </div>
+                <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold text-brand-purple">₦</span><input type="number" id="airtime-amount" placeholder="500" class="w-full pl-10 pr-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-bold" /></div>
+                <div class="flex gap-3 mt-2"><button onclick="closeModal('modal-airtime')" class="flex-1 py-3 bg-brand-bgGray rounded-xl text-xs font-bold text-brand-textGray">Cancel</button><button onclick="executeAirtimePurchase()" class="flex-1 py-3 bg-brand-btnPurple text-white rounded-xl text-xs font-bold">Purchase</button></div>
             </div>
         </div>
 
     </div><!-- /app-shell -->
 
 
-    <!-- ========================================== -->
-    <!-- JAVASCRIPT                                 -->
-    <!-- ========================================== -->
     <script>
         // ===== AUDIO =====
         const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
 
         function playTone(freq, type, duration) {
-            try {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
+            try { const osc = audioCtx.createOscillator(),
+                    gain = audioCtx.createGain();
                 osc.type = type;
                 osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
                 gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
@@ -1182,22 +1389,15 @@
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
                 osc.start();
-                osc.stop(audioCtx.currentTime + duration);
-            } catch (_) {}
+                osc.stop(audioCtx.currentTime + duration); } catch (_) {}
         }
 
-        function playUnlockSound() {
-            playTone(523, 'triangle', 0.1);
-            setTimeout(() => playTone(659, 'triangle', 0.12), 80);
-        }
+        function playUnlockSound() { playTone(523, 'triangle', 0.1);
+            setTimeout(() => playTone(659, 'triangle', 0.12), 80); }
 
-        function playErrorSound() {
-            playTone(150, 'sawtooth', 0.25);
-        }
+        function playErrorSound() { playTone(150, 'sawtooth', 0.25); }
 
-        function playKeySound() {
-            playTone(380, 'sine', 0.05);
-        }
+        function playKeySound() { playTone(380, 'sine', 0.05); }
 
         // ===== TOAST =====
         function showToast(message, type = 'success') {
@@ -1205,19 +1405,14 @@
             const el = document.createElement('div');
             el.className = `toast-item ${type}`;
             el.innerHTML =
-                `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark'}"></i> <span>${message}</span>`;
+            `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark'}"></i> <span>${message}</span>`;
             container.appendChild(el);
             requestAnimationFrame(() => el.classList.add('show'));
-            setTimeout(() => {
-                el.classList.remove('show');
-                setTimeout(() => el.remove(), 300);
-            }, 2600);
+            setTimeout(() => { el.classList.remove('show');
+                setTimeout(() => el.remove(), 300); }, 2600);
         }
 
-        function showLoading(state) {
-            const loader = document.getElementById('network-loader');
-            loader.classList.toggle('show', state);
-        }
+        function showLoading(state) { document.getElementById('network-loader').classList.toggle('show', state); }
 
         // ===== JSONBin =====
         const BIN_ID = '6a58c982f5f4af5e29974312';
@@ -1228,19 +1423,17 @@
             users: [],
             currentUser: null,
             isBalanceHidden: false,
-            enteredPin: ""
+            enteredPin: "",
+            verifyPin: ""
         };
 
-        // Default user for fallback
         const DEFAULT_USER = {
             name: 'PungyOnYT',
             phone: '8012345678',
             pin: '1234',
             balance: 171.41,
-            transactions: [
-                { id: 'TX-' + Date.now(), type: 'deposit', amount: 171.41, date: new Date().toLocaleDateString(),
-                    title: 'Registration Reward' }
-            ]
+            transactions: [{ id: 'TX-' + Date.now(), type: 'deposit', amount: 171.41, date: new Date().toLocaleDateString(),
+                title: 'Registration Reward' }]
         };
 
         async function fetchUsers() {
@@ -1250,80 +1443,48 @@
                 if (!res.ok) throw new Error('API error');
                 const data = await res.json();
                 const users = data.record?.users || [];
-                if (users.length === 0) {
-                    appState.users = [DEFAULT_USER];
-                    await syncUsers();
-                } else {
-                    appState.users = users;
-                }
+                if (users.length === 0) { appState.users = [DEFAULT_USER];
+                    await syncUsers(); } else { appState.users = users; }
                 localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users));
                 return true;
             } catch (err) {
-                console.warn('JSONBin fetch failed, using localStorage backup:', err);
                 const backup = localStorage.getItem('palmpay_users_backup');
-                if (backup) {
-                    try {
-                        appState.users = JSON.parse(backup);
-                        if (appState.users.length === 0) {
-                            appState.users = [DEFAULT_USER];
-                            localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users));
-                        }
-                        return true;
-                    } catch (_) {
-                        appState.users = [DEFAULT_USER];
-                        localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users));
-                        return true;
-                    }
-                } else {
-                    appState.users = [DEFAULT_USER];
-                    localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users));
-                    return true;
-                }
-            } finally {
-                showLoading(false);
-            }
+                if (backup) { try { appState.users = JSON.parse(backup); if (appState.users.length === 0) { appState.users = [
+                            DEFAULT_USER];
+                        localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users)); } return true; } catch (
+                    _) { appState.users = [DEFAULT_USER];
+                    localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users)); return true; } } else { appState
+                        .users = [DEFAULT_USER];
+                    localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users)); return true; }
+            } finally { showLoading(false); }
         }
 
         async function syncUsers() {
             try {
                 showLoading(true);
-                const res = await fetch(API_URL, {
-                    method: 'PUT',
-                    headers: { 'X-Master-Key': API_KEY, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ users: appState.users })
-                });
-                if (res.ok) {
-                    localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users));
-                    return true;
-                }
+                const res = await fetch(API_URL, { method: 'PUT', headers: { 'X-Master-Key': API_KEY,
+                        'Content-Type': 'application/json' }, body: JSON.stringify({ users: appState.users }) });
+                if (res.ok) { localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users)); return true; }
                 throw new Error('Sync failed');
-            } catch (_) {
-                localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users));
-                showToast('Synced locally (offline mode).', 'success');
-                return true;
-            } finally {
-                showLoading(false);
-            }
+            } catch (_) { localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users));
+                showToast('Synced locally (offline mode).', 'success'); return true; } finally { showLoading(false); }
         }
 
         // ===== PAGE NAVIGATION =====
         function showPage(pageId) {
-            const all = ['page-gateway', 'page-lockscreen', 'page-dashboard', 'page-settings', 'page-login-settings'];
-            all.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.classList.remove('page-visible');
-            });
+            const all = ['page-gateway', 'page-lockscreen', 'page-dashboard', 'page-settings', 'page-login-settings',
+                'page-transfer', 'page-receipt', 'page-pin-verify'
+            ];
+            all.forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('page-visible'); });
             const target = document.getElementById(pageId);
             if (target) target.classList.add('page-visible');
         }
 
-        // ===== AUTH TABS =====
         function toggleAuthTab(tab) {
-            const btnLogin = document.getElementById('btn-tab-login');
-            const btnSignup = document.getElementById('btn-tab-signup');
-            const formLogin = document.getElementById('form-login');
-            const formSignup = document.getElementById('form-signup');
-
+            const btnLogin = document.getElementById('btn-tab-login'),
+                btnSignup = document.getElementById('btn-tab-signup'),
+                formLogin = document.getElementById('form-login'),
+                formSignup = document.getElementById('form-signup');
             if (tab === 'login') {
                 btnLogin.className =
                     'flex-1 py-3 text-sm font-bold rounded-lg transition-all bg-white text-brand-purple shadow-sm';
@@ -1340,83 +1501,54 @@
         }
 
         // ===== LOCK SCREEN =====
-        function resetPinState() {
-            appState.enteredPin = '';
-            updatePinDots();
-        }
+        function resetPinState() { appState.enteredPin = '';
+            updatePinDots(); }
 
         function updatePinDots() {
             const dots = document.querySelectorAll('#pinDotsRow .pin-dot');
-            dots.forEach((dot, i) => {
-                dot.className = i < appState.enteredPin.length ? 'pin-dot pin-dot-filled' : 'pin-dot';
-            });
+            dots.forEach((dot, i) => { dot.className = i < appState.enteredPin.length ? 'pin-dot pin-dot-filled' :
+                'pin-dot'; });
         }
 
         function pressPinKey(key) {
-            if (key === 'backspace') {
-                if (appState.enteredPin.length > 0) {
-                    appState.enteredPin = appState.enteredPin.slice(0, -1);
+            if (key === 'backspace') { if (appState.enteredPin.length > 0) { appState.enteredPin = appState.enteredPin.slice(0,
+                        -1);
                     updatePinDots();
-                    playKeySound();
-                }
-                return;
-            }
-            if (appState.enteredPin.length < 4) {
-                appState.enteredPin += key;
+                    playKeySound(); } return; }
+            if (appState.enteredPin.length < 4) { appState.enteredPin += key;
                 updatePinDots();
-                playKeySound();
-                if (appState.enteredPin.length === 4) {
-                    setTimeout(() => verifyPinCode(), 180);
-                }
-            }
+                playKeySound(); if (appState.enteredPin.length === 4) { setTimeout(() => verifyPinCode(), 180); } }
         }
 
         function verifyPinCode() {
-            if (appState.enteredPin === appState.currentUser.pin) {
-                playUnlockSound();
+            if (appState.enteredPin === appState.currentUser.pin) { playUnlockSound();
                 showToast('Access Authorized.');
                 initializeDashboard();
-                showPage('page-dashboard');
-            } else {
-                playErrorSound();
+                showPage('page-dashboard'); } else { playErrorSound();
                 showToast('Incorrect security PIN.', 'error');
-                resetPinState();
-            }
+                resetPinState(); }
         }
 
-        // ===== BIOMETRIC =====
+        // ===== BIOMETRIC (WebAuthn) =====
         async function registerDeviceBiometrics() {
             const hasWebAuthn = !!window.PublicKeyCredential;
             const secure = window.isSecureContext || window.location.hostname === 'localhost' || window.location.protocol ===
                 'https:';
-
             if (secure && hasWebAuthn && appState.currentUser) {
                 try {
                     const challenge = crypto.getRandomValues(new Uint8Array(32));
                     const userId = crypto.getRandomValues(new Uint8Array(16));
-                    const options = {
-                        publicKey: {
-                            challenge,
-                            rp: { name: 'PalmPay Replica', id: window.location.hostname },
-                            user: { id: userId, name: appState.currentUser.phone, displayName: appState.currentUser
-                                    .name },
-                            pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
-                            authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },
-                            timeout: 15000
-                        }
-                    };
+                    const options = { publicKey: { challenge, rp: { name: 'PalmPay Replica', id: window.location
+                                .hostname }, user: { id: userId, name: appState.currentUser.phone,
+                            displayName: appState.currentUser.name }, pubKeyCredParams: [{ type: 'public-key',
+                                alg: -7 }], authenticatorSelection: { authenticatorAttachment: 'platform',
+                            userVerification: 'required' }, timeout: 15000 } };
                     const cred = await navigator.credentials.create(options);
-                    if (cred) {
-                        const rawId = new Uint8Array(cred.rawId);
+                    if (cred) { const rawId = new Uint8Array(cred.rawId);
                         const b64 = btoa(String.fromCharCode(...rawId));
                         localStorage.setItem('local_biometric_id', b64);
-                        showToast('Touch ID enabled!', 'success');
-                        return true;
-                    }
-                } catch (_) {
-                    showToast('Biometric registration failed.', 'error');
-                    return false;
-                }
+                        showToast('Touch ID enabled!', 'success'); return true; }
+                } catch (_) { showToast('Biometric registration failed.', 'error'); return false; }
             }
             localStorage.setItem('local_biometric_id', 'mock_' + Date.now());
             showToast('Touch ID enabled (simulated).', 'success');
@@ -1425,40 +1557,22 @@
 
         async function triggerBiometricUnlock() {
             const enabled = localStorage.getItem('palmpay_biometric') === 'true';
-            if (!enabled) {
-                showToast('Enable Touch ID in Login Settings first.', 'error');
-                return;
-            }
-
+            if (!enabled) { showToast('Enable Touch ID in Login Settings first.', 'error'); return; }
             const savedId = localStorage.getItem('local_biometric_id');
             const hasWA = !!window.PublicKeyCredential;
-
             if (hasWA && savedId && !savedId.startsWith('mock_')) {
                 try {
                     const challenge = crypto.getRandomValues(new Uint8Array(32));
                     const rawId = Uint8Array.from(atob(savedId), c => c.charCodeAt(0));
-                    const options = {
-                        publicKey: {
-                            challenge,
-                            allowCredentials: [{ id: rawId, type: 'public-key' }],
-                            userVerification: 'required',
-                            timeout: 15000
-                        }
-                    };
+                    const options = { publicKey: { challenge, allowCredentials: [{ id: rawId, type: 'public-key' }],
+                            userVerification: 'required', timeout: 15000 } };
                     const assertion = await navigator.credentials.get(options);
-                    if (assertion) {
-                        playUnlockSound();
+                    if (assertion) { playUnlockSound();
                         showToast('Fingerprint matched!');
                         initializeDashboard();
-                        showPage('page-dashboard');
-                        return;
-                    }
-                } catch (_) {
-                    showToast('Biometric scan failed. Use PIN.', 'error');
-                    return;
-                }
+                        showPage('page-dashboard'); return; }
+                } catch (_) { showToast('Biometric scan failed. Use PIN.', 'error'); return; }
             }
-
             showToast('Touch ID simulation: granted.', 'success');
             playUnlockSound();
             initializeDashboard();
@@ -1470,12 +1584,9 @@
             const phone = localStorage.getItem('palmpay_current_phone');
             if (phone && appState.users.length) {
                 const user = appState.users.find(u => u.phone === phone);
-                if (user) {
-                    appState.currentUser = user;
+                if (user) { appState.currentUser = user;
                     setupLockscreen();
-                    showPage('page-lockscreen');
-                    return;
-                }
+                    showPage('page-lockscreen'); return; }
             }
             showPage('page-gateway');
         }
@@ -1483,9 +1594,7 @@
         function setupLockscreen() {
             document.getElementById('lockscreen-username').textContent = `Welcome Back, ${appState.currentUser.name}`;
             resetPinState();
-            if (localStorage.getItem('palmpay_biometric') === 'true') {
-                setTimeout(() => triggerBiometricUnlock(), 700);
-            }
+            if (localStorage.getItem('palmpay_biometric') === 'true') { setTimeout(() => triggerBiometricUnlock(), 700); }
         }
 
         function initializeDashboard() {
@@ -1496,58 +1605,50 @@
 
         // ===== BALANCE =====
         function updateBalanceUI() {
-            const bal = document.getElementById('dashboard-balance');
-            const assets = document.getElementById('me-assets-balance');
+            const bal = document.getElementById('dashboard-balance'),
+                assets = document.getElementById('me-assets-balance');
             const formatted =
                 `₦${appState.currentUser.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
             const hidden = '••••••';
             bal.textContent = appState.isBalanceHidden ? hidden : formatted;
             assets.textContent = appState.isBalanceHidden ? hidden : formatted;
+            document.getElementById('transfer-balance-display').textContent = formatted;
         }
 
         function toggleBalanceMask() {
             appState.isBalanceHidden = !appState.isBalanceHidden;
-            document.getElementById('balance-eye-icon').className =
-                appState.isBalanceHidden ? 'fa-solid fa-eye-slash text-xs' : 'fa-solid fa-eye text-xs';
+            document.getElementById('balance-eye-icon').className = appState.isBalanceHidden ?
+                'fa-solid fa-eye-slash text-xs' : 'fa-solid fa-eye text-xs';
             updateBalanceUI();
         }
 
         // ===== TAB SWITCH =====
         function switchTab(tabId) {
-            const home = document.getElementById('tab-home');
-            const me = document.getElementById('tab-me');
-            const btnHome = document.getElementById('nav-btn-home');
-            const btnMe = document.getElementById('nav-btn-me');
-
-            if (tabId === 'home') {
-                home.classList.remove('hidden');
+            const home = document.getElementById('tab-home'),
+                me = document.getElementById('tab-me'),
+                btnHome = document.getElementById('nav-btn-home'),
+                btnMe = document.getElementById('nav-btn-me');
+            if (tabId === 'home') { home.classList.remove('hidden');
                 me.classList.add('hidden');
                 btnHome.className = 'flex-1 flex flex-col items-center gap-1 text-brand-purple';
-                btnMe.className = 'flex-1 flex flex-col items-center gap-1 text-brand-textGray';
-            } else {
-                home.classList.add('hidden');
+                btnMe.className = 'flex-1 flex flex-col items-center gap-1 text-brand-textGray'; } else { home.classList.add(
+                    'hidden');
                 me.classList.remove('hidden');
                 btnMe.className = 'flex-1 flex flex-col items-center gap-1 text-brand-purple';
                 btnHome.className = 'flex-1 flex flex-col items-center gap-1 text-brand-textGray';
-                populateMePage();
-            }
+                populateMePage(); }
         }
 
         function populateMePage() {
             const u = appState.currentUser;
             document.getElementById('me-user-name').textContent = `Hi, ${u.name.toUpperCase()}`;
-            document.getElementById('me-user-phone').textContent =
-                `+234 ${u.phone.slice(0,3)} ${u.phone.slice(3,6)} ${u.phone.slice(6)}`;
+            document.getElementById('me-user-phone').textContent = `+234 ${u.phone.slice(0,3)} ${u.phone.slice(3,6)} ${u.phone.slice(6)}`;
             updateBalanceUI();
-
             const container = document.getElementById('me-mini-transactions');
             container.innerHTML = '';
             const txs = u.transactions || [];
-            if (!txs.length) {
-                container.innerHTML =
-                    `<p class="text-[10px] text-brand-textGray text-center py-2">No transactions recorded.</p>`;
-                return;
-            }
+            if (!txs.length) { container.innerHTML =
+                    `<p class="text-[10px] text-brand-textGray text-center py-2">No transactions recorded.</p>`; return; }
             txs.slice(0, 2).forEach(t => {
                 const isDeposit = t.type === 'deposit';
                 const icon = isDeposit ? 'fa-wallet text-emerald-500' : 'fa-mobile-retro text-brand-purple';
@@ -1557,60 +1658,38 @@
                 row.className =
                     'flex justify-between items-center text-xs border-b border-slate-50 pb-2 last:border-b-0 last:pb-0';
                 row.innerHTML = `
-                        <div class="flex items-center gap-2.5">
-                            <i class="fa-solid ${icon} text-[11px] opacity-85"></i>
-                            <div>
-                                <h5 class="font-bold text-brand-textDark text-[11px]">${t.title}</h5>
-                                <p class="text-[9px] text-brand-textGray font-semibold">${t.date}</p>
-                            </div>
+                        <div class="flex items-center gap-2.5"><i class="fa-solid ${icon} text-[11px] opacity-85"></i>
+                            <div><h5 class="font-bold text-brand-textDark text-[11px]">${t.title}</h5><p class="text-[9px] text-brand-textGray font-semibold">${t.date}</p></div>
                         </div>
-                        <div class="text-right">
-                            <span class="font-bold ${color}">${prefix} ₦ ${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-                            <p class="text-[8px] text-emerald-500 font-extrabold mt-0.5">Successful</p>
-                        </div>
+                        <div class="text-right"><span class="font-bold ${color}">${prefix} ₦ ${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span><p class="text-[8px] text-emerald-500 font-extrabold mt-0.5">Successful</p></div>
                     `;
                 container.appendChild(row);
             });
         }
 
-        // ===== SETTINGS NAV =====
-        function navigateToSettings() {
-            showPage('page-settings');
-            loadToggleStates();
-        }
+        // ===== SETTINGS =====
+        function navigateToSettings() { showPage('page-settings');
+            loadToggleStates(); }
 
-        function goBackFromSettings() {
-            showPage('page-dashboard');
-            if (document.getElementById('tab-me').classList.contains('hidden')) switchTab('me');
-        }
+        function goBackFromSettings() { showPage('page-dashboard'); if (document.getElementById('tab-me').classList.contains(
+                'hidden')) switchTab('me'); }
 
-        function navigateToLoginSettings() {
-            showPage('page-login-settings');
-            loadToggleStates();
-        }
+        function navigateToLoginSettings() { showPage('page-login-settings');
+            loadToggleStates(); }
 
-        function goBackFromLoginSettings() {
-            showPage('page-settings');
-        }
+        function goBackFromLoginSettings() { showPage('page-settings'); }
 
-        // ===== TOGGLES =====
         function toggleSwitch(el, key) {
             el.classList.toggle('active');
             const state = el.classList.contains('active');
             if (key) {
                 localStorage.setItem('palmpay_' + key, state ? 'true' : 'false');
                 if (key === 'biometric') {
-                    if (state) {
-                        registerDeviceBiometrics().then(success => {
-                            if (!success) {
-                                el.classList.remove('active');
-                                localStorage.setItem('palmpay_biometric', 'false');
-                            }
-                        });
-                    } else {
-                        localStorage.removeItem('local_biometric_id');
-                        showToast('Touch ID disabled', 'success');
-                    }
+                    if (state) { registerDeviceBiometrics().then(success => { if (!success) { el.classList.remove(
+                                'active');
+                            localStorage.setItem('palmpay_biometric', 'false'); } }); } else { localStorage.removeItem(
+                            'local_biometric_id');
+                        showToast('Touch ID disabled', 'success'); }
                 }
                 if (key === 'speaker') showToast(state ? 'Speaker ON' : 'Speaker OFF', 'success');
                 if (key === 'darkmode') showToast(state ? 'Dark Mode ON' : 'Dark Mode OFF', 'success');
@@ -1626,150 +1705,90 @@
                     const saved = localStorage.getItem('palmpay_' + k);
                     if (saved === 'true') el.classList.add('active');
                     else if (saved === 'false') el.classList.remove('active');
-                    else {
-                        if (k === 'speaker') el.classList.add('active');
-                        else el.classList.remove('active');
-                    }
+                    else { if (k === 'speaker') el.classList.add('active');
+                        else el.classList.remove('active'); }
                 }
             });
         }
 
         // ===== MODALS =====
-        function openDepositModal() {
-            document.getElementById('modal-deposit').classList.add('show');
-        }
+        function openDepositModal() { document.getElementById('modal-deposit').classList.add('show'); }
 
-        function setDepositQuick(amt) {
-            document.getElementById('deposit-amount').value = amt;
-        }
+        function setDepositQuick(amt) { document.getElementById('deposit-amount').value = amt; }
 
         async function executeDeposit() {
-            const input = document.getElementById('deposit-amount');
-            const amount = parseFloat(input.value);
-            if (isNaN(amount) || amount <= 0) {
-                showToast('Enter a valid amount.', 'error');
-                return;
-            }
+            const input = document.getElementById('deposit-amount'),
+                amount = parseFloat(input.value);
+            if (isNaN(amount) || amount <= 0) { showToast('Enter a valid amount.', 'error'); return; }
             appState.currentUser.balance += amount;
-            appState.currentUser.transactions.unshift({
-                id: 'TX-' + Date.now(),
-                type: 'deposit',
-                amount,
-                date: new Date().toLocaleDateString(),
-                title: 'Account Deposit'
-            });
+            appState.currentUser.transactions.unshift({ id: 'TX-' + Date.now(), type: 'deposit', amount, date: new Date()
+                    .toLocaleDateString(), title: 'Account Deposit' });
             const ok = await syncUsers();
-            if (ok) {
-                showToast(`Deposited ₦${amount.toLocaleString()}`);
+            if (ok) { showToast(`Deposited ₦${amount.toLocaleString()}`);
                 updateBalanceUI();
                 closeModal('modal-deposit');
                 input.value = '';
-                if (!document.getElementById('tab-me').classList.contains('hidden')) populateMePage();
-            }
+                if (!document.getElementById('tab-me').classList.contains('hidden')) populateMePage(); }
         }
 
-        function openAirtimeModal() {
-            document.getElementById('modal-airtime').classList.add('show');
-        }
+        function openAirtimeModal() { document.getElementById('modal-airtime').classList.add('show'); }
 
         async function executeAirtimePurchase() {
-            const phone = document.getElementById('airtime-phone').value.trim();
-            const amount = parseFloat(document.getElementById('airtime-amount').value);
-            if (!phone || isNaN(amount) || amount <= 0) {
-                showToast('Invalid input.', 'error');
-                return;
-            }
-            if (appState.currentUser.balance < amount) {
-                showToast('Insufficient Balance.', 'error');
-                return;
-            }
+            const phone = document.getElementById('airtime-phone').value.trim(),
+                amount = parseFloat(document.getElementById('airtime-amount').value);
+            if (!phone || isNaN(amount) || amount <= 0) { showToast('Invalid input.', 'error'); return; }
+            if (appState.currentUser.balance < amount) { showToast('Insufficient Balance.', 'error'); return; }
             appState.currentUser.balance -= amount;
-            appState.currentUser.transactions.unshift({
-                id: 'TX-' + Date.now(),
-                type: 'airtime',
-                amount,
-                date: new Date().toLocaleDateString(),
-                title: `Airtime Sent (${phone})`
-            });
+            appState.currentUser.transactions.unshift({ id: 'TX-' + Date.now(), type: 'airtime', amount, date: new Date()
+                    .toLocaleDateString(), title: `Airtime Sent (${phone})` });
             const ok = await syncUsers();
-            if (ok) {
-                showToast(`₦${amount.toLocaleString()} sent to ${phone}`);
+            if (ok) { showToast(`₦${amount.toLocaleString()} sent to ${phone}`);
                 updateBalanceUI();
                 closeModal('modal-airtime');
                 document.getElementById('airtime-phone').value = '';
                 document.getElementById('airtime-amount').value = '';
-                if (!document.getElementById('tab-me').classList.contains('hidden')) populateMePage();
-            }
+                if (!document.getElementById('tab-me').classList.contains('hidden')) populateMePage(); }
         }
 
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('show');
-        }
+        function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
         // ===== LOGOUT =====
-        function logout() {
-            localStorage.removeItem('palmpay_current_phone');
+        function logout() { localStorage.removeItem('palmpay_current_phone');
             appState.currentUser = null;
             showPage('page-gateway');
-            showToast('Logged out.');
-        }
+            showToast('Logged out.'); }
 
         // ===== FORMS =====
         document.getElementById('form-signup').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const name = document.getElementById('signup-name').value.trim();
-            const phone = document.getElementById('signup-phone').value.trim();
-            const pin = document.getElementById('signup-pin').value;
-            const confirm = document.getElementById('signup-pin-confirm').value;
-
-            if (pin.length !== 4 || confirm.length !== 4) {
-                showToast('PIN must be 4 digits.', 'error');
-                return;
-            }
-            if (pin !== confirm) {
-                showToast('PIN mismatch.', 'error');
-                return;
-            }
-            if (appState.users.find(u => u.phone === phone)) {
-                showToast('Number already registered.', 'error');
-                return;
-            }
-
-            const newUser = {
-                name,
-                phone,
-                pin,
-                balance: 171.41,
-                transactions: [{ id: 'TX-' + Date.now(), type: 'deposit', amount: 171.41, date: new Date()
-                        .toLocaleDateString(), title: 'Registration Reward' }]
-            };
+            const name = document.getElementById('signup-name').value.trim(),
+                phone = document.getElementById('signup-phone').value.trim(),
+                pin = document.getElementById('signup-pin').value,
+                confirm = document.getElementById('signup-pin-confirm').value;
+            if (pin.length !== 4 || confirm.length !== 4) { showToast('PIN must be 4 digits.', 'error'); return; }
+            if (pin !== confirm) { showToast('PIN mismatch.', 'error'); return; }
+            if (appState.users.find(u => u.phone === phone)) { showToast('Number already registered.', 'error'); return; }
+            const newUser = { name, phone, pin, balance: 171.41, transactions: [{ id: 'TX-' + Date.now(), type: 'deposit',
+                    amount: 171.41, date: new Date().toLocaleDateString(), title: 'Registration Reward' }] };
             appState.users.push(newUser);
             const ok = await syncUsers();
-            if (ok) {
-                appState.currentUser = newUser;
+            if (ok) { appState.currentUser = newUser;
                 localStorage.setItem('palmpay_current_phone', phone);
                 showToast('Welcome! Registration completed.');
                 playUnlockSound();
                 initializeDashboard();
-                showPage('page-dashboard');
-            }
+                showPage('page-dashboard'); }
         });
 
         document.getElementById('form-login').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const phone = document.getElementById('login-phone').value.trim();
-            const pin = document.getElementById('login-pin').value;
+            const phone = document.getElementById('login-phone').value.trim(),
+                pin = document.getElementById('login-pin').value;
             const user = appState.users.find(u => u.phone === phone);
-            if (!user) {
-                playErrorSound();
-                showToast('No account found with this number.', 'error');
-                return;
-            }
-            if (user.pin !== pin) {
-                playErrorSound();
-                showToast('Invalid PIN.', 'error');
-                return;
-            }
+            if (!user) { playErrorSound();
+                showToast('No account found with this number.', 'error'); return; }
+            if (user.pin !== pin) { playErrorSound();
+                showToast('Invalid PIN.', 'error'); return; }
             appState.currentUser = user;
             localStorage.setItem('palmpay_current_phone', phone);
             showToast('Welcome back!');
@@ -1781,134 +1800,611 @@
         // ===== PWA INSTALL =====
         let deferredPrompt = null;
         let isAppInstalled = false;
-
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
             document.querySelectorAll('.install-btn').forEach(btn => btn.classList.remove('hidden'));
-            if (window.matchMedia('(display-mode: standalone)').matches) {
-                document.querySelectorAll('.install-btn').forEach(btn => btn.classList.add('hidden'));
-                isAppInstalled = true;
-            }
+            if (window.matchMedia('(display-mode: standalone)').matches) { document.querySelectorAll('.install-btn')
+                    .forEach(btn => btn.classList.add('hidden'));
+                isAppInstalled = true; }
         });
-
-        window.addEventListener('appinstalled', () => {
-            isAppInstalled = true;
+        window.addEventListener('appinstalled', () => { isAppInstalled = true;
             document.querySelectorAll('.install-btn').forEach(btn => btn.classList.add('hidden'));
-            showToast('App installed successfully!', 'success');
-        });
+            showToast('App installed successfully!', 'success'); });
 
         async function installApp() {
             if (deferredPrompt) {
-                try {
-                    const result = await deferredPrompt.prompt();
-                    if (result.outcome === 'accepted') {
-                        showToast('App installation started!', 'success');
-                    } else {
-                        showToast('Installation cancelled.', 'error');
-                    }
+                try { const result = await deferredPrompt.prompt(); if (result.outcome === 'accepted') { showToast(
+                            'App installation started!', 'success'); } else { showToast('Installation cancelled.',
+                            'error'); }
                     deferredPrompt = null;
-                    document.querySelectorAll('.install-btn').forEach(btn => btn.classList.add('hidden'));
-                } catch (_) {
-                    showToast('Installation failed.', 'error');
-                }
+                    document.querySelectorAll('.install-btn').forEach(btn => btn.classList.add('hidden')); } catch (_) { showToast(
+                        'Installation failed.', 'error'); }
             } else {
                 showToast('Open this page in Chrome and add to home screen.', 'success');
-                if (navigator.share) {
-                    try {
-                        await navigator.share({
-                            title: 'PalmPay',
-                            text: 'Install PalmPay app',
-                            url: window.location.href
-                        });
-                    } catch (_) {}
-                }
+                if (navigator.share) { try { await navigator.share({ title: 'PalmPay', text: 'Install PalmPay app',
+                        url: window.location.href }); } catch (_) {} }
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.install-btn').forEach(btn => {
-                btn.addEventListener('click', installApp);
-            });
+            document.querySelectorAll('.install-btn').forEach(btn => { btn.addEventListener('click', installApp); });
+            if (window.matchMedia('(display-mode: standalone)').matches) { document.querySelectorAll('.install-btn')
+                    .forEach(btn => btn.classList.add('hidden'));
+                isAppInstalled = true; }
+        });
 
-            if (window.matchMedia('(display-mode: standalone)').matches) {
-                document.querySelectorAll('.install-btn').forEach(btn => btn.classList.add('hidden'));
-                isAppInstalled = true;
+        // ================================================================
+        // ===== MONNIFY API INTEGRATION =====
+        // ================================================================
+
+        const MONNIFY_API_KEY = 'MK_TEST_HVGMDBEU66';
+        const MONNIFY_SECRET_KEY = 'E35B7MUYXL4TQ2PGC2EC9JUZXMWHYJYJ';
+        const MONNIFY_BASE_URL = 'https://sandbox.monnify.com';
+
+        let monnifyToken = null;
+        let tokenExpiry = 0;
+
+        async function getMonnifyToken() {
+            if (monnifyToken && Date.now() < tokenExpiry) return monnifyToken;
+            try {
+                const auth = btoa(`${MONNIFY_API_KEY}:${MONNIFY_SECRET_KEY}`);
+                const res = await fetch(`${MONNIFY_BASE_URL}/api/v1/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/json' }
+                });
+                if (!res.ok) throw new Error('Auth failed');
+                const data = await res.json();
+                if (data.responseBody && data.responseBody.accessToken) {
+                    monnifyToken = data.responseBody.accessToken;
+                    tokenExpiry = Date.now() + 3500000; // ~1 hour
+                    return monnifyToken;
+                }
+                throw new Error('No token');
+            } catch (e) {
+                console.warn('Monnify auth error:', e);
+                return null;
+            }
+        }
+
+        async function resolveAccountWithMonnify(accountNumber, bankCode) {
+            try {
+                const token = await getMonnifyToken();
+                if (!token) throw new Error('No token');
+
+                const res = await fetch(`${MONNIFY_BASE_URL}/api/v1/merchant/bank-accounts/resolve`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ accountNumber, bankCode })
+                });
+
+                if (!res.ok) {
+                    const errText = await res.text();
+                    throw new Error(`API error: ${res.status} - ${errText}`);
+                }
+
+                const data = await res.json();
+                if (data.responseBody && data.responseBody.accountName) {
+                    return data.responseBody.accountName;
+                }
+                throw new Error('No account name in response');
+            } catch (e) {
+                console.warn('Monnify resolve error:', e);
+                return null;
+            }
+        }
+
+        // Bank code mapping
+        const bankCodeMap = {
+            'Moniepoint': '030',
+            'OPay': '038',
+            'Wema Bank': '035',
+            'GTBank': '058',
+            'Access Bank': '044',
+            'First Bank': '011',
+            'UBA': '033',
+            'Zenith Bank': '057',
+            'PalmPay': '999'
+        };
+
+        // ================================================================
+        // ===== TRANSFER FLOW =====
+        // ================================================================
+
+        let transferData = {
+            account: '',
+            bank: '',
+            bankCode: '',
+            accountName: '',
+            amount: 0,
+            note: '',
+            fee: 0,
+            recipient: '',
+            bankDisplay: ''
+        };
+
+        let isResolvingAccount = false;
+
+        function openTransferFlow() {
+            transferData = { account: '', bank: '', bankCode: '', accountName: '', amount: 0, note: '', fee: 0,
+                recipient: '', bankDisplay: '' };
+            document.getElementById('transfer-account').value = '';
+            document.getElementById('selected-bank-label').textContent = 'Select bank';
+            document.getElementById('selected-bank-label').className = 'text-brand-textGray';
+            document.getElementById('account-name-preview').classList.add('hidden');
+            document.getElementById('account-name-error').classList.add('hidden');
+            document.getElementById('transfer-next-1').disabled = true;
+            document.getElementById('transfer-amount-input').value = '';
+            document.getElementById('transfer-note').value = '';
+            document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
+            showPage('page-transfer');
+            goToTransferStep(1);
+            updateBalanceUI();
+            document.getElementById('bank-dropdown').classList.add('hidden');
+            isResolvingAccount = false;
+        }
+
+        function closeTransferFlow() {
+            showPage('page-dashboard');
+            if (document.getElementById('tab-me').classList.contains('hidden')) switchTab('home');
+        }
+
+        function goToTransferStep(step) {
+            for (let i = 1; i <= 3; i++) {
+                const el = document.getElementById('transfer-step-' + i);
+                if (i === step) { el.style.display = 'flex';
+                    el.classList.add('active'); } else { el.style.display = 'none';
+                    el.classList.remove('active'); }
+            }
+            if (step === 3) {
+                const amt = transferData.amount || 0;
+                const formatted =
+                    `₦${amt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                document.getElementById('step3-amount').textContent = formatted;
+                document.getElementById('step3-fee').innerHTML =
+                    `₦${transferData.fee.toFixed(2)}  <span class="text-green-600 line-through text-xs opacity-60">₦0.00</span>`;
+                document.getElementById('step3-acc-num').textContent = transferData.account;
+                document.getElementById('step3-acc-name').textContent = transferData.accountName.length > 30 ? transferData
+                    .accountName.slice(0, 30) + '...' : transferData.accountName;
+                document.getElementById('step3-bank').textContent = transferData.bank;
+                document.getElementById('step3-account-name').textContent = transferData.accountName;
+                document.getElementById('step3-account-number').textContent = transferData.account;
+                document.getElementById('step3-bank-name').textContent = transferData.bank;
+                const bal = appState.currentUser ? appState.currentUser.balance : 0;
+                document.getElementById('step3-balance').textContent =
+                    `₦${bal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            }
+            if (step === 2) {
+                document.getElementById('step2-account-name').textContent = transferData.accountName;
+                document.getElementById('step2-account-number').textContent = transferData.account;
+                document.getElementById('step2-bank-name').textContent = transferData.bank;
+                updateBalanceUI();
+            }
+        }
+
+        function toggleBankDropdown() {
+            const dd = document.getElementById('bank-dropdown');
+            dd.classList.toggle('hidden');
+        }
+
+        function selectBank(bank, code) {
+            transferData.bank = bank;
+            transferData.bankCode = code || bankCodeMap[bank] || '030';
+            document.getElementById('selected-bank-label').textContent = bank;
+            document.getElementById('selected-bank-label').className = 'text-brand-textDark font-semibold';
+            document.getElementById('bank-dropdown').classList.add('hidden');
+            checkAccountAndBank();
+        }
+
+        // Bank option click handler
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.bank-option[data-bank]').forEach(el => {
+                el.addEventListener('click', function() {
+                    const bank = this.dataset.bank;
+                    const code = this.dataset.code;
+                    selectBank(bank, code);
+                });
+            });
+        });
+
+        async function checkAccountAndBank() {
+            const account = document.getElementById('transfer-account').value.trim();
+            transferData.account = account;
+            if (account.length === 10 && transferData.bank && transferData.bankCode) {
+                await resolveAccountName(account, transferData.bankCode);
+            } else {
+                document.getElementById('account-name-preview').classList.add('hidden');
+                document.getElementById('account-name-error').classList.add('hidden');
+                document.getElementById('transfer-next-1').disabled = true;
+            }
+        }
+
+        async function resolveAccountName(account, bankCode) {
+            if (isResolvingAccount) return;
+            isResolvingAccount = true;
+            const preview = document.getElementById('account-name-preview');
+            const errorEl = document.getElementById('account-name-error');
+            const nameEl = document.getElementById('preview-account-name');
+            const numEl = document.getElementById('preview-account-number');
+            const bankEl = document.getElementById('preview-bank-name');
+
+            // Show loading state
+            preview.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            nameEl.textContent = 'Loading account name...';
+            numEl.textContent = account;
+            bankEl.textContent = transferData.bank;
+
+            try {
+                // Try Monnify API
+                const result = await resolveAccountWithMonnify(account, bankCode);
+                if (result) {
+                    transferData.accountName = result;
+                    nameEl.textContent = result;
+                    document.getElementById('transfer-next-1').disabled = false;
+                } else {
+                    // Fallback to mock data
+                    const mockNames = {
+                        '8201633275': 'IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise',
+                        '8134013878': 'AYOTOLA OLUWATOBILOBA ALAMU',
+                        '8058746952': 'FAVOUR STEVE -EMOKINIOVO',
+                        '8052241166': 'PHILO OGHENEOVO EVENT',
+                        '8454383041': 'CNL/CODAPAYMENTSNGBANKTR',
+                        '9153307641': 'FLORENCE OGHENEMUDIAKEWVE OYIBOCHA'
+                    };
+                    const fallback = mockNames[account] || `${transferData.bank} Account Holder`;
+                    transferData.accountName = fallback;
+                    nameEl.textContent = fallback;
+                    document.getElementById('transfer-next-1').disabled = false;
+                    // Show a subtle indication that we used fallback
+                    showToast('Account resolved using local data.', 'success');
+                }
+            } catch (e) {
+                // Fallback to mock
+                const mockNames = {
+                    '8201633275': 'IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise',
+                    '8134013878': 'AYOTOLA OLUWATOBILOBA ALAMU',
+                    '8058746952': 'FAVOUR STEVE -EMOKINIOVO',
+                    '8052241166': 'PHILO OGHENEOVO EVENT',
+                    '8454383041': 'CNL/CODAPAYMENTSNGBANKTR',
+                    '9153307641': 'FLORENCE OGHENEMUDIAKEWVE OYIBOCHA'
+                };
+                const fallback = mockNames[account] || `${transferData.bank} Account Holder`;
+                transferData.accountName = fallback;
+                nameEl.textContent = fallback;
+                document.getElementById('transfer-next-1').disabled = false;
+                showToast('Account resolved using local data.', 'success');
+            } finally {
+                isResolvingAccount = false;
+            }
+        }
+
+        // Account input listener
+        document.addEventListener('DOMContentLoaded', function() {
+            const accInput = document.getElementById('transfer-account');
+            if (accInput) {
+                accInput.addEventListener('input', function() {
+                    this.value = this.value.replace(/\D/g, '').slice(0, 10);
+                    transferData.account = this.value;
+                    checkAccountAndBank();
+                });
             }
         });
 
-        // ===== KEYPAD EVENT BINDING =====
+        function fillRecentAccount(bank, name, account) {
+            transferData.bank = bank;
+            transferData.bankCode = bankCodeMap[bank] || '030';
+            transferData.account = account;
+            transferData.accountName = name;
+            document.getElementById('transfer-account').value = account;
+            document.getElementById('selected-bank-label').textContent = bank;
+            document.getElementById('selected-bank-label').className = 'text-brand-textDark font-semibold';
+            document.getElementById('preview-account-name').textContent = name;
+            document.getElementById('preview-account-number').textContent = account;
+            document.getElementById('preview-bank-name').textContent = bank;
+            document.getElementById('account-name-preview').classList.remove('hidden');
+            document.getElementById('account-name-error').classList.add('hidden');
+            document.getElementById('transfer-next-1').disabled = false;
+            document.getElementById('bank-dropdown').classList.add('hidden');
+            switchTransferTab('recent', document.querySelector('.tab-bar .tab-btn.active'));
+        }
+
+        function switchTransferTab(tab, btn) {
+            const tabs = document.querySelectorAll('.tab-bar .tab-btn');
+            tabs.forEach(t => t.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            else { document.querySelector('.tab-bar .tab-btn:first-child').classList.add('active'); }
+            document.getElementById('transfer-recent-list').classList.toggle('hidden', tab !== 'recent');
+            document.getElementById('transfer-favorites-list').classList.toggle('hidden', tab !== 'favorites');
+            document.getElementById('transfer-contacts-list').classList.toggle('hidden', tab !== 'contacts');
+        }
+
+        // ----- Amount Entry -----
+        function setTransferAmount(amount, btn) {
+            transferData.amount = amount;
+            document.getElementById('transfer-amount-input').value = amount.toLocaleString();
+            document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
+            if (btn) btn.classList.add('selected');
+            calculateFee();
+        }
+
+        function calculateFee() {
+            const amt = transferData.amount || 0;
+            transferData.fee = amt > 0 && amt <= 5000 ? 10 : 0;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.key-btn').forEach(btn => {
+            const amtInput = document.getElementById('transfer-amount-input');
+            if (amtInput) {
+                amtInput.addEventListener('input', function() {
+                    let val = this.value.replace(/,/g, '');
+                    const num = parseFloat(val);
+                    if (!isNaN(num) && num >= 0) {
+                        transferData.amount = num;
+                        this.value = num.toLocaleString();
+                        calculateFee();
+                        document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
+                    } else if (val === '') {
+                        transferData.amount = 0;
+                        calculateFee();
+                    }
+                });
+            }
+        });
+
+        // ================================================================
+        // ===== WEBAUTHN FINGERPRINT FOR PAYMENT =====
+        // ================================================================
+
+        async function confirmTransferWithWebAuthn() {
+            if (!appState.currentUser) { showToast('Please log in first.', 'error'); return; }
+            const amt = transferData.amount || 0;
+            if (amt <= 0) { showToast('Please enter a valid amount.', 'error'); return; }
+            const total = amt + transferData.fee;
+            if (total > appState.currentUser.balance) { showToast('Insufficient balance. Please add money.', 'error'); return; }
+
+            // Check if WebAuthn is available and registered
+            const hasWA = !!window.PublicKeyCredential;
+            const savedId = localStorage.getItem('local_biometric_id');
+            const isBiometricEnabled = localStorage.getItem('palmpay_biometric') === 'true';
+
+            if (hasWA && savedId && isBiometricEnabled && !savedId.startsWith('mock_')) {
+                // Use WebAuthn for payment confirmation
+                try {
+                    showLoading(true);
+                    const challenge = crypto.getRandomValues(new Uint8Array(32));
+                    const rawId = Uint8Array.from(atob(savedId), c => c.charCodeAt(0));
+                    const options = {
+                        publicKey: {
+                            challenge,
+                            allowCredentials: [{ id: rawId, type: 'public-key' }],
+                            userVerification: 'required',
+                            timeout: 15000
+                        }
+                    };
+                    const assertion = await navigator.credentials.get(options);
+                    if (assertion) {
+                        showLoading(false);
+                        playUnlockSound();
+                        showToast('Fingerprint verified!', 'success');
+                        completeTransfer();
+                    } else {
+                        showLoading(false);
+                        showToast('Fingerprint verification failed.', 'error');
+                    }
+                } catch (e) {
+                    showLoading(false);
+                    console.warn('WebAuthn payment error:', e);
+                    // Fallback to PIN
+                    showToast('Fingerprint failed. Use PIN.', 'error');
+                    showPinVerification();
+                }
+            } else {
+                // Fallback to PIN
+                showPinVerification();
+            }
+        }
+
+        // ===== PIN VERIFICATION (fallback) =====
+        let verifyPinState = '';
+
+        function showPinVerification() {
+            verifyPinState = '';
+            document.getElementById('verifyPinDotsRow').querySelectorAll('.pin-dot').forEach(d => d.className = 'pin-dot');
+            document.getElementById('page-pin-verify').classList.add('page-visible');
+        }
+
+        function pressVerifyPin(key) {
+            if (key === 'backspace') {
+                if (verifyPinState.length > 0) { verifyPinState = verifyPinState.slice(0, -1);
+                    updateVerifyDots();
+                    playKeySound(); }
+                return;
+            }
+            if (key === 'fingerprint') {
+                // Try WebAuthn again from PIN screen
+                document.getElementById('page-pin-verify').classList.remove('page-visible');
+                confirmTransferWithWebAuthn();
+                return;
+            }
+            if (verifyPinState.length < 4) {
+                verifyPinState += key;
+                updateVerifyDots();
+                playKeySound();
+                if (verifyPinState.length === 4) {
+                    setTimeout(() => {
+                        if (verifyPinState === appState.currentUser.pin) {
+                            playUnlockSound();
+                            document.getElementById('page-pin-verify').classList.remove('page-visible');
+                            completeTransfer();
+                        } else {
+                            playErrorSound();
+                            showToast('Invalid PIN.', 'error');
+                            verifyPinState = '';
+                            updateVerifyDots();
+                        }
+                    }, 200);
+                }
+            }
+        }
+
+        function updateVerifyDots() {
+            const dots = document.getElementById('verifyPinDotsRow').querySelectorAll('.pin-dot');
+            dots.forEach((dot, i) => { dot.className = i < verifyPinState.length ? 'pin-dot pin-dot-filled' :
+                'pin-dot'; });
+        }
+
+        function cancelPinVerification() {
+            document.getElementById('page-pin-verify').classList.remove('page-visible');
+            verifyPinState = '';
+            showToast('Transaction cancelled.', 'error');
+        }
+
+        // ===== COMPLETE TRANSFER =====
+        function completeTransfer() {
+            const amt = transferData.amount || 0;
+            const total = amt + transferData.fee;
+            if (total > appState.currentUser.balance) { showToast('Insufficient balance.', 'error'); return; }
+
+            appState.currentUser.balance -= total;
+
+            const now = new Date();
+            const txId = generateTxId();
+            const sessionId = generateSessionId();
+            const dateStr = formatDate(now);
+
+            appState.currentUser.transactions.unshift({
+                id: 'TX-' + Date.now(),
+                type: 'transfer',
+                amount: amt,
+                fee: transferData.fee,
+                date: dateStr,
+                title: `Bank Transfer to ${transferData.accountName.slice(0, 20)}...`,
+                recipient: transferData.accountName,
+                bank: transferData.bank,
+                account: transferData.account,
+                txId: txId,
+                sessionId: sessionId
+            });
+
+            syncUsers().then(() => {
+                updateBalanceUI();
+                showReceipt(amt, transferData.accountName, transferData.bank, transferData.account, txId, sessionId,
+                    dateStr);
+                showToast(`₦${amt.toLocaleString()} sent to ${transferData.accountName.slice(0, 15)}...`, 'success');
+            });
+        }
+
+        function generateTxId() {
+            const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            let id = '';
+            for (let i = 0; i < 12; i++) { id += chars[Math.floor(Math.random() * chars.length)]; }
+            return id;
+        }
+
+        function generateSessionId() {
+            const chars = '0123456789';
+            let id = '';
+            for (let i = 0; i < 15; i++) { id += chars[Math.floor(Math.random() * chars.length)]; }
+            return id;
+        }
+
+        function formatDate(date) {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const d = date.getDate().toString().padStart(2, '0');
+            const m = months[date.getMonth()];
+            const y = date.getFullYear();
+            const h12 = ((date.getHours() % 12) || 12).toString().padStart(2, '0');
+            const min = date.getMinutes().toString().padStart(2, '0');
+            const sec = date.getSeconds().toString().padStart(2, '0');
+            const ampm = date.getHours() >= 12 ? 'PM' : 'AM';
+            return `${m} ${d}, ${y} ${h12}:${min}:${sec} ${ampm}`;
+        }
+
+        // ===== RECEIPT =====
+        function showReceipt(amount, recipient, bank, account, txId, sessionId, dateStr) {
+            document.getElementById('receipt-amount').textContent =
+                `₦${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            document.getElementById('receipt-recipient').textContent = recipient;
+            document.getElementById('receipt-recipient-detail').textContent =
+                `${bank} | ${account.slice(0,3)} ${account.slice(3,6)} ${account.slice(6)}`;
+            const sender = appState.currentUser ? appState.currentUser.name : 'CHIZOBA ONYEMA';
+            const senderPhone = appState.currentUser ? appState.currentUser.phone : '9061234954';
+            document.getElementById('receipt-sender').textContent = sender.toUpperCase();
+            document.getElementById('receipt-sender-detail').textContent =
+                `PalmPay | ${senderPhone.slice(0,3)}***${senderPhone.slice(-4)}`;
+            document.getElementById('receipt-tx-id').textContent = txId;
+            document.getElementById('receipt-session-id').textContent = sessionId;
+            document.getElementById('receipt-date').textContent = dateStr;
+            showPage('page-receipt');
+        }
+
+        function closeReceipt() {
+            showPage('page-dashboard');
+            if (document.getElementById('tab-me').classList.contains('hidden')) switchTab('home');
+            closeTransferFlow();
+        }
+
+        // ================================================================
+        // ===== KEYPAD EVENT BINDING =====
+        // ================================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Lock screen keypad
+            document.querySelectorAll('#page-lockscreen .key-btn').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
                     const key = this.dataset.key;
-                    if (key === 'fingerprint') {
-                        triggerBiometricUnlock();
-                    } else {
-                        pressPinKey(key);
-                    }
+                    if (key === 'fingerprint') { triggerBiometricUnlock(); } else { pressPinKey(key); }
                 });
-                btn.addEventListener('touchstart', function() {
-                    this.style.transform = 'scale(0.92)';
-                }, { passive: true });
-                btn.addEventListener('touchend', function() {
-                    this.style.transform = '';
-                }, { passive: true });
             });
 
-            document.getElementById('switchAccountBtn').addEventListener('click', function(e) {
-                e.stopPropagation();
-                logout();
+            document.getElementById('switchAccountBtn').addEventListener('click', function(e) { e.stopPropagation();
+                logout(); });
+            document.getElementById('forgotPinBtn').addEventListener('click', function(e) { e.stopPropagation();
+                alert('Contact support to reset your PIN.'); });
+
+            // Transfer step 1 next button
+            document.getElementById('transfer-next-1').addEventListener('click', function() {
+                if (!this.disabled) {
+                    const account = document.getElementById('transfer-account').value.trim();
+                    if (account.length === 10 && transferData.bank && transferData.accountName) {
+                        goToTransferStep(2);
+                    }
+                }
             });
 
-            document.getElementById('forgotPinBtn').addEventListener('click', function(e) {
-                e.stopPropagation();
-                alert('Contact support to reset your PIN.');
+            // Close bank dropdown on outside click
+            document.addEventListener('click', function(e) {
+                const dd = document.getElementById('bank-dropdown');
+                const btn = document.getElementById('bank-selector-btn');
+                if (dd && !dd.contains(e.target) && !btn.contains(e.target)) {
+                    dd.classList.add('hidden');
+                }
             });
 
-            // ===== PWA MANIFEST with custom logo =====
+            // PWA manifest
             const LOGO_URL = 'https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png';
-
             const manifest = {
                 short_name: 'PalmPay',
                 name: 'PalmPay Portal',
-                icons: [{
-                    src: LOGO_URL,
-                    type: 'image/png',
-                    sizes: '512x512',
-                    purpose: 'any maskable'
-                }],
+                icons: [{ src: LOGO_URL, type: 'image/png', sizes: '512x512', purpose: 'any maskable' }],
                 start_url: '.',
                 background_color: '#5F259F',
                 theme_color: '#5F259F',
                 display: 'standalone',
                 orientation: 'portrait'
             };
-
-            // Try to fetch the logo and convert to base64 for manifest
-            // Fallback: use the URL directly
             const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-            const manifestURL = URL.createObjectURL(blob);
             const manifestLink = document.querySelector('#manifest-placeholder');
-            if (manifestLink) {
-                manifestLink.setAttribute('href', manifestURL);
-            }
-
-            // Also set favicon and apple-touch-icon dynamically
-            const favicon = document.querySelector('link[rel="icon"]');
-            if (favicon) favicon.href = LOGO_URL;
-            const appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
-            if (appleIcon) appleIcon.href = LOGO_URL;
+            if (manifestLink) manifestLink.setAttribute('href', URL.createObjectURL(blob));
 
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
-                    const sw = `
-                            const C='palmpay-v7';
-                            const U=['/','index.html'];
-                            self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(U))));
-                            self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));
-                        `;
+                    const sw =
+                        `const C='palmpay-v9';const U=['/','index.html'];self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(U))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
                     const b2 = new Blob([sw], { type: 'application/javascript' });
                     navigator.serviceWorker.register(URL.createObjectURL(b2)).catch(() => {});
                 });
@@ -1916,13 +2412,11 @@
 
             // Init
             fetchUsers().then(loaded => {
-                if (loaded) {
-                    loadLocalSession();
-                    loadToggleStates();
-                }
+                if (loaded) { loadLocalSession();
+                    loadToggleStates(); }
             });
         });
     </script>
 
 </body>
-                                    </html>
+                                </html>
