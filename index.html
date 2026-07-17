@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>PalmPay</title>
-    <link id="manifest-placeholder" rel="manifest">
-    <meta name="theme-color" content="#5F259F">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/10014/10014234.png">
+    <link id="manifest-placeholder" rel="manifest" />
+    <meta name="theme-color" content="#5F259F" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/10014/10014234.png" />
 
-    <!-- Tailwind CSS & FontAwesome -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind & FontAwesome -->
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
     <script>
         tailwind.config = {
@@ -32,9 +33,7 @@
                             fixedOrange: '#FFF7ED'
                         }
                     },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
                 }
             }
         }
@@ -52,13 +51,6 @@
             width: 100%;
             height: 100%;
         }
-        @keyframes radar-pulse {
-            0% { transform: scale(1); opacity: 0.6; }
-            100% { transform: scale(1.6); opacity: 0; }
-        }
-        .radar-ring {
-            animation: radar-pulse 2s infinite ease-out;
-        }
         .pin-dot {
             transition: all 0.15s ease-in-out;
         }
@@ -70,14 +62,59 @@
             width: 0px;
             background: transparent;
         }
+
+        /* Toggle Switch */
+        .toggle-track {
+            width: 44px;
+            height: 24px;
+            background: #d1d5db;
+            border-radius: 999px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.25s ease;
+            flex-shrink: 0;
+        }
+        .toggle-track.active {
+            background: #5F259F;
+        }
+        .toggle-thumb {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.25s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        .toggle-track.active .toggle-thumb {
+            transform: translateX(20px);
+        }
+
+        /* Settings item hover */
+        .settings-item {
+            transition: background 0.15s ease;
+        }
+        .settings-item:active {
+            background: #f1f1f1;
+        }
+
+        /* Pin dot glow */
+        .pin-dot-filled {
+            background: white;
+            transform: scale(1.15);
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+        }
     </style>
 </head>
+
 <body class="bg-slate-900 font-sans text-brand-textDark antialiased flex items-center justify-center min-h-screen selection:bg-brand-purple selection:text-white">
 
-    <!-- Screen Shell -->
+    <!-- ===== SHELL ===== -->
     <div class="relative w-full max-w-md bg-brand-bgGray h-screen md:h-[880px] md:rounded-[40px] md:shadow-2xl overflow-hidden flex flex-col page-transition border border-slate-800 md:border-slate-700">
 
-        <!-- Network Loading Overlay -->
+        <!-- Network Loader -->
         <div id="network-loader" class="absolute inset-0 bg-black/40 backdrop-blur-md z-[100] flex flex-col items-center justify-center hidden">
             <div class="bg-white p-6 rounded-2xl shadow-xl flex flex-col items-center gap-4">
                 <div class="w-12 h-12 border-4 border-brand-purple border-t-transparent rounded-full animate-spin"></div>
@@ -85,9 +122,10 @@
             </div>
         </div>
 
-        <!-- Custom Audio Feedback -->
+        <!-- Audio Context -->
         <script>
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+
             function playTone(freq, type, duration) {
                 try {
                     const osc = audioCtx.createOscillator();
@@ -100,19 +138,25 @@
                     gain.connect(audioCtx.destination);
                     osc.start();
                     osc.stop(audioCtx.currentTime + duration);
-                } catch (e) { console.log("Audio blocked"); }
+                } catch (_) {}
             }
+
             function playUnlockSound() {
-                playTone(523.25, 'triangle', 0.1); 
-                setTimeout(() => playTone(659.25, 'triangle', 0.15), 80); 
+                playTone(523.25, 'triangle', 0.1);
+                setTimeout(() => playTone(659.25, 'triangle', 0.15), 80);
             }
+
             function playErrorSound() {
                 playTone(150, 'sawtooth', 0.25);
+            }
+
+            function playKeySound() {
+                playTone(380, 'sine', 0.06);
             }
         </script>
 
         <!-- ========================================== -->
-        <!-- SCREEN 1: WELCOME GATEWAY (SIGNUP / LOGIN) -->
+        <!-- SCREEN 1: GATEWAY (Signup / Login)         -->
         <!-- ========================================== -->
         <div id="page-gateway" class="absolute inset-0 bg-white flex flex-col z-50 overflow-y-auto px-6 py-8">
             <div class="flex flex-col items-center mt-10 mb-8">
@@ -133,12 +177,12 @@
                     <label class="text-xs font-semibold text-brand-textGray">Mobile Number</label>
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-brand-textGray font-semibold">+234</span>
-                        <input type="tel" id="login-phone" placeholder="8012345678" required class="w-full pl-16 pr-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-semibold">
+                        <input type="tel" id="login-phone" placeholder="8012345678" required class="w-full pl-16 pr-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-semibold" />
                     </div>
                 </div>
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-brand-textGray">4-Digit Security PIN</label>
-                    <input type="password" id="login-pin" maxlength="4" pattern="[0-9]*" inputmode="numeric" placeholder="••••" required class="w-full px-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none text-center tracking-widest font-extrabold">
+                    <input type="password" id="login-pin" maxlength="4" pattern="[0-9]*" inputmode="numeric" placeholder="••••" required class="w-full px-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none text-center tracking-widest font-extrabold" />
                 </div>
                 <button type="submit" class="w-full bg-brand-btnPurple text-white py-4 rounded-xl font-bold text-sm mt-4 shadow-md shadow-brand-purple/20 hover:bg-brand-purple transition-all">Sign In</button>
             </form>
@@ -146,30 +190,29 @@
             <form id="form-signup" class="flex flex-col gap-4 hidden">
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-brand-textGray">Full Name</label>
-                    <input type="text" id="signup-name" placeholder="SOMTOCHUKWU" required class="w-full px-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-semibold">
+                    <input type="text" id="signup-name" placeholder="SOMTOCHUKWU" required class="w-full px-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-semibold" />
                 </div>
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-brand-textGray">Mobile Number</label>
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-brand-textGray font-semibold">+234</span>
-                        <input type="tel" id="signup-phone" placeholder="8012345678" required class="w-full pl-16 pr-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-semibold">
+                        <input type="tel" id="signup-phone" placeholder="8012345678" required class="w-full pl-16 pr-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-semibold" />
                     </div>
                 </div>
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-brand-textGray">Create 4-Digit PIN</label>
-                    <input type="password" id="signup-pin" maxlength="4" pattern="[0-9]*" inputmode="numeric" placeholder="••••" required class="w-full px-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none text-center tracking-widest font-extrabold">
+                    <input type="password" id="signup-pin" maxlength="4" pattern="[0-9]*" inputmode="numeric" placeholder="••••" required class="w-full px-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none text-center tracking-widest font-extrabold" />
                 </div>
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-brand-textGray">Confirm 4-Digit PIN</label>
-                    <input type="password" id="signup-pin-confirm" maxlength="4" pattern="[0-9]*" inputmode="numeric" placeholder="••••" required class="w-full px-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none text-center tracking-widest font-extrabold">
+                    <input type="password" id="signup-pin-confirm" maxlength="4" pattern="[0-9]*" inputmode="numeric" placeholder="••••" required class="w-full px-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none text-center tracking-widest font-extrabold" />
                 </div>
                 <button type="submit" class="w-full bg-brand-btnPurple text-white py-4 rounded-xl font-bold text-sm mt-4 shadow-md shadow-brand-purple/20 hover:bg-brand-purple transition-all">Create Account</button>
             </form>
         </div>
 
-
         <!-- ========================================== -->
-        <!-- SCREEN 2: LOCK SCREEN (PIN & BIOMETRIC) -->
+        <!-- SCREEN 2: LOCK SCREEN (PIN + Biometric)    -->
         <!-- ========================================== -->
         <div id="page-lockscreen" class="absolute inset-0 bg-brand-purple flex flex-col z-[40] hidden-page">
             <div class="flex flex-col items-center mt-16 flex-1 px-8 text-center text-white">
@@ -199,6 +242,7 @@
                     <button onclick="pressPinKey('8')" class="py-4 text-2xl font-bold text-white rounded-full hover:bg-white/10 transition-all active:scale-90">8</button>
                     <button onclick="pressPinKey('9')" class="py-4 text-2xl font-bold text-white rounded-full hover:bg-white/10 transition-all active:scale-90">9</button>
 
+                    <!-- FINGERPRINT BUTTON — uses WebAuthn directly, no fake modal -->
                     <button onclick="triggerBiometricUnlock()" class="py-4 flex items-center justify-center text-white rounded-full hover:bg-white/10 transition-all active:scale-90">
                         <i class="fa-solid fa-fingerprint text-2xl"></i>
                     </button>
@@ -214,15 +258,14 @@
             </div>
         </div>
 
-
         <!-- ========================================== -->
-        <!-- SCREEN 3: MASTER DASHBOARD WITH MULTI-TABS -->
+        <!-- SCREEN 3: DASHBOARD (Home + Me tabs)       -->
         <!-- ========================================== -->
         <div id="page-dashboard" class="absolute inset-0 flex flex-col z-30 hidden-page overflow-hidden bg-brand-bgGray">
-            
-            <!-- Tab Container 1: HOME PAGE -->
+
+            <!-- TAB: HOME -->
             <div id="tab-home" class="flex-grow flex flex-col overflow-hidden">
-                <!-- Top Status Bar & Custom Header -->
+                <!-- Header -->
                 <div class="bg-white px-4 pt-4 pb-2 flex justify-between items-center z-10">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-purple to-indigo-600 flex items-center justify-center text-white font-extrabold text-sm border-2 border-brand-lightPurple relative shadow-sm">
@@ -245,7 +288,7 @@
 
                 <!-- Scrollable Home Content -->
                 <div class="flex-1 overflow-y-auto pb-24">
-                    <!-- Purple Glowing Balance Card -->
+                    <!-- Balance Card -->
                     <div class="mx-4 mt-3 bg-gradient-to-br from-[#EBE3FF] to-[#F5F2FF] rounded-2xl p-4 shadow-sm border border-brand-purple/10 relative overflow-hidden">
                         <div class="flex justify-between items-center text-brand-purple mb-3">
                             <div class="flex items-center gap-1.5 text-xs font-semibold">
@@ -258,7 +301,6 @@
                                 <i class="fa-solid fa-chevron-right text-[10px]"></i>
                             </button>
                         </div>
-
                         <div class="flex justify-between items-end">
                             <div>
                                 <h2 id="dashboard-balance" class="text-3xl font-extrabold text-brand-purple tracking-tight">₦171.41</h2>
@@ -268,7 +310,6 @@
                                 <span>Add Money</span>
                             </button>
                         </div>
-
                         <div class="mt-4 pt-3 border-t border-brand-purple/10 flex justify-between items-center text-[11px] text-brand-purple font-medium">
                             <div class="flex items-center gap-1.5">
                                 <i class="fa-solid fa-wallet"></i>
@@ -278,7 +319,7 @@
                         </div>
                     </div>
 
-                    <!-- Primary Action Cards -->
+                    <!-- Action Cards -->
                     <div class="grid grid-cols-4 gap-2.5 mx-4 mt-4">
                         <button onclick="alert('Interbank transfers offline.')" class="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-2 hover:bg-slate-50 transition-all relative">
                             <span class="absolute -top-1.5 -right-1 px-1.5 py-0.5 bg-orange-500 text-[8px] text-white rounded-full font-extrabold scale-90">0 Fee</span>
@@ -299,7 +340,7 @@
                         </button>
                     </div>
 
-                    <!-- Main Services Grid -->
+                    <!-- Services Grid -->
                     <div class="mx-4 mt-4 bg-white rounded-3xl p-4 shadow-sm border border-slate-100">
                         <div class="grid grid-cols-4 gap-y-5 gap-x-2 text-center">
                             <button onclick="openAirtimeModal()" class="flex flex-col items-center gap-1.5">
@@ -338,7 +379,7 @@
                         </div>
                     </div>
 
-                    <!-- Mid-Tier Cash Reward Banner -->
+                    <!-- Cash Reward Banner -->
                     <div class="mx-4 mt-4 bg-white rounded-2xl p-3 shadow-sm border border-slate-100 flex justify-between items-center gap-3">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full bg-green-800 text-white flex flex-col items-center justify-center leading-none">
@@ -355,9 +396,9 @@
                 </div>
             </div>
 
-            <!-- Tab Container 2: ME MENU PAGE (Matches your screenshot) -->
+            <!-- TAB: ME (matches the PalmPay screenshot) -->
             <div id="tab-me" class="flex-grow flex flex-col overflow-hidden hidden">
-                <!-- Top Header Row -->
+                <!-- Header -->
                 <div class="bg-white px-5 pt-5 pb-3 flex justify-between items-center border-b border-slate-50">
                     <div class="flex items-center gap-3">
                         <div class="w-11 h-11 rounded-full bg-purple-100 flex items-center justify-center text-brand-purple font-black text-lg border border-brand-purple/10">
@@ -379,10 +420,10 @@
                     </div>
                 </div>
 
-                <!-- Scrollable Body for Me Section -->
+                <!-- Scrollable Me Body -->
                 <div class="flex-1 overflow-y-auto px-4 pb-24 pt-3 space-y-3.5">
-                    
-                    <!-- Total Assets Card (Matches screenshot layout) -->
+
+                    <!-- Total Assets -->
                     <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
                         <div class="flex justify-between items-center text-xs text-brand-textGray font-medium mb-1">
                             <span class="flex items-center gap-1">Total Assets <i class="fa-regular fa-eye-slash text-[10px]"></i></span>
@@ -392,20 +433,16 @@
                             <h2 id="me-assets-balance" class="text-2xl font-black text-brand-textDark tracking-tight">₦171.41</h2>
                             <span class="text-emerald-500 font-bold text-sm">+₦0.09</span>
                         </div>
-
-                        <!-- Dynamic Mini-Transaction History -->
                         <div class="border-t border-slate-100 pt-3">
                             <div class="flex justify-between items-center mb-2.5">
                                 <span class="text-[11px] font-bold text-brand-textGray">Transaction History</span>
                                 <button class="text-[10px] text-brand-purple font-extrabold bg-brand-lightPurple px-2.5 py-1 rounded-full">Monthly Overview</button>
                             </div>
-                            <div id="me-mini-transactions" class="space-y-3">
-                                <!-- Populated dynamically by script -->
-                            </div>
+                            <div id="me-mini-transactions" class="space-y-3"></div>
                         </div>
                     </div>
 
-                    <!-- Add Email CTA Row -->
+                    <!-- Add Email -->
                     <div class="bg-brand-lightPurple/50 rounded-xl p-3 border border-brand-purple/10 flex justify-between items-center">
                         <div class="flex items-center gap-2.5">
                             <div class="w-8 h-8 rounded-full bg-brand-lightPurple flex items-center justify-center text-brand-purple text-xs"><i class="fa-solid fa-envelope"></i></div>
@@ -417,7 +454,7 @@
                         <button class="bg-brand-btnPurple text-white px-3 py-1 rounded-full text-[10px] font-bold">Add Now</button>
                     </div>
 
-                    <!-- Quick Access Section -->
+                    <!-- Quick Access -->
                     <div>
                         <h4 class="text-xs font-bold text-brand-textGray uppercase tracking-wider mb-2 px-1">Quick Access</h4>
                         <div class="grid grid-cols-2 gap-3">
@@ -438,7 +475,7 @@
                         </div>
                     </div>
 
-                    <!-- Menu List Actions -->
+                    <!-- Menu List -->
                     <div class="bg-white rounded-2xl p-2 shadow-sm border border-slate-100 divide-y divide-slate-50">
                         <button class="w-full flex justify-between items-center py-3.5 px-3 text-left">
                             <div class="flex items-center gap-3">
@@ -483,11 +520,10 @@
                             <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
                         </button>
                     </div>
-
                 </div>
             </div>
 
-            <!-- Persistent Bottom Navigation Bar -->
+            <!-- Bottom Nav -->
             <div class="absolute bottom-0 inset-x-0 bg-white border-t border-slate-100 px-3 py-2 flex justify-between items-center z-10">
                 <button onclick="switchTab('home')" id="nav-btn-home" class="flex-1 flex flex-col items-center gap-1 text-brand-purple">
                     <i class="fa-solid fa-house text-lg"></i>
@@ -514,58 +550,95 @@
             </div>
         </div>
 
-
         <!-- ========================================== -->
-        <!-- MODAL FLOATS & SLIDING DRAWERS -->
+        <!-- MODALS                                       -->
         <!-- ========================================== -->
 
-        <!-- Dynamic Settings & Biometric Setup Drawer -->
+        <!-- SETTINGS MODAL — redesigned to match PalmPay screenshot -->
         <div id="modal-settings" class="absolute inset-0 bg-black/50 z-[60] flex flex-col justify-end hidden page-transition">
-            <div class="bg-white rounded-t-[32px] max-h-[80%] flex flex-col">
+            <div class="bg-white rounded-t-[32px] max-h-[85%] flex flex-col">
                 <div class="flex justify-between items-center px-6 py-5 border-b border-slate-100">
-                    <h3 class="font-bold text-base text-brand-textDark">Account Security Settings</h3>
-                    <button onclick="closeModal('modal-settings')" class="w-8 h-8 rounded-full bg-brand-bgGray flex items-center justify-center text-brand-textGray"><i class="fa-solid fa-xmark"></i></button>
+                    <h3 class="font-bold text-lg text-brand-textDark">Settings</h3>
+                    <button onclick="closeModal('modal-settings')" class="w-8 h-8 rounded-full bg-brand-bgGray flex items-center justify-center text-brand-textGray">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
-                
-                <div class="p-6 flex flex-col gap-5">
-                    <!-- Toggle Switch for Biometrics -->
-                    <div class="flex items-center justify-between bg-brand-bgGray p-4 rounded-2xl border border-slate-100">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-brand-lightPurple flex items-center justify-center text-brand-purple text-lg"><i class="fa-solid fa-fingerprint"></i></div>
-                            <div>
-                                <h4 class="text-xs font-bold text-brand-textDark">Biometric Sign In</h4>
-                                <p class="text-[9px] text-brand-textGray mt-0.5">Unlock account instantly with your fingerprint</p>
-                            </div>
+
+                <div class="flex-1 overflow-y-auto px-5 py-3 divide-y divide-slate-50">
+
+                    <!-- Login Settings -->
+                    <div class="settings-item flex justify-between items-center py-3.5 cursor-pointer" onclick="alert('Login Settings')">
+                        <span class="text-sm font-medium text-brand-textDark">Login Settings</span>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
+                    </div>
+
+                    <!-- Payment Settings -->
+                    <div class="settings-item flex justify-between items-center py-3.5 cursor-pointer" onclick="alert('Payment Settings')">
+                        <span class="text-sm font-medium text-brand-textDark">Payment Settings</span>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
+                    </div>
+
+                    <!-- Dark Mode (toggle) -->
+                    <div class="settings-item flex justify-between items-center py-3.5">
+                        <span class="text-sm font-medium text-brand-textDark">Dark Mode</span>
+                        <div class="toggle-track" onclick="toggleSwitch(this)">
+                            <div class="toggle-thumb"></div>
                         </div>
-                        
-                        <!-- Toggle Switch -->
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-biometrics" class="sr-only peer" onchange="handleBiometricsToggle(this)">
-                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-purple"></div>
-                        </label>
                     </div>
 
-                    <!-- Informational Note -->
-                    <div class="p-3.5 bg-brand-lightPurple/40 rounded-xl border border-brand-purple/5 text-[10px] text-brand-purple leading-relaxed">
-                        <i class="fa-solid fa-circle-info mr-1"></i> Once biometric sign-in is configured and your session is cached, you will bypass credential input forms upon launching the application.
+                    <!-- SMS Alert Subscribe (toggle) -->
+                    <div class="settings-item flex justify-between items-center py-3.5">
+                        <span class="text-sm font-medium text-brand-textDark">SMS Alert Subscribe</span>
+                        <div class="toggle-track" onclick="toggleSwitch(this)">
+                            <div class="toggle-thumb"></div>
+                        </div>
                     </div>
 
-                    <!-- Master Danger Zone Log Out -->
-                    <button onclick="logout()" class="w-full mt-4 bg-red-50 text-red-600 border border-red-100 py-3.5 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 hover:bg-red-100/50 transition-all">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out Completely
+                    <!-- Email Notification Settings -->
+                    <div class="settings-item flex justify-between items-center py-3.5 cursor-pointer" onclick="alert('Email Notification Settings')">
+                        <span class="text-sm font-medium text-brand-textDark">Email Notification Settings</span>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
+                    </div>
+
+                    <!-- Speaker on (toggle) -->
+                    <div class="settings-item flex justify-between items-center py-3.5">
+                        <span class="text-sm font-medium text-brand-textDark">Speaker on</span>
+                        <div class="toggle-track active" onclick="toggleSwitch(this)">
+                            <div class="toggle-thumb"></div>
+                        </div>
+                    </div>
+
+                    <!-- About PalmPay -->
+                    <div class="settings-item flex justify-between items-center py-3.5 cursor-pointer" onclick="alert('About PalmPay')">
+                        <span class="text-sm font-medium text-brand-textDark">About PalmPay</span>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
+                    </div>
+
+                    <!-- Close PalmPay Account -->
+                    <div class="settings-item flex justify-between items-center py-3.5 cursor-pointer" onclick="if(confirm('Are you sure you want to close your PalmPay account? This action is irreversible.')){alert('Account closure requested.');}">
+                        <span class="text-sm font-medium text-red-500">Close PalmPay Account</span>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
+                    </div>
+
+                </div>
+
+                <!-- Log Out Button -->
+                <div class="px-5 py-5 border-t border-slate-100">
+                    <button onclick="logout()" class="w-full bg-red-50 text-red-600 border border-red-200 py-3.5 rounded-xl font-extrabold text-sm flex items-center justify-center gap-2 hover:bg-red-100/60 transition-all">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Deposit Modal -->
+        <!-- DEPOSIT MODAL -->
         <div id="modal-deposit" class="absolute inset-0 bg-black/50 z-[60] flex items-center justify-center px-6 hidden page-transition">
             <div class="bg-white rounded-3xl w-full p-6 shadow-xl flex flex-col gap-4">
                 <h3 class="font-bold text-lg text-brand-textDark">Add Money</h3>
                 <p class="text-xs text-brand-textGray">Fund your account balance from simulated gateway channels.</p>
                 <div class="relative">
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold text-brand-purple">₦</span>
-                    <input type="number" id="deposit-amount" placeholder="2,500" class="w-full pl-10 pr-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-bold">
+                    <input type="number" id="deposit-amount" placeholder="2,500" class="w-full pl-10 pr-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-bold" />
                 </div>
                 <div class="grid grid-cols-3 gap-2">
                     <button onclick="setDepositQuick(1000)" class="py-2 bg-brand-lightPurple rounded-lg text-xs font-bold text-brand-purple">₦1,000</button>
@@ -579,15 +652,15 @@
             </div>
         </div>
 
-        <!-- Airtime Recharge Modal -->
+        <!-- AIRTIME MODAL -->
         <div id="modal-airtime" class="absolute inset-0 bg-black/50 z-[60] flex items-center justify-center px-6 hidden page-transition">
             <div class="bg-white rounded-3xl w-full p-6 shadow-xl flex flex-col gap-4">
                 <h3 class="font-bold text-lg text-brand-textDark">Buy Airtime / Data</h3>
                 <p class="text-xs text-brand-textGray">Recharge networks and save with cash rewards.</p>
-                <input type="tel" id="airtime-phone" placeholder="08012345678" class="w-full px-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-bold">
+                <input type="tel" id="airtime-phone" placeholder="08012345678" class="w-full px-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-bold" />
                 <div class="relative">
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold text-brand-purple">₦</span>
-                    <input type="number" id="airtime-amount" placeholder="500" class="w-full pl-10 pr-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-bold">
+                    <input type="number" id="airtime-amount" placeholder="500" class="w-full pl-10 pr-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-bold" />
                 </div>
                 <div class="flex gap-3 mt-2">
                     <button onclick="closeModal('modal-airtime')" class="flex-1 py-3 bg-brand-bgGray rounded-xl text-xs font-bold text-brand-textGray">Cancel</button>
@@ -596,35 +669,14 @@
             </div>
         </div>
 
-        <!-- Biometric Scan Prompt Modal -->
-        <div id="modal-biometric" class="absolute inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center px-8 hidden page-transition">
-            <div class="bg-white rounded-3xl w-full p-8 shadow-2xl flex flex-col items-center text-center gap-6 relative overflow-hidden">
-                <div class="flex flex-col gap-1">
-                    <h3 class="font-bold text-lg text-brand-textDark">Fingerprint Sensor</h3>
-                    <p class="text-xs text-brand-textGray">Hold your finger on the sensor scanner</p>
-                </div>
-                
-                <div class="relative w-28 h-28 flex items-center justify-center">
-                    <div class="absolute inset-0 rounded-full bg-brand-purple/10 radar-ring"></div>
-                    <div class="absolute inset-2 rounded-full bg-brand-purple/20 radar-ring" style="animation-delay: 0.7s"></div>
-                    <div class="w-20 h-20 rounded-full bg-brand-lightPurple flex items-center justify-center text-brand-purple text-4xl shadow-md border border-brand-purple/20 relative overflow-hidden">
-                        <i class="fa-solid fa-fingerprint animate-pulse"></i>
-                        <div class="absolute inset-x-0 h-0.5 bg-brand-accentPurple shadow-[0_0_10px_#7C3AED] animate-bounce top-0"></div>
-                    </div>
-                </div>
-
-                <p id="biometric-status" class="text-xs font-bold text-brand-purple animate-pulse">Waiting for scan...</p>
-                <button onclick="cancelBiometricVerification()" class="text-xs font-semibold text-brand-textGray hover:text-brand-textDark mt-2">Use PIN Security instead</button>
-            </div>
-        </div>
-
-        <!-- Toast Alerts Container -->
+        <!-- Toast Container -->
         <div id="toast-container" class="absolute bottom-20 left-1/2 -translate-x-1/2 w-[85%] z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
     </div>
+    <!-- ===== END SHELL ===== -->
 
     <!-- ========================================== -->
-    <!-- JAVASCRIPT: SECURE LOGIC & DYNAMICS -->
+    <!-- JAVASCRIPT                                  -->
     <!-- ========================================== -->
     <script>
         const BIN_ID = '6a58c982f5f4af5e29974312';
@@ -638,20 +690,16 @@
             enteredPin: ""
         };
 
-        // Custom Toast Engine
+        // ===== Toast =====
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            toast.className = `p-3.5 rounded-xl shadow-lg text-xs font-bold text-white flex items-center gap-2 transform translate-y-4 opacity-0 transition-all duration-300 pointer-events-auto ${
-                type === 'success' ? 'bg-emerald-500' : 'bg-red-500'
-            }`;
-            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark'}"></i> <span>${message}</span>`;
+            toast.className =
+                `p-3.5 rounded-xl shadow-lg text-xs font-bold text-white flex items-center gap-2 transform translate-y-4 opacity-0 transition-all duration-300 pointer-events-auto ${type === 'success' ? 'bg-emerald-500' : 'bg-red-500'}`;
+            toast.innerHTML =
+                `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark'}"></i> <span>${message}</span>`;
             container.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.classList.remove('translate-y-4', 'opacity-0');
-            }, 10);
-
+            setTimeout(() => toast.classList.remove('translate-y-4', 'opacity-0'), 10);
             setTimeout(() => {
                 toast.classList.add('translate-y-4', 'opacity-0');
                 setTimeout(() => toast.remove(), 300);
@@ -659,24 +707,19 @@
         }
 
         function showLoading(state) {
-            const loader = document.getElementById('network-loader');
-            if (state) loader.classList.remove('hidden');
-            else loader.classList.add('hidden');
+            document.getElementById('network-loader').classList.toggle('hidden', !state);
         }
 
-        // Database Access Functions
+        // ===== JSONBin =====
         async function fetchUsersFromCloud() {
             try {
                 showLoading(true);
-                const response = await fetch(API_URL, {
-                    headers: { 'X-Master-Key': API_KEY }
-                });
-                const data = await response.json();
-                appState.users = data.record.users || [];
+                const res = await fetch(API_URL, { headers: { 'X-Master-Key': API_KEY } });
+                const data = await res.json();
+                appState.users = data.record?.users || [];
                 return true;
-            } catch (err) {
-                console.error("Database connection failure:", err);
-                showToast("Failed to connect to secure servers.", "error");
+            } catch (_) {
+                showToast('Failed to connect to secure servers.', 'error');
                 return false;
             } finally {
                 showLoading(false);
@@ -686,52 +729,44 @@
         async function syncUsersToCloud() {
             try {
                 showLoading(true);
-                const response = await fetch(API_URL, {
+                const res = await fetch(API_URL, {
                     method: 'PUT',
-                    headers: {
-                        'X-Master-Key': API_KEY,
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'X-Master-Key': API_KEY, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ users: appState.users })
                 });
-                if (response.ok) return true;
-                throw new Error("Synchronization rejected.");
-            } catch (err) {
-                console.error("Cloud update failure:", err);
-                showToast("Could not sync state to cloud.", "error");
+                return res.ok;
+            } catch (_) {
+                showToast('Could not sync state to cloud.', 'error');
                 return false;
             } finally {
                 showLoading(false);
             }
         }
 
-        // Master Page Display Engine
+        // ===== Page Navigation =====
         function showPage(pageId) {
-            document.getElementById('page-gateway').classList.add('hidden-page');
-            document.getElementById('page-lockscreen').classList.add('hidden-page');
-            document.getElementById('page-dashboard').classList.add('hidden-page');
-
-            const page = document.getElementById(pageId);
-            page.classList.remove('hidden-page');
+            ['page-gateway', 'page-lockscreen', 'page-dashboard'].forEach(id => {
+                document.getElementById(id).classList.add('hidden-page');
+            });
+            document.getElementById(pageId).classList.remove('hidden-page');
         }
 
-        // Tab Switching Engine (Home vs. Me)
         function switchTab(tabId) {
-            const tabHome = document.getElementById('tab-home');
-            const tabMe = document.getElementById('tab-me');
+            const home = document.getElementById('tab-home');
+            const me = document.getElementById('tab-me');
             const btnHome = document.getElementById('nav-btn-home');
             const btnMe = document.getElementById('nav-btn-me');
 
             if (tabId === 'home') {
-                tabHome.classList.remove('hidden');
-                tabMe.classList.add('hidden');
-                btnHome.className = "flex-1 flex flex-col items-center gap-1 text-brand-purple";
-                btnMe.className = "flex-1 flex flex-col items-center gap-1 text-brand-textGray";
+                home.classList.remove('hidden');
+                me.classList.add('hidden');
+                btnHome.className = 'flex-1 flex flex-col items-center gap-1 text-brand-purple';
+                btnMe.className = 'flex-1 flex flex-col items-center gap-1 text-brand-textGray';
             } else {
-                tabHome.classList.add('hidden');
-                tabMe.classList.remove('hidden');
-                btnMe.className = "flex-1 flex flex-col items-center gap-1 text-brand-purple";
-                btnHome.className = "flex-1 flex flex-col items-center gap-1 text-brand-textGray";
+                home.classList.add('hidden');
+                me.classList.remove('hidden');
+                btnMe.className = 'flex-1 flex flex-col items-center gap-1 text-brand-purple';
+                btnHome.className = 'flex-1 flex flex-col items-center gap-1 text-brand-textGray';
                 populateMePageDetails();
             }
         }
@@ -743,25 +778,25 @@
             const formSignup = document.getElementById('form-signup');
 
             if (tab === 'login') {
-                btnLogin.className = "flex-1 py-3 text-sm font-bold rounded-lg transition-all bg-white text-brand-purple shadow-sm";
-                btnSignup.className = "flex-1 py-3 text-sm font-bold rounded-lg transition-all text-brand-textGray";
+                btnLogin.className = 'flex-1 py-3 text-sm font-bold rounded-lg transition-all bg-white text-brand-purple shadow-sm';
+                btnSignup.className = 'flex-1 py-3 text-sm font-bold rounded-lg transition-all text-brand-textGray';
                 formLogin.classList.remove('hidden');
                 formSignup.classList.add('hidden');
             } else {
-                btnSignup.className = "flex-1 py-3 text-sm font-bold rounded-lg transition-all bg-white text-brand-purple shadow-sm";
-                btnLogin.className = "flex-1 py-3 text-sm font-bold rounded-lg transition-all text-brand-textGray";
+                btnSignup.className = 'flex-1 py-3 text-sm font-bold rounded-lg transition-all bg-white text-brand-purple shadow-sm';
+                btnLogin.className = 'flex-1 py-3 text-sm font-bold rounded-lg transition-all text-brand-textGray';
                 formSignup.classList.remove('hidden');
                 formLogin.classList.add('hidden');
             }
         }
 
-        // Initial App Routing Flow
+        // ===== Session =====
         function loadLocalSession() {
-            const userPhone = localStorage.getItem('palmpay_current_phone');
-            if (userPhone && appState.users.length > 0) {
-                const userObj = appState.users.find(u => u.phone === userPhone);
-                if (userObj) {
-                    appState.currentUser = userObj;
+            const phone = localStorage.getItem('palmpay_current_phone');
+            if (phone && appState.users.length) {
+                const user = appState.users.find(u => u.phone === phone);
+                if (user) {
+                    appState.currentUser = user;
                     setupLockscreen();
                     showPage('page-lockscreen');
                     return;
@@ -773,55 +808,328 @@
         function setupLockscreen() {
             document.getElementById('lockscreen-username').textContent = `Welcome Back, ${appState.currentUser.name}`;
             resetPinState();
-            
-            // Auto-trigger biometric scan ONLY if enabled in settings
-            const bioEnabled = localStorage.getItem('biometrics_enabled') === 'true';
-            if (bioEnabled) {
-                setTimeout(() => {
-                    triggerBiometricUnlock();
-                }, 600);
+            // Check if biometrics are enabled — if so, auto-prompt (but no fake modal)
+            if (localStorage.getItem('biometrics_enabled') === 'true') {
+                setTimeout(() => triggerBiometricUnlock(), 500);
             }
         }
 
-        // Auth Submissions
+        function initializeDashboard() {
+            document.getElementById('dashboard-user-title').textContent = `Hi, ${appState.currentUser.name}`;
+            updateBalanceUI();
+            switchTab('home');
+        }
+
+        // ===== Balance =====
+        function updateBalanceUI() {
+            const bal = document.getElementById('dashboard-balance');
+            const assets = document.getElementById('me-assets-balance');
+            const formatted = `₦${appState.currentUser.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            const hidden = '••••••';
+            bal.textContent = appState.isBalanceHidden ? hidden : formatted;
+            assets.textContent = appState.isBalanceHidden ? hidden : formatted;
+        }
+
+        function toggleBalanceMask() {
+            appState.isBalanceHidden = !appState.isBalanceHidden;
+            document.getElementById('balance-eye-icon').className =
+                appState.isBalanceHidden ? 'fa-solid fa-eye-slash text-xs' : 'fa-solid fa-eye text-xs';
+            updateBalanceUI();
+        }
+
+        // ===== Me Tab =====
+        function populateMePageDetails() {
+            const u = appState.currentUser;
+            document.getElementById('me-user-name').textContent = `Hi, ${u.name.toUpperCase()}`;
+            document.getElementById('me-user-phone').textContent = `+234 ${u.phone.slice(0,3)} ${u.phone.slice(3,6)} ${u.phone.slice(6)}`;
+            updateBalanceUI();
+
+            const container = document.getElementById('me-mini-transactions');
+            container.innerHTML = '';
+            const txs = u.transactions || [];
+            if (!txs.length) {
+                container.innerHTML = `<p class="text-[10px] text-brand-textGray text-center py-2">No transactions recorded.</p>`;
+                return;
+            }
+            txs.slice(0, 2).forEach(t => {
+                const isDeposit = t.type === 'deposit';
+                const icon = isDeposit ? 'fa-wallet text-emerald-500' : 'fa-mobile-retro text-brand-purple';
+                const prefix = isDeposit ? '+' : '-';
+                const color = isDeposit ? 'text-emerald-500' : 'text-brand-textDark';
+                const row = document.createElement('div');
+                row.className = 'flex justify-between items-center text-xs border-b border-slate-50 pb-2 last:border-b-0 last:pb-0';
+                row.innerHTML = `
+                    <div class="flex items-center gap-2.5">
+                        <i class="fa-solid ${icon} text-[11px] opacity-85"></i>
+                        <div>
+                            <h5 class="font-bold text-brand-textDark text-[11px]">${t.title}</h5>
+                            <p class="text-[9px] text-brand-textGray font-semibold">${t.date}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-bold ${color}">${prefix} ₦ ${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                        <p class="text-[8px] text-emerald-500 font-extrabold mt-0.5">Successful</p>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        // ===== Lockscreen PIN =====
+        function resetPinState() {
+            appState.enteredPin = '';
+            updatePinDots();
+        }
+
+        function updatePinDots() {
+            document.querySelectorAll('.pin-dot').forEach((dot, i) => {
+                dot.className = i < appState.enteredPin.length ?
+                    'pin-dot w-3.5 h-3.5 rounded-full bg-white scale-110 shadow-lg shadow-white/30' :
+                    'pin-dot w-3.5 h-3.5 rounded-full border border-white/40 bg-transparent';
+            });
+        }
+
+        function pressPinKey(key) {
+            if (key === 'backspace') {
+                if (appState.enteredPin.length) {
+                    appState.enteredPin = appState.enteredPin.slice(0, -1);
+                    updatePinDots();
+                    playKeySound();
+                }
+                return;
+            }
+            if (appState.enteredPin.length < 4) {
+                appState.enteredPin += key;
+                updatePinDots();
+                playKeySound();
+                if (appState.enteredPin.length === 4) {
+                    setTimeout(() => verifyPinCode(), 200);
+                }
+            }
+        }
+
+        function verifyPinCode() {
+            if (appState.enteredPin === appState.currentUser.pin) {
+                playUnlockSound();
+                showToast('Access Authorized.');
+                initializeDashboard();
+                showPage('page-dashboard');
+            } else {
+                playErrorSound();
+                showToast('Incorrect security PIN.', 'error');
+                resetPinState();
+            }
+        }
+
+        // ===== FINGERPRINT — REAL WebAuthn, NO FAKE MODAL =====
+        async function triggerBiometricUnlock() {
+            const enabled = localStorage.getItem('biometrics_enabled') === 'true';
+            if (!enabled) {
+                showToast('Please enable Biometric Login in Settings first!', 'error');
+                return;
+            }
+
+            // Check if WebAuthn is available and we have a saved credential
+            const savedCredId = localStorage.getItem('local_biometric_id');
+            const hasWebAuthn = window.PublicKeyCredential !== undefined;
+
+            if (hasWebAuthn && savedCredId) {
+                try {
+                    const challenge = crypto.getRandomValues(new Uint8Array(32));
+                    const rawId = Uint8Array.from(atob(savedCredId), c => c.charCodeAt(0));
+                    const options = {
+                        publicKey: {
+                            challenge,
+                            allowCredentials: [{ id: rawId, type: 'public-key' }],
+                            userVerification: 'required',
+                            timeout: 15000
+                        }
+                    };
+                    const assertion = await navigator.credentials.get(options);
+                    if (assertion) {
+                        playUnlockSound();
+                        showToast('Fingerprint matched!');
+                        initializeDashboard();
+                        showPage('page-dashboard');
+                        return;
+                    }
+                } catch (e) {
+                    console.warn('WebAuthn assertion failed:', e);
+                    showToast('Biometric scan failed. Please use PIN.', 'error');
+                    return;
+                }
+            }
+
+            // Fallback: if no WebAuthn or no credential, guide user to set up
+            showToast('No biometric credential found. Enable in Settings.', 'error');
+        }
+
+        // ===== Register Biometric (WebAuthn) =====
+        async function registerDeviceBiometrics() {
+            const hasWebAuthn = window.PublicKeyCredential !== undefined;
+            const secure = window.isSecureContext || window.location.hostname === 'localhost' || window.location.protocol ===
+                'https:';
+
+            if (secure && hasWebAuthn) {
+                try {
+                    const challenge = crypto.getRandomValues(new Uint8Array(32));
+                    const userId = crypto.getRandomValues(new Uint8Array(16));
+                    const username = appState.currentUser.phone;
+
+                    const options = {
+                        publicKey: {
+                            challenge,
+                            rp: { name: 'PalmPay Replica', id: window.location.hostname },
+                            user: { id: userId, name: username, displayName: appState.currentUser.name },
+                            pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
+                            authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },
+                            timeout: 15000
+                        }
+                    };
+
+                    const credential = await navigator.credentials.create(options);
+                    if (credential) {
+                        const rawId = new Uint8Array(credential.rawId);
+                        const base64Id = btoa(String.fromCharCode(...rawId));
+                        localStorage.setItem('local_biometric_id', base64Id);
+                        return true;
+                    }
+                } catch (e) {
+                    console.warn('WebAuthn registration cancelled/failed:', e);
+                    showToast('Biometric registration cancelled.', 'error');
+                    return false;
+                }
+            }
+
+            showToast('WebAuthn not available. Use PIN.', 'error');
+            return false;
+        }
+
+        // ===== Settings Modal =====
+        function openSettingsModal() {
+            document.getElementById('modal-settings').classList.remove('hidden');
+        }
+
+        // ===== Toggle Switch (settings) =====
+        function toggleSwitch(el) {
+            el.classList.toggle('active');
+            const label = el.closest('.settings-item')?.querySelector('span')?.textContent || 'Switch';
+            const state = el.classList.contains('active') ? 'ON' : 'OFF';
+            showToast(`${label} ${state}`, 'success');
+        }
+
+        // ===== Deposit =====
+        function openDepositModal() {
+            document.getElementById('modal-deposit').classList.remove('hidden');
+        }
+
+        function setDepositQuick(amt) {
+            document.getElementById('deposit-amount').value = amt;
+        }
+
+        async function executeDeposit() {
+            const input = document.getElementById('deposit-amount');
+            const amount = parseFloat(input.value);
+            if (isNaN(amount) || amount <= 0) {
+                showToast('Please input a valid sum.', 'error');
+                return;
+            }
+            appState.currentUser.balance += amount;
+            appState.currentUser.transactions.unshift({
+                id: 'TX-' + Date.now(),
+                type: 'deposit',
+                amount,
+                date: new Date().toLocaleDateString(),
+                title: 'Account Deposit (Simulation)'
+            });
+            const ok = await syncUsersToCloud();
+            if (ok) {
+                showToast(`Deposited ₦${amount.toLocaleString()} successfully.`);
+                updateBalanceUI();
+                closeModal('modal-deposit');
+                input.value = '';
+                if (!document.getElementById('tab-me').classList.contains('hidden')) populateMePageDetails();
+            }
+        }
+
+        // ===== Airtime =====
+        function openAirtimeModal() {
+            document.getElementById('modal-airtime').classList.remove('hidden');
+        }
+
+        async function executeAirtimePurchase() {
+            const phone = document.getElementById('airtime-phone').value.trim();
+            const amount = parseFloat(document.getElementById('airtime-amount').value);
+            if (!phone || isNaN(amount) || amount <= 0) {
+                showToast('Invalid network top-up parameters.', 'error');
+                return;
+            }
+            if (appState.currentUser.balance < amount) {
+                showToast('Insufficient Balance.', 'error');
+                return;
+            }
+            appState.currentUser.balance -= amount;
+            appState.currentUser.transactions.unshift({
+                id: 'TX-' + Date.now(),
+                type: 'airtime',
+                amount,
+                date: new Date().toLocaleDateString(),
+                title: `Airtime Sent (${phone})`
+            });
+            const ok = await syncUsersToCloud();
+            if (ok) {
+                showToast(`₦${amount.toLocaleString()} sent to ${phone}`);
+                updateBalanceUI();
+                closeModal('modal-airtime');
+                document.getElementById('airtime-phone').value = '';
+                document.getElementById('airtime-amount').value = '';
+                if (!document.getElementById('tab-me').classList.contains('hidden')) populateMePageDetails();
+            }
+        }
+
+        // ===== Close Modal =====
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // ===== Logout =====
+        function logout() {
+            localStorage.removeItem('palmpay_current_phone');
+            localStorage.removeItem('biometrics_enabled');
+            localStorage.removeItem('local_biometric_id');
+            appState.currentUser = null;
+            closeModal('modal-settings');
+            showPage('page-gateway');
+            showToast('Logged out completely.');
+        }
+
+        // ===== Form Handlers =====
         document.getElementById('form-signup').addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('signup-name').value.trim();
             const phone = document.getElementById('signup-phone').value.trim();
             const pin = document.getElementById('signup-pin').value;
-            const pinConfirm = document.getElementById('signup-pin-confirm').value;
+            const confirm = document.getElementById('signup-pin-confirm').value;
 
-            if (pin.length !== 4 || pinConfirm.length !== 4) {
-                showToast("PIN must be exactly 4 digits.", "error");
-                return;
-            }
-            if (pin !== pinConfirm) {
-                showToast("PIN confirmation mismatched.", "error");
-                return;
-            }
-
-            const existingUser = appState.users.find(u => u.phone === phone);
-            if (existingUser) {
-                showToast("This mobile number is already registered.", "error");
-                return;
-            }
+            if (pin.length !== 4 || confirm.length !== 4) { showToast('PIN must be exactly 4 digits.', 'error'); return; }
+            if (pin !== confirm) { showToast('PIN confirmation mismatched.', 'error'); return; }
+            if (appState.users.find(u => u.phone === phone)) { showToast('This mobile number is already registered.',
+                    'error'); return; }
 
             const newUser = {
                 name,
                 phone,
                 pin,
                 balance: 171.41,
-                transactions: [
-                    { id: 'TX-' + Date.now(), type: 'deposit', amount: 171.41, date: new Date().toLocaleDateString(), title: 'Registration Reward' }
-                ]
+                transactions: [{ id: 'TX-' + Date.now(), type: 'deposit', amount: 171.41, date: new Date()
+                        .toLocaleDateString(), title: 'Registration Reward' }]
             };
-
             appState.users.push(newUser);
-            const success = await syncUsersToCloud();
-            if (success) {
+            const ok = await syncUsersToCloud();
+            if (ok) {
                 appState.currentUser = newUser;
                 localStorage.setItem('palmpay_current_phone', phone);
-                showToast("Welcome! Registration completed.");
+                showToast('Welcome! Registration completed.');
                 playUnlockSound();
                 initializeDashboard();
                 showPage('page-dashboard');
@@ -832,450 +1140,57 @@
             e.preventDefault();
             const phone = document.getElementById('login-phone').value.trim();
             const pin = document.getElementById('login-pin').value;
-
             const user = appState.users.find(u => u.phone === phone);
             if (!user || user.pin !== pin) {
                 playErrorSound();
-                showToast("Invalid credentials supplied.", "error");
+                showToast('Invalid credentials supplied.', 'error');
                 return;
             }
-
             appState.currentUser = user;
             localStorage.setItem('palmpay_current_phone', phone);
-            showToast("Secure session loaded.");
+            showToast('Secure session loaded.');
             playUnlockSound();
             initializeDashboard();
             showPage('page-dashboard');
         });
 
-        // Dashboard Balance Managers
-        function initializeDashboard() {
-            document.getElementById('dashboard-user-title').textContent = `Hi, ${appState.currentUser.name}`;
-            updateBalanceUI();
-            switchTab('home');
-        }
-
-        function updateBalanceUI() {
-            const balElement = document.getElementById('dashboard-balance');
-            const assetsElement = document.getElementById('me-assets-balance');
-            
-            const formatter = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            const formattedBalance = `₦${formatter.format(appState.currentUser.balance)}`;
-
-            if (appState.isBalanceHidden) {
-                balElement.textContent = "••••••";
-                assetsElement.textContent = "••••••";
-            } else {
-                balElement.textContent = formattedBalance;
-                assetsElement.textContent = formattedBalance;
-            }
-        }
-
-        function toggleBalanceMask() {
-            appState.isBalanceHidden = !appState.isBalanceHidden;
-            const eyeIcon = document.getElementById('balance-eye-icon');
-            if (appState.isBalanceHidden) {
-                eyeIcon.className = "fa-solid fa-eye-slash text-xs";
-            } else {
-                eyeIcon.className = "fa-solid fa-eye text-xs";
-            }
-            updateBalanceUI();
-        }
-
-        // Populate Me Tab Layout (Matches screenshot details)
-        function populateMePageDetails() {
-            document.getElementById('me-user-name').textContent = `Hi, ${appState.currentUser.name.toUpperCase()}`;
-            document.getElementById('me-user-phone').textContent = `+234 ${appState.currentUser.phone.slice(0,3)} ${appState.currentUser.phone.slice(3,6)} ${appState.currentUser.phone.slice(6)}`;
-            updateBalanceUI();
-
-            const miniList = document.getElementById('me-mini-transactions');
-            miniList.innerHTML = "";
-
-            const transactions = appState.currentUser.transactions || [];
-            if (transactions.length === 0) {
-                miniList.innerHTML = `<p class="text-[10px] text-brand-textGray text-center py-2">No transactions recorded.</p>`;
-            } else {
-                // Show up to the last 2 transactions to mimic screenshot style
-                transactions.slice(0, 2).forEach(t => {
-                    const color = t.type === 'deposit' ? 'text-emerald-500' : 'text-brand-textDark';
-                    const prefix = t.type === 'deposit' ? '+' : '-';
-                    const icon = t.type === 'deposit' ? 'fa-wallet text-emerald-500' : 'fa-mobile-retro text-brand-purple';
-                    
-                    const row = document.createElement('div');
-                    row.className = "flex justify-between items-center text-xs border-b border-slate-50 pb-2 last:border-b-0 last:pb-0";
-                    row.innerHTML = `
-                        <div class="flex items-center gap-2.5">
-                            <i class="fa-solid ${icon} text-[11px] opacity-85"></i>
-                            <div>
-                                <h5 class="font-bold text-brand-textDark text-[11px]">${t.title}</h5>
-                                <p class="text-[9px] text-brand-textGray font-semibold">${t.date}</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <span class="font-bold ${color}">${prefix} ₦ ${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-                            <p class="text-[8px] text-emerald-500 font-extrabold mt-0.5">Successful</p>
-                        </div>
-                    `;
-                    miniList.appendChild(row);
-                });
-            }
-        }
-
-        // Lockscreen Keypad Handlers
-        function resetPinState() {
-            appState.enteredPin = "";
-            updatePinDots();
-        }
-
-        function updatePinDots() {
-            const dots = document.querySelectorAll('.pin-dot');
-            dots.forEach((dot, idx) => {
-                if (idx < appState.enteredPin.length) {
-                    dot.className = "pin-dot w-3.5 h-3.5 rounded-full bg-white scale-110 shadow-lg shadow-white/30";
-                } else {
-                    dot.className = "pin-dot w-3.5 h-3.5 rounded-full border border-white/40 bg-transparent";
-                }
-            });
-        }
-
-        function pressPinKey(num) {
-            if (num === 'backspace') {
-                if (appState.enteredPin.length > 0) {
-                    appState.enteredPin = appState.enteredPin.slice(0, -1);
-                    updatePinDots();
-                    playTone(300, 'sine', 0.05);
-                }
-                return;
-            }
-            
-            if (appState.enteredPin.length < 4) {
-                appState.enteredPin += num;
-                updatePinDots();
-                playTone(400 + (appState.enteredPin.length * 50), 'sine', 0.05);
-
-                if (appState.enteredPin.length === 4) {
-                    setTimeout(() => {
-                        verifyPinCode();
-                    }, 200);
-                }
-            }
-        }
-
-        function verifyPinCode() {
-            if (appState.enteredPin === appState.currentUser.pin) {
-                playUnlockSound();
-                showToast("Access Authorized.");
-                initializeDashboard();
-                showPage('page-dashboard');
-            } else {
-                playErrorSound();
-                showToast("Incorrect security PIN.", "error");
-                resetPinState();
-            }
-        }
-
-        // Settings Modal Controls
-        function openSettingsModal() {
-            document.getElementById('modal-settings').classList.remove('hidden');
-            const bioToggle = document.getElementById('toggle-biometrics');
-            bioToggle.checked = localStorage.getItem('biometrics_enabled') === 'true';
-        }
-
-        // Handles Biometric Setting Toggle Control with Fallback Verification
-        async function handleBiometricsToggle(checkbox) {
-            if (checkbox.checked) {
-                // Biometrics activation triggered
-                const enrollmentSuccessful = await registerDeviceBiometrics();
-                if (enrollmentSuccessful) {
-                    localStorage.setItem('biometrics_enabled', 'true');
-                    showToast("Biometric verification active.");
-                } else {
-                    checkbox.checked = false;
-                    localStorage.setItem('biometrics_enabled', 'false');
-                }
-            } else {
-                localStorage.setItem('biometrics_enabled', 'false');
-                showToast("Biometric verification disabled.");
-            }
-        }
-
-        // Registers biometric credential using WebAuthn or clean local mock fallback
-        async function registerDeviceBiometrics() {
-            const isSecureContext = window.isSecureContext || window.location.hostname === 'localhost' || window.location.protocol === 'https:';
-            const hasWebAuthn = window.PublicKeyCredential;
-
-            if (isSecureContext && hasWebAuthn) {
-                try {
-                    const challenge = crypto.getRandomValues(new Uint8Array(32));
-                    const userId = crypto.getRandomValues(new Uint8Array(16));
-                    const username = appState.currentUser.phone;
-
-                    const options = {
-                        publicKey: {
-                            challenge: challenge,
-                            rp: { name: "PalmPay Replica", id: window.location.hostname },
-                            user: {
-                                id: userId,
-                                name: username,
-                                displayName: appState.currentUser.name
-                            },
-                            pubKeyCredParams: [{ type: "public-key", alg: -7 }],
-                            authenticatorSelection: {
-                                authenticatorAttachment: "platform",
-                                userVerification: "required"
-                            },
-                            timeout: 15000
-                        }
-                    };
-
-                    const credential = await navigator.credentials.create(options);
-                    if (credential) {
-                        const rawId = new Uint8Array(credential.rawId);
-                        const base64Id = btoa(String.fromCharCode(...rawId));
-                        localStorage.setItem("local_biometric_id", base64Id);
-                        return true;
-                    }
-                } catch (e) {
-                    console.warn("Hardware registration cancelled or failed. Emulating scan interface context.", e);
-                }
-            }
-
-            // Interactive Emulation Fallback
-            return new Promise((resolve) => {
-                const modal = document.getElementById('modal-biometric');
-                const statusText = document.getElementById('biometric-status');
-                
-                modal.classList.remove('hidden');
-                statusText.textContent = "Setting up hardware credential link...";
-                statusText.className = "text-xs font-bold text-brand-purple animate-pulse";
-
-                if ('vibrate' in navigator) navigator.vibrate([100]);
-
-                setTimeout(() => {
-                    statusText.textContent = "Scan Verified & Saved Locally.";
-                    statusText.className = "text-xs font-bold text-emerald-500 animate-none";
-                    playUnlockSound();
-                    
-                    setTimeout(() => {
-                        modal.classList.add('hidden');
-                        resolve(true);
-                    }, 800);
-                }, 2000);
-            });
-        }
-
-        // Biometric Scanning Execution Flow
-        async function triggerBiometricUnlock() {
-            const bioEnabled = localStorage.getItem('biometrics_enabled') === 'true';
-            if (!bioEnabled) {
-                showToast("Please enable Biometric Login in Me > Settings first!", "error");
-                return;
-            }
-
-            const modal = document.getElementById('modal-biometric');
-            const statusText = document.getElementById('biometric-status');
-            
-            modal.classList.remove('hidden');
-            statusText.textContent = "Authenticating fingerprint credentials...";
-            statusText.className = "text-xs font-bold text-brand-purple animate-pulse";
-
-            if ('vibrate' in navigator) navigator.vibrate([80, 50, 80]);
-
-            // Try real WebAuthn login handshake if saved credentials exist
-            const savedCredId = localStorage.getItem("local_biometric_id");
-            if (savedCredId && window.PublicKeyCredential) {
-                try {
-                    const challenge = crypto.getRandomValues(new Uint8Array(32));
-                    const rawId = Uint8Array.from(atob(savedCredId), c => c.charCodeAt(0));
-
-                    const options = {
-                        publicKey: {
-                            challenge: challenge,
-                            allowCredentials: [{ id: rawId, type: "public-key" }],
-                            userVerification: "required",
-                            timeout: 15000
-                        }
-                    };
-
-                    const assertion = await navigator.credentials.get(options);
-                    if (assertion) {
-                        statusText.textContent = "Fingerprint matched!";
-                        statusText.className = "text-xs font-bold text-emerald-500 animate-none";
-                        playUnlockSound();
-                        setTimeout(() => {
-                            modal.classList.add('hidden');
-                            initializeDashboard();
-                            showPage('page-dashboard');
-                        }, 500);
-                        return;
-                    }
-                } catch (e) {
-                    console.warn("Hardware assertion bypassed, falling back to simulated validation timeline.", e);
-                }
-            }
-
-            // Unified Emulator Timeline (If hardware fails or local dev context has no https)
-            setTimeout(() => {
-                if (modal.classList.contains('hidden')) return;
-                
-                statusText.textContent = "Biometric Match Confirmed.";
-                statusText.className = "text-xs font-bold text-emerald-500 animate-none";
-                playUnlockSound();
-                
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    initializeDashboard();
-                    showPage('page-dashboard');
-                }, 600);
-            }, 2200);
-        }
-
-        function cancelBiometricVerification() {
-            document.getElementById('modal-biometric').classList.add('hidden');
-            showToast("Fingerprint scanner dismissed.", "error");
-        }
-
-        // Money Deposit Execution Flows
-        function openDepositModal() {
-            document.getElementById('modal-deposit').classList.remove('hidden');
-        }
-
-        function setDepositQuick(amount) {
-            document.getElementById('deposit-amount').value = amount;
-        }
-
-        async function executeDeposit() {
-            const amountInput = document.getElementById('deposit-amount');
-            const amount = parseFloat(amountInput.value);
-
-            if (isNaN(amount) || amount <= 0) {
-                showToast("Please input a valid sum.", "error");
-                return;
-            }
-
-            appState.currentUser.balance += amount;
-            appState.currentUser.transactions.unshift({
-                id: 'TX-' + Date.now(),
-                type: 'deposit',
-                amount: amount,
-                date: new Date().toLocaleDateString(),
-                title: 'Account Deposit (Simulation)'
-            });
-
-            const success = await syncUsersToCloud();
-            if (success) {
-                showToast(`Deposited ₦${amount.toLocaleString()} successfully.`);
-                updateBalanceUI();
-                closeModal('modal-deposit');
-                amountInput.value = "";
-                if (!document.getElementById('tab-me').classList.contains('hidden')) {
-                    populateMePageDetails();
-                }
-            }
-        }
-
-        // Airtime Purchasing
-        function openAirtimeModal() {
-            document.getElementById('modal-airtime').classList.remove('hidden');
-        }
-
-        async function executeAirtimePurchase() {
-            const phoneInput = document.getElementById('airtime-phone');
-            const amountInput = document.getElementById('airtime-amount');
-            const phone = phoneInput.value.trim();
-            const amount = parseFloat(amountInput.value);
-
-            if (!phone || isNaN(amount) || amount <= 0) {
-                showToast("Invalid network top-up parameters.", "error");
-                return;
-            }
-
-            if (appState.currentUser.balance < amount) {
-                showToast("Insufficient Balance.", "error");
-                return;
-            }
-
-            appState.currentUser.balance -= amount;
-            appState.currentUser.transactions.unshift({
-                id: 'TX-' + Date.now(),
-                type: 'airtime',
-                amount: amount,
-                date: new Date().toLocaleDateString(),
-                title: `Airtime Sent (${phone})`
-            });
-
-            const success = await syncUsersToCloud();
-            if (success) {
-                showToast(`₦${amount.toLocaleString()} sent to ${phone}`);
-                updateBalanceUI();
-                closeModal('modal-airtime');
-                phoneInput.value = "";
-                amountInput.value = "";
-                if (!document.getElementById('tab-me').classList.contains('hidden')) {
-                    populateMePageDetails();
-                }
-            }
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
-        }
-
-        // Complete Session Reset (Pure Logout)
-        function logout() {
-            localStorage.removeItem('palmpay_current_phone');
-            localStorage.removeItem('biometrics_enabled');
-            localStorage.removeItem('local_biometric_id');
-            appState.currentUser = null;
-            closeModal('modal-settings');
-            showPage('page-gateway');
-            showToast("Logged out completely.");
-        }
-
-        // Register Secure Browser Offline PWA Shell
+        // ===== PWA / Manifest =====
         function registerSecurePWA() {
             const manifest = {
-                "short_name": "PalmPay",
-                "name": "PalmPay Portal",
-                "icons": [{
-                    "src": "https://cdn-icons-png.flaticon.com/512/10014/10014234.png",
-                    "type": "image/png",
-                    "sizes": "512x512"
-                }],
-                "start_url": ".",
-                "background_color": "#5F259F",
-                "theme_color": "#5F259F",
-                "display": "standalone",
-                "orientation": "portrait"
+                short_name: 'PalmPay',
+                name: 'PalmPay Portal',
+                icons: [{ src: 'https://cdn-icons-png.flaticon.com/512/10014/10014234.png', type: 'image/png',
+                    sizes: '512x512' }],
+                start_url: '.',
+                background_color: '#5F259F',
+                theme_color: '#5F259F',
+                display: 'standalone',
+                orientation: 'portrait'
             };
-            const stringManifest = JSON.stringify(manifest);
-            const blob = new Blob([stringManifest], {type: 'application/json'});
-            const manifestURL = URL.createObjectURL(blob);
-            document.querySelector('#manifest-placeholder').setAttribute('href', manifestURL);
+            const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+            document.querySelector('#manifest-placeholder').setAttribute('href', URL.createObjectURL(blob));
 
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
-                    const swContent = `
-                        const CACHE_NAME = 'palmpay-v2';
-                        const urlsToCache = ['/', 'index.html'];
-                        self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(urlsToCache))));
-                        self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
+                    const sw = `
+                        const CACHE='palmpay-v3';
+                        const URLS=['/','index.html'];
+                        self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(URLS))));
+                        self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));
                     `;
-                    const swBlob = new Blob([swContent], { type: 'application/javascript' });
-                    const swUrl = URL.createObjectURL(swBlob);
-                    navigator.serviceWorker.register(swUrl).catch(e => console.log('PWA Service bypassed.', e));
+                    const blob2 = new Blob([sw], { type: 'application/javascript' });
+                    navigator.serviceWorker.register(URL.createObjectURL(blob2)).catch(() => {});
                 });
             }
         }
 
-        // Load & Mount app
+        // ===== Init =====
         window.addEventListener('DOMContentLoaded', async () => {
             registerSecurePWA();
             const loaded = await fetchUsersFromCloud();
-            if (loaded) {
-                loadLocalSession();
-            }
+            if (loaded) loadLocalSession();
         });
     </script>
+
 </body>
-</html>
+                        </html>
