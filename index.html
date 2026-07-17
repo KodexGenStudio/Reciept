@@ -42,7 +42,6 @@
     </script>
 
     <style>
-        /* RESET & FULLSCREEN */
         * {
             margin: 0;
             padding: 0;
@@ -121,7 +120,6 @@
             z-index: 10;
         }
 
-        /* PAGE Z-INDEXES */
         #page-gateway {
             z-index: 50;
             background: #ffffff;
@@ -186,7 +184,6 @@
             transform: translateX(0) !important;
         }
 
-        /* LOCK SCREEN KEYPAD - FIXED ALIGNMENT */
         .lockscreen-content {
             display: flex;
             flex-direction: column;
@@ -217,7 +214,6 @@
             align-items: center;
             gap: 24px;
         }
-        /* Keypad grid - centered, proper phone layout */
         .keypad-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -321,7 +317,6 @@
             box-shadow: 0 0 16px rgba(255, 255, 255, 0.5);
         }
 
-        /* TOGGLE SWITCH */
         .toggle-track {
             width: 48px;
             height: 28px;
@@ -544,7 +539,6 @@
             font-size: 24px;
         }
 
-        /* Transfer flow */
         .bank-option {
             transition: background 0.15s ease;
             cursor: pointer;
@@ -723,7 +717,6 @@
             border-bottom: none;
         }
 
-        /* PIN verification overlay */
         .pin-verify-container {
             background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(12px);
@@ -810,6 +803,40 @@
         .pin-verify-box .cancel-btn:active {
             color: #fff;
         }
+
+        /* Account resolution loader */
+        .resolving-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #5F259F;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+        }
+
+        .bank-match-item {
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            margin-bottom: 8px;
+        }
+        .bank-match-item:active {
+            background: #f5f2ff;
+            border-color: #5F259F;
+        }
+        .bank-match-item .bank-name {
+            font-weight: 600;
+            font-size: 13px;
+            color: #1A1A1A;
+        }
+        .bank-match-item .account-info {
+            font-size: 11px;
+            color: #757575;
+        }
     </style>
 </head>
 <body>
@@ -883,7 +910,7 @@
                 </div>
             </div>
 
-            <!-- ===== PAGE: LOCK SCREEN (FIXED ALIGNMENT) ===== -->
+            <!-- ===== PAGE: LOCK SCREEN ===== -->
             <div id="page-lockscreen" class="page-layer">
                 <div class="lockscreen-content">
                     <div class="lockscreen-top">
@@ -1107,6 +1134,8 @@
                                 <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
                                     <label class="text-xs font-semibold text-brand-textGray">Enter 10-digit Account No.</label>
                                     <input type="text" id="transfer-account" maxlength="10" inputmode="numeric" pattern="[0-9]*" placeholder="8201633275" class="w-full mt-1 px-3 py-3 bg-brand-bgGray border-0 rounded-lg text-sm focus:ring-2 focus:ring-brand-purple outline-none font-semibold" />
+                                    
+                                    <!-- Bank selection -->
                                     <div class="mt-3">
                                         <label class="text-xs font-semibold text-brand-textGray">Select bank</label>
                                         <div class="relative mt-1">
@@ -1127,16 +1156,33 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="account-name-preview" class="mt-3 hidden">
+                                    
+                                    <!-- Account resolution results -->
+                                    <div id="account-resolution-area" class="mt-3 hidden">
+                                        <div class="flex items-center gap-2 text-xs text-brand-textGray mb-2">
+                                            <span class="resolving-spinner" id="resolving-spinner"></span>
+                                            <span id="resolution-status">Resolving account details...</span>
+                                        </div>
+                                        <div id="account-match-list" class="space-y-2">
+                                            <!-- Dynamic bank matches will appear here -->
+                                        </div>
+                                    </div>
+
+                                    <!-- Selected account preview -->
+                                    <div id="selected-account-preview" class="mt-3 hidden">
                                         <div class="flex items-center gap-3 p-3 bg-brand-lightPurple/40 rounded-lg border border-brand-purple/10">
-                                            <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple font-bold text-sm"><i class="fa-solid fa-user"></i></div>
+                                            <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple font-bold text-sm"><i class="fa-solid fa-check-circle"></i></div>
                                             <div>
-                                                <p class="text-xs font-bold text-brand-textDark" id="preview-account-name">Loading...</p>
-                                                <p class="text-[10px] text-brand-textGray"><span id="preview-account-number">---</span> • <span id="preview-bank-name">---</span></p>
+                                                <p class="text-xs font-bold text-brand-textDark" id="selected-account-name">---</p>
+                                                <p class="text-[10px] text-brand-textGray"><span id="selected-account-number">---</span> • <span id="selected-bank-name">---</span></p>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="account-name-error" class="mt-2 text-xs text-red-500 hidden">Failed to resolve account name. Please check the details.</div>
+
+                                    <div id="account-resolution-error" class="mt-2 text-xs text-red-500 hidden">
+                                        <i class="fa-solid fa-exclamation-circle mr-1"></i>
+                                        <span>Failed to resolve account. Please check the account number and try again.</span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -1193,8 +1239,8 @@
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple font-bold text-sm"><i class="fa-solid fa-user"></i></div>
                                     <div>
-                                        <p class="text-xs font-bold text-brand-textDark" id="step2-account-name">IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise</p>
-                                        <p class="text-[10px] text-brand-textGray"><span id="step2-account-number">8201633275</span> • <span id="step2-bank-name">Moniepoint</span></p>
+                                        <p class="text-xs font-bold text-brand-textDark" id="step2-account-name">---</p>
+                                        <p class="text-[10px] text-brand-textGray"><span id="step2-account-number">---</span> • <span id="step2-bank-name">---</span></p>
                                     </div>
                                 </div>
                             </div>
@@ -1236,29 +1282,29 @@
                                 <div class="flex items-center gap-3 mb-3">
                                     <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple font-bold text-sm"><i class="fa-solid fa-user"></i></div>
                                     <div>
-                                        <p class="text-xs font-bold text-brand-textDark" id="step3-account-name">IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise</p>
-                                        <p class="text-[10px] text-brand-textGray"><span id="step3-account-number">8201633275</span> • <span id="step3-bank-name">Moniepoint</span></p>
+                                        <p class="text-xs font-bold text-brand-textDark" id="step3-account-name">---</p>
+                                        <p class="text-[10px] text-brand-textGray"><span id="step3-account-number">---</span> • <span id="step3-bank-name">---</span></p>
                                     </div>
                                 </div>
                                 <div class="flex justify-between items-center py-2 border-t border-slate-100">
                                     <span class="text-sm text-brand-textGray">Amount</span>
-                                    <span class="text-sm font-bold text-brand-textDark" id="step3-amount">₦1,000.00</span>
+                                    <span class="text-sm font-bold text-brand-textDark" id="step3-amount">₦0.00</span>
                                 </div>
                                 <div class="flex justify-between items-center py-2 border-t border-slate-100">
                                     <span class="text-sm text-brand-textGray">Fee</span>
-                                    <span class="text-sm font-bold text-green-600" id="step3-fee">₦10.00  <span class="text-green-600 line-through text-xs opacity-60">₦0.00</span></span>
+                                    <span class="text-sm font-bold text-green-600" id="step3-fee">₦0.00</span>
                                 </div>
                                 <div class="flex justify-between items-center py-2 border-t border-slate-100">
                                     <span class="text-sm text-brand-textGray">Account Number</span>
-                                    <span class="text-sm font-bold text-brand-textDark" id="step3-acc-num">8201633275</span>
+                                    <span class="text-sm font-bold text-brand-textDark" id="step3-acc-num">---</span>
                                 </div>
                                 <div class="flex justify-between items-center py-2 border-t border-slate-100">
                                     <span class="text-sm text-brand-textGray">Name</span>
-                                    <span class="text-sm font-bold text-brand-textDark text-right max-w-[60%]" id="step3-acc-name">IJE-DIJI VIVIAN ENTERPRISES - Vivian enter...</span>
+                                    <span class="text-sm font-bold text-brand-textDark text-right max-w-[60%]" id="step3-acc-name">---</span>
                                 </div>
                                 <div class="flex justify-between items-center py-2 border-t border-slate-100">
                                     <span class="text-sm text-brand-textGray">Bank</span>
-                                    <span class="text-sm font-bold text-brand-textDark" id="step3-bank">Moniepoint</span>
+                                    <span class="text-sm font-bold text-brand-textDark" id="step3-bank">---</span>
                                 </div>
                             </div>
                             <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100 mb-4">
@@ -1283,7 +1329,7 @@
                 </div>
             </div>
 
-            <!-- ===== PAGE: PIN VERIFICATION (fallback) ===== -->
+            <!-- ===== PAGE: PIN VERIFICATION ===== -->
             <div id="page-pin-verify" class="page-layer">
                 <div class="pin-verify-container">
                     <div class="pin-verify-box">
@@ -1326,21 +1372,21 @@
                         <div class="receipt-logo mx-auto">
                             <img src="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png" alt="PalmPay" class="app-logo-img" onerror="this.style.display='none'; this.parentElement.classList.add('app-logo-placeholder'); this.parentElement.textContent='P';" />
                         </div>
-                        <h2 class="text-2xl font-black text-brand-textDark" id="receipt-amount">₦1,250.00</h2>
+                        <h2 class="text-2xl font-black text-brand-textDark" id="receipt-amount">₦0.00</h2>
                         <div class="flex items-center justify-center gap-2 mt-1">
                             <span class="status-badge">Successful Transaction</span>
                         </div>
-                        <p class="text-xs text-brand-textGray mt-1" id="receipt-date">Jul 16, 2026 11:28:11 AM</p>
+                        <p class="text-xs text-brand-textGray mt-1" id="receipt-date">---</p>
                         <div class="mt-6 text-left">
-                            <div class="receipt-line"><span class="label">Recipient:</span><span class="value" id="receipt-recipient">IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise</span></div>
-                            <div class="receipt-line"><span class="label"></span><span class="value text-sm font-normal text-brand-textGray" id="receipt-recipient-detail">Moniepoint | 820 163 3275</span></div>
-                            <div class="receipt-line mt-3"><span class="label">Sender:</span><span class="value" id="receipt-sender">CHIZOBA ONYEMA</span></div>
-                            <div class="receipt-line"><span class="label"></span><span class="value text-sm font-normal text-brand-textGray" id="receipt-sender-detail">PalmPay | 906***4954</span></div>
+                            <div class="receipt-line"><span class="label">Recipient:</span><span class="value" id="receipt-recipient">---</span></div>
+                            <div class="receipt-line"><span class="label"></span><span class="value text-sm font-normal text-brand-textGray" id="receipt-recipient-detail">---</span></div>
+                            <div class="receipt-line mt-3"><span class="label">Sender:</span><span class="value" id="receipt-sender">---</span></div>
+                            <div class="receipt-line"><span class="label"></span><span class="value text-sm font-normal text-brand-textGray" id="receipt-sender-detail">---</span></div>
                         </div>
                         <div class="mt-6 pt-4 border-t border-slate-100">
                             <div class="receipt-line"><span class="label">Transaction Type</span><span class="value">Bank Transfer</span></div>
-                            <div class="receipt-line"><span class="label">Transaction ID</span><span class="value text-xs font-mono" id="receipt-tx-id">03370l5ld103</span></div>
-                            <div class="receipt-line"><span class="label">Session ID</span><span class="value text-xs font-mono" id="receipt-session-id">100033260716102</span></div>
+                            <div class="receipt-line"><span class="label">Transaction ID</span><span class="value text-xs font-mono" id="receipt-tx-id">---</span></div>
+                            <div class="receipt-line"><span class="label">Session ID</span><span class="value text-xs font-mono" id="receipt-session-id">---</span></div>
                         </div>
                         <div class="mt-6 pt-4 border-t border-slate-100">
                             <p class="text-xs text-brand-textGray">Enjoy Seamless and Unlimited Free Transfers to All Banks.</p>
@@ -1835,69 +1881,43 @@
         });
 
         // ================================================================
-        // ===== MONNIFY API INTEGRATION =====
+        // ===== ACCOUNT RESOLUTION WITH MULTI-BANK SUPPORT =====
         // ================================================================
 
-        const MONNIFY_API_KEY = 'MK_TEST_HVGMDBEU66';
-        const MONNIFY_SECRET_KEY = 'E35B7MUYXL4TQ2PGC2EC9JUZXMWHYJYJ';
-        const MONNIFY_BASE_URL = 'https://sandbox.monnify.com';
+        // Extended mock database with multiple banks per account number
+        const accountDatabase = {
+            '8201633275': [
+                { bank: 'Moniepoint', name: 'IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise' },
+                { bank: 'OPay', name: 'VIVIAN ENTERPRISES LTD' },
+            ],
+            '8134013878': [
+                { bank: 'OPay', name: 'AYOTOLA OLUWATOBILOBA ALAMU' },
+                { bank: 'Moniepoint', name: 'AYOTOLA ALAMU' },
+            ],
+            '8058746952': [
+                { bank: 'OPay', name: 'FAVOUR STEVE -EMOKINIOVO' },
+            ],
+            '8052241166': [
+                { bank: 'OPay', name: 'PHILO OGHENEOVO EVENT' },
+            ],
+            '8454383041': [
+                { bank: 'Wema Bank', name: 'CNL/CODAPAYMENTSNGBANKTR' },
+            ],
+            '9153307641': [
+                { bank: 'Moniepoint', name: 'FLORENCE OGHENEMUDIAKEWVE OYIBOCHA' },
+            ],
+            '9061234567': [
+                { bank: 'GTBank', name: 'CHIZOBA ONYEMA' },
+                { bank: 'Access Bank', name: 'CHIZOBA ONYEMA' },
+            ],
+            '1234567890': [
+                { bank: 'First Bank', name: 'TEST ACCOUNT HOLDER' },
+                { bank: 'UBA', name: 'TEST UBA ACCOUNT' },
+                { bank: 'Zenith Bank', name: 'TEST ZENITH ACCOUNT' },
+            ],
+        };
 
-        let monnifyToken = null;
-        let tokenExpiry = 0;
-
-        async function getMonnifyToken() {
-            if (monnifyToken && Date.now() < tokenExpiry) return monnifyToken;
-            try {
-                const auth = btoa(`${MONNIFY_API_KEY}:${MONNIFY_SECRET_KEY}`);
-                const res = await fetch(`${MONNIFY_BASE_URL}/api/v1/auth/login`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/json' }
-                });
-                if (!res.ok) throw new Error('Auth failed');
-                const data = await res.json();
-                if (data.responseBody && data.responseBody.accessToken) {
-                    monnifyToken = data.responseBody.accessToken;
-                    tokenExpiry = Date.now() + 3500000; // ~1 hour
-                    return monnifyToken;
-                }
-                throw new Error('No token');
-            } catch (e) {
-                console.warn('Monnify auth error:', e);
-                return null;
-            }
-        }
-
-        async function resolveAccountWithMonnify(accountNumber, bankCode) {
-            try {
-                const token = await getMonnifyToken();
-                if (!token) throw new Error('No token');
-
-                const res = await fetch(`${MONNIFY_BASE_URL}/api/v1/merchant/bank-accounts/resolve`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ accountNumber, bankCode })
-                });
-
-                if (!res.ok) {
-                    const errText = await res.text();
-                    throw new Error(`API error: ${res.status} - ${errText}`);
-                }
-
-                const data = await res.json();
-                if (data.responseBody && data.responseBody.accountName) {
-                    return data.responseBody.accountName;
-                }
-                throw new Error('No account name in response');
-            } catch (e) {
-                console.warn('Monnify resolve error:', e);
-                return null;
-            }
-        }
-
-        // Bank code mapping
+        // Real bank codes for Monnify (sandbox)
         const bankCodeMap = {
             'Moniepoint': '030',
             'OPay': '038',
@@ -1909,6 +1929,242 @@
             'Zenith Bank': '057',
             'PalmPay': '999'
         };
+
+        let isResolving = false;
+        let selectedBankMatch = null;
+
+        async function resolveAccountNumber(accountNumber) {
+            if (isResolving) return;
+            isResolving = true;
+
+            const area = document.getElementById('account-resolution-area');
+            const list = document.getElementById('account-match-list');
+            const error = document.getElementById('account-resolution-error');
+            const status = document.getElementById('resolution-status');
+            const spinner = document.getElementById('resolving-spinner');
+            const preview = document.getElementById('selected-account-preview');
+
+            // Show loading
+            area.classList.remove('hidden');
+            error.classList.add('hidden');
+            preview.classList.add('hidden');
+            list.innerHTML = '';
+            spinner.style.display = 'inline-block';
+            status.textContent = 'Resolving account details...';
+
+            try {
+                // First try Monnify API with multiple banks
+                const results = await tryMonnifyResolution(accountNumber);
+
+                if (results && results.length > 0) {
+                    // Show matches
+                    list.innerHTML = '';
+                    results.forEach((match, index) => {
+                        const div = document.createElement('div');
+                        div.className = 'bank-match-item';
+                        div.innerHTML = `
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="bank-name">${match.bank}</div>
+                                    <div class="account-info">${match.name}</div>
+                                    <div class="account-info text-[10px] text-brand-textGray">${accountNumber}</div>
+                                </div>
+                                <button class="text-brand-purple text-xs font-bold px-3 py-1 rounded-full border border-brand-purple/30 hover:bg-brand-lightPurple transition-all" onclick="selectBankMatch(${index})">Select</button>
+                            </div>
+                        `;
+                        list.appendChild(div);
+                    });
+                    status.textContent = `${results.length} account(s) found. Select one to continue.`;
+                    spinner.style.display = 'none';
+                } else {
+                    // Try local database
+                    const localMatches = accountDatabase[accountNumber] || [];
+                    if (localMatches.length > 0) {
+                        localMatches.forEach((match, index) => {
+                            const div = document.createElement('div');
+                            div.className = 'bank-match-item';
+                            div.innerHTML = `
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <div class="bank-name">${match.bank}</div>
+                                        <div class="account-info">${match.name}</div>
+                                        <div class="account-info text-[10px] text-brand-textGray">${accountNumber}</div>
+                                    </div>
+                                    <button class="text-brand-purple text-xs font-bold px-3 py-1 rounded-full border border-brand-purple/30 hover:bg-brand-lightPurple transition-all" onclick="selectLocalBankMatch('${match.bank}', '${match.name}')">Select</button>
+                                </div>
+                            `;
+                            list.appendChild(div);
+                        });
+                        status.textContent = `${localMatches.length} account(s) found in local database.`;
+                        spinner.style.display = 'none';
+                    } else {
+                        // No matches found - show error
+                        error.classList.remove('hidden');
+                        error.innerHTML = '<i class="fa-solid fa-exclamation-circle mr-1"></i> No account found. Please verify the account number.';
+                        status.textContent = 'No accounts found.';
+                        spinner.style.display = 'none';
+                    }
+                }
+            } catch (e) {
+                error.classList.remove('hidden');
+                error.innerHTML = '<i class="fa-solid fa-exclamation-circle mr-1"></i> Error resolving account. Please try again.';
+                status.textContent = 'Error occurred.';
+                spinner.style.display = 'none';
+            } finally {
+                isResolving = false;
+            }
+        }
+
+        // Try Monnify API with multiple banks
+        async function tryMonnifyResolution(accountNumber) {
+            const results = [];
+            const banks = ['Moniepoint', 'OPay', 'Wema Bank', 'GTBank', 'Access Bank', 'First Bank', 'UBA', 'Zenith Bank'];
+
+            for (const bank of banks) {
+                try {
+                    const token = await getMonnifyToken();
+                    if (!token) continue;
+
+                    const code = bankCodeMap[bank] || '030';
+                    const res = await fetch(`https://sandbox.monnify.com/api/v1/merchant/bank-accounts/resolve`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ accountNumber, bankCode: code })
+                    });
+
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.responseBody && data.responseBody.accountName) {
+                            results.push({
+                                bank: bank,
+                                name: data.responseBody.accountName
+                            });
+                            // Break early if we found multiple matches
+                            if (results.length >= 2) break;
+                        }
+                    }
+                } catch (e) {
+                    // Continue to next bank
+                    continue;
+                }
+            }
+
+            return results;
+        }
+
+        // Monnify token cache
+        let monnifyToken = null;
+        let tokenExpiry = 0;
+
+        async function getMonnifyToken() {
+            if (monnifyToken && Date.now() < tokenExpiry) return monnifyToken;
+            try {
+                const auth = btoa(`MK_TEST_HVGMDBEU66:E35B7MUYXL4TQ2PGC2EC9JUZXMWHYJYJ`);
+                const res = await fetch('https://sandbox.monnify.com/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/json' }
+                });
+                if (!res.ok) throw new Error('Auth failed');
+                const data = await res.json();
+                if (data.responseBody && data.responseBody.accessToken) {
+                    monnifyToken = data.responseBody.accessToken;
+                    tokenExpiry = Date.now() + 3500000;
+                    return monnifyToken;
+                }
+                return null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // Select bank match from Monnify results
+        let monnifyResults = [];
+
+        function selectBankMatch(index) {
+            const list = document.getElementById('account-match-list');
+            const items = list.querySelectorAll('.bank-match-item');
+            if (items[index]) {
+                const bankName = items[index].querySelector('.bank-name')?.textContent || '';
+                const accountName = items[index].querySelector('.account-info')?.textContent || '';
+                selectAccount(bankName, accountName);
+            }
+        }
+
+        function selectLocalBankMatch(bank, name) {
+            selectAccount(bank, name);
+        }
+
+        function selectAccount(bank, name) {
+            const account = document.getElementById('transfer-account').value.trim();
+            transferData.bank = bank;
+            transferData.bankCode = bankCodeMap[bank] || '030';
+            transferData.account = account;
+            transferData.accountName = name;
+
+            // Update preview
+            document.getElementById('selected-account-name').textContent = name;
+            document.getElementById('selected-account-number').textContent = account;
+            document.getElementById('selected-bank-name').textContent = bank;
+            document.getElementById('selected-account-preview').classList.remove('hidden');
+
+            // Hide resolution area
+            document.getElementById('account-resolution-area').classList.add('hidden');
+
+            // Enable next button
+            document.getElementById('transfer-next-1').disabled = false;
+
+            showToast(`Selected: ${name} (${bank})`, 'success');
+        }
+
+        // Account input listener
+        document.addEventListener('DOMContentLoaded', function() {
+            const accInput = document.getElementById('transfer-account');
+            if (accInput) {
+                accInput.addEventListener('input', function() {
+                    this.value = this.value.replace(/\D/g, '').slice(0, 10);
+                    transferData.account = this.value;
+
+                    // Hide previous results
+                    document.getElementById('account-resolution-area').classList.add('hidden');
+                    document.getElementById('selected-account-preview').classList.add('hidden');
+                    document.getElementById('account-resolution-error').classList.add('hidden');
+                    document.getElementById('transfer-next-1').disabled = true;
+
+                    // Auto-resolve when 10 digits are entered
+                    if (this.value.length === 10) {
+                        resolveAccountNumber(this.value);
+                    }
+                });
+            }
+        });
+
+        // ===== BANK DROPDOWN =====
+        function toggleBankDropdown() {
+            const dd = document.getElementById('bank-dropdown');
+            dd.classList.toggle('hidden');
+        }
+
+        // Bank option click handler
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.bank-option[data-bank]').forEach(el => {
+                el.addEventListener('click', function() {
+                    const bank = this.dataset.bank;
+                    const code = this.dataset.code;
+                    document.getElementById('selected-bank-label').textContent = bank;
+                    document.getElementById('selected-bank-label').className = 'text-brand-textDark font-semibold';
+                    document.getElementById('bank-dropdown').classList.add('hidden');
+
+                    // If account number is already entered, re-resolve
+                    const account = document.getElementById('transfer-account').value.trim();
+                    if (account.length === 10) {
+                        resolveAccountNumber(account);
+                    }
+                });
+            });
+        });
 
         // ================================================================
         // ===== TRANSFER FLOW =====
@@ -1922,20 +2178,16 @@
             amount: 0,
             note: '',
             fee: 0,
-            recipient: '',
-            bankDisplay: ''
         };
 
-        let isResolvingAccount = false;
-
         function openTransferFlow() {
-            transferData = { account: '', bank: '', bankCode: '', accountName: '', amount: 0, note: '', fee: 0,
-                recipient: '', bankDisplay: '' };
+            transferData = { account: '', bank: '', bankCode: '', accountName: '', amount: 0, note: '', fee: 0 };
             document.getElementById('transfer-account').value = '';
             document.getElementById('selected-bank-label').textContent = 'Select bank';
             document.getElementById('selected-bank-label').className = 'text-brand-textGray';
-            document.getElementById('account-name-preview').classList.add('hidden');
-            document.getElementById('account-name-error').classList.add('hidden');
+            document.getElementById('selected-account-preview').classList.add('hidden');
+            document.getElementById('account-resolution-area').classList.add('hidden');
+            document.getElementById('account-resolution-error').classList.add('hidden');
             document.getElementById('transfer-next-1').disabled = true;
             document.getElementById('transfer-amount-input').value = '';
             document.getElementById('transfer-note').value = '';
@@ -1944,7 +2196,7 @@
             goToTransferStep(1);
             updateBalanceUI();
             document.getElementById('bank-dropdown').classList.add('hidden');
-            isResolvingAccount = false;
+            document.getElementById('account-match-list').innerHTML = '';
         }
 
         function closeTransferFlow() {
@@ -1964,8 +2216,7 @@
                 const formatted =
                     `₦${amt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
                 document.getElementById('step3-amount').textContent = formatted;
-                document.getElementById('step3-fee').innerHTML =
-                    `₦${transferData.fee.toFixed(2)}  <span class="text-green-600 line-through text-xs opacity-60">₦0.00</span>`;
+                document.getElementById('step3-fee').innerHTML = `₦${transferData.fee.toFixed(2)}`;
                 document.getElementById('step3-acc-num').textContent = transferData.account;
                 document.getElementById('step3-acc-name').textContent = transferData.accountName.length > 30 ? transferData
                     .accountName.slice(0, 30) + '...' : transferData.accountName;
@@ -1985,115 +2236,6 @@
             }
         }
 
-        function toggleBankDropdown() {
-            const dd = document.getElementById('bank-dropdown');
-            dd.classList.toggle('hidden');
-        }
-
-        function selectBank(bank, code) {
-            transferData.bank = bank;
-            transferData.bankCode = code || bankCodeMap[bank] || '030';
-            document.getElementById('selected-bank-label').textContent = bank;
-            document.getElementById('selected-bank-label').className = 'text-brand-textDark font-semibold';
-            document.getElementById('bank-dropdown').classList.add('hidden');
-            checkAccountAndBank();
-        }
-
-        // Bank option click handler
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.bank-option[data-bank]').forEach(el => {
-                el.addEventListener('click', function() {
-                    const bank = this.dataset.bank;
-                    const code = this.dataset.code;
-                    selectBank(bank, code);
-                });
-            });
-        });
-
-        async function checkAccountAndBank() {
-            const account = document.getElementById('transfer-account').value.trim();
-            transferData.account = account;
-            if (account.length === 10 && transferData.bank && transferData.bankCode) {
-                await resolveAccountName(account, transferData.bankCode);
-            } else {
-                document.getElementById('account-name-preview').classList.add('hidden');
-                document.getElementById('account-name-error').classList.add('hidden');
-                document.getElementById('transfer-next-1').disabled = true;
-            }
-        }
-
-        async function resolveAccountName(account, bankCode) {
-            if (isResolvingAccount) return;
-            isResolvingAccount = true;
-            const preview = document.getElementById('account-name-preview');
-            const errorEl = document.getElementById('account-name-error');
-            const nameEl = document.getElementById('preview-account-name');
-            const numEl = document.getElementById('preview-account-number');
-            const bankEl = document.getElementById('preview-bank-name');
-
-            // Show loading state
-            preview.classList.remove('hidden');
-            errorEl.classList.add('hidden');
-            nameEl.textContent = 'Loading account name...';
-            numEl.textContent = account;
-            bankEl.textContent = transferData.bank;
-
-            try {
-                // Try Monnify API
-                const result = await resolveAccountWithMonnify(account, bankCode);
-                if (result) {
-                    transferData.accountName = result;
-                    nameEl.textContent = result;
-                    document.getElementById('transfer-next-1').disabled = false;
-                } else {
-                    // Fallback to mock data
-                    const mockNames = {
-                        '8201633275': 'IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise',
-                        '8134013878': 'AYOTOLA OLUWATOBILOBA ALAMU',
-                        '8058746952': 'FAVOUR STEVE -EMOKINIOVO',
-                        '8052241166': 'PHILO OGHENEOVO EVENT',
-                        '8454383041': 'CNL/CODAPAYMENTSNGBANKTR',
-                        '9153307641': 'FLORENCE OGHENEMUDIAKEWVE OYIBOCHA'
-                    };
-                    const fallback = mockNames[account] || `${transferData.bank} Account Holder`;
-                    transferData.accountName = fallback;
-                    nameEl.textContent = fallback;
-                    document.getElementById('transfer-next-1').disabled = false;
-                    // Show a subtle indication that we used fallback
-                    showToast('Account resolved using local data.', 'success');
-                }
-            } catch (e) {
-                // Fallback to mock
-                const mockNames = {
-                    '8201633275': 'IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise',
-                    '8134013878': 'AYOTOLA OLUWATOBILOBA ALAMU',
-                    '8058746952': 'FAVOUR STEVE -EMOKINIOVO',
-                    '8052241166': 'PHILO OGHENEOVO EVENT',
-                    '8454383041': 'CNL/CODAPAYMENTSNGBANKTR',
-                    '9153307641': 'FLORENCE OGHENEMUDIAKEWVE OYIBOCHA'
-                };
-                const fallback = mockNames[account] || `${transferData.bank} Account Holder`;
-                transferData.accountName = fallback;
-                nameEl.textContent = fallback;
-                document.getElementById('transfer-next-1').disabled = false;
-                showToast('Account resolved using local data.', 'success');
-            } finally {
-                isResolvingAccount = false;
-            }
-        }
-
-        // Account input listener
-        document.addEventListener('DOMContentLoaded', function() {
-            const accInput = document.getElementById('transfer-account');
-            if (accInput) {
-                accInput.addEventListener('input', function() {
-                    this.value = this.value.replace(/\D/g, '').slice(0, 10);
-                    transferData.account = this.value;
-                    checkAccountAndBank();
-                });
-            }
-        });
-
         function fillRecentAccount(bank, name, account) {
             transferData.bank = bank;
             transferData.bankCode = bankCodeMap[bank] || '030';
@@ -2102,14 +2244,16 @@
             document.getElementById('transfer-account').value = account;
             document.getElementById('selected-bank-label').textContent = bank;
             document.getElementById('selected-bank-label').className = 'text-brand-textDark font-semibold';
-            document.getElementById('preview-account-name').textContent = name;
-            document.getElementById('preview-account-number').textContent = account;
-            document.getElementById('preview-bank-name').textContent = bank;
-            document.getElementById('account-name-preview').classList.remove('hidden');
-            document.getElementById('account-name-error').classList.add('hidden');
+            document.getElementById('selected-account-name').textContent = name;
+            document.getElementById('selected-account-number').textContent = account;
+            document.getElementById('selected-bank-name').textContent = bank;
+            document.getElementById('selected-account-preview').classList.remove('hidden');
+            document.getElementById('account-resolution-area').classList.add('hidden');
+            document.getElementById('account-resolution-error').classList.add('hidden');
             document.getElementById('transfer-next-1').disabled = false;
             document.getElementById('bank-dropdown').classList.add('hidden');
             switchTransferTab('recent', document.querySelector('.tab-bar .tab-btn.active'));
+            showToast(`Selected: ${name}`, 'success');
         }
 
         function switchTransferTab(tab, btn) {
@@ -2166,13 +2310,11 @@
             const total = amt + transferData.fee;
             if (total > appState.currentUser.balance) { showToast('Insufficient balance. Please add money.', 'error'); return; }
 
-            // Check if WebAuthn is available and registered
             const hasWA = !!window.PublicKeyCredential;
             const savedId = localStorage.getItem('local_biometric_id');
             const isBiometricEnabled = localStorage.getItem('palmpay_biometric') === 'true';
 
             if (hasWA && savedId && isBiometricEnabled && !savedId.startsWith('mock_')) {
-                // Use WebAuthn for payment confirmation
                 try {
                     showLoading(true);
                     const challenge = crypto.getRandomValues(new Uint8Array(32));
@@ -2198,17 +2340,15 @@
                 } catch (e) {
                     showLoading(false);
                     console.warn('WebAuthn payment error:', e);
-                    // Fallback to PIN
                     showToast('Fingerprint failed. Use PIN.', 'error');
                     showPinVerification();
                 }
             } else {
-                // Fallback to PIN
                 showPinVerification();
             }
         }
 
-        // ===== PIN VERIFICATION (fallback) =====
+        // ===== PIN VERIFICATION =====
         let verifyPinState = '';
 
         function showPinVerification() {
@@ -2225,7 +2365,6 @@
                 return;
             }
             if (key === 'fingerprint') {
-                // Try WebAuthn again from PIN screen
                 document.getElementById('page-pin-verify').classList.remove('page-visible');
                 confirmTransferWithWebAuthn();
                 return;
@@ -2352,7 +2491,6 @@
         // ===== KEYPAD EVENT BINDING =====
         // ================================================================
         document.addEventListener('DOMContentLoaded', function() {
-            // Lock screen keypad
             document.querySelectorAll('#page-lockscreen .key-btn').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -2366,17 +2504,12 @@
             document.getElementById('forgotPinBtn').addEventListener('click', function(e) { e.stopPropagation();
                 alert('Contact support to reset your PIN.'); });
 
-            // Transfer step 1 next button
             document.getElementById('transfer-next-1').addEventListener('click', function() {
                 if (!this.disabled) {
-                    const account = document.getElementById('transfer-account').value.trim();
-                    if (account.length === 10 && transferData.bank && transferData.accountName) {
-                        goToTransferStep(2);
-                    }
+                    goToTransferStep(2);
                 }
             });
 
-            // Close bank dropdown on outside click
             document.addEventListener('click', function(e) {
                 const dd = document.getElementById('bank-dropdown');
                 const btn = document.getElementById('bank-selector-btn');
@@ -2404,13 +2537,12 @@
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     const sw =
-                        `const C='palmpay-v9';const U=['/','index.html'];self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(U))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
+                        `const C='palmpay-v10';const U=['/','index.html'];self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(U))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
                     const b2 = new Blob([sw], { type: 'application/javascript' });
                     navigator.serviceWorker.register(URL.createObjectURL(b2)).catch(() => {});
                 });
             }
 
-            // Init
             fetchUsers().then(loaded => {
                 if (loaded) { loadLocalSession();
                     loadToggleStates(); }
@@ -2419,4 +2551,4 @@
     </script>
 
 </body>
-                                </html>
+    </html>
