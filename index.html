@@ -804,7 +804,7 @@
             color: #fff;
         }
 
-        /* Account resolution loader */
+        /* Resolution styles */
         .resolving-spinner {
             display: inline-block;
             width: 16px;
@@ -816,24 +816,29 @@
             margin-right: 8px;
         }
 
-        .bank-match-item {
-            padding: 10px 14px;
-            border-radius: 10px;
+        .account-preview-card {
+            padding: 12px 16px;
+            border-radius: 12px;
             border: 1px solid #e5e7eb;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            margin-bottom: 8px;
+            background: #fafafa;
+            transition: all 0.2s ease;
         }
-        .bank-match-item:active {
-            background: #f5f2ff;
+        .account-preview-card.resolved {
             border-color: #5F259F;
+            background: #f5f2ff;
         }
-        .bank-match-item .bank-name {
+        .account-preview-card .bank-name {
             font-weight: 600;
             font-size: 13px;
             color: #1A1A1A;
         }
-        .bank-match-item .account-info {
+        .account-preview-card .account-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1A1A1A;
+            margin-top: 2px;
+        }
+        .account-preview-card .account-number {
             font-size: 11px;
             color: #757575;
         }
@@ -1132,56 +1137,73 @@
                                     <span class="text-[10px] text-brand-textGray ml-auto">Unlimited transfers with 0 fees ></span>
                                 </div>
                                 <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-                                    <label class="text-xs font-semibold text-brand-textGray">Enter 10-digit Account No.</label>
-                                    <input type="text" id="transfer-account" maxlength="10" inputmode="numeric" pattern="[0-9]*" placeholder="8201633275" class="w-full mt-1 px-3 py-3 bg-brand-bgGray border-0 rounded-lg text-sm focus:ring-2 focus:ring-brand-purple outline-none font-semibold" />
-                                    
-                                    <!-- Bank selection -->
-                                    <div class="mt-3">
-                                        <label class="text-xs font-semibold text-brand-textGray">Select bank</label>
+                                    <!-- Bank Selection -->
+                                    <div class="mb-3">
+                                        <label class="text-xs font-semibold text-brand-textGray">Select Bank</label>
                                         <div class="relative mt-1">
                                             <button id="bank-selector-btn" onclick="toggleBankDropdown()" class="w-full px-3 py-3 bg-brand-bgGray border-0 rounded-lg text-sm flex items-center justify-between focus:ring-2 focus:ring-brand-purple outline-none font-semibold text-left">
                                                 <span id="selected-bank-label" class="text-brand-textGray">Select bank</span>
                                                 <i class="fa-solid fa-chevron-down text-xs text-brand-textGray"></i>
                                             </button>
-                                            <div id="bank-dropdown" class="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-lg border border-slate-100 z-20 hidden max-h-48 overflow-y-auto">
+                                            <div id="bank-dropdown" class="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-lg border border-slate-100 z-20 hidden max-h-52 overflow-y-auto">
                                                 <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="Moniepoint" data-code="030">Moniepoint</div>
                                                 <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="OPay" data-code="038">OPay</div>
-                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="Wema Bank" data-code="035">Wema Bank</div>
+                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="PalmPay" data-code="999">PalmPay</div>
                                                 <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="GTBank" data-code="058">GTBank</div>
                                                 <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="Access Bank" data-code="044">Access Bank</div>
                                                 <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="First Bank" data-code="011">First Bank</div>
                                                 <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="UBA" data-code="033">UBA</div>
                                                 <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="Zenith Bank" data-code="057">Zenith Bank</div>
-                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="PalmPay" data-code="999">PalmPay</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Account resolution results -->
-                                    <div id="account-resolution-area" class="mt-3 hidden">
-                                        <div class="flex items-center gap-2 text-xs text-brand-textGray mb-2">
-                                            <span class="resolving-spinner" id="resolving-spinner"></span>
-                                            <span id="resolution-status">Resolving account details...</span>
-                                        </div>
-                                        <div id="account-match-list" class="space-y-2">
-                                            <!-- Dynamic bank matches will appear here -->
-                                        </div>
-                                    </div>
-
-                                    <!-- Selected account preview -->
-                                    <div id="selected-account-preview" class="mt-3 hidden">
-                                        <div class="flex items-center gap-3 p-3 bg-brand-lightPurple/40 rounded-lg border border-brand-purple/10">
-                                            <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple font-bold text-sm"><i class="fa-solid fa-check-circle"></i></div>
-                                            <div>
-                                                <p class="text-xs font-bold text-brand-textDark" id="selected-account-name">---</p>
-                                                <p class="text-[10px] text-brand-textGray"><span id="selected-account-number">---</span> • <span id="selected-bank-name">---</span></p>
+                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="Wema Bank" data-code="035">Wema Bank</div>
+                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="Sterling Bank" data-code="232">Sterling Bank</div>
+                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="FCMB" data-code="214">FCMB</div>
+                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="Union Bank" data-code="032">Union Bank</div>
+                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="Ecobank" data-code="050">Ecobank</div>
+                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="Fidelity Bank" data-code="070">Fidelity Bank</div>
+                                                <div class="bank-option px-4 py-3 text-sm hover:bg-brand-lightPurple" data-bank="Stanbic IBTC" data-code="221">Stanbic IBTC</div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div id="account-resolution-error" class="mt-2 text-xs text-red-500 hidden">
-                                        <i class="fa-solid fa-exclamation-circle mr-1"></i>
-                                        <span>Failed to resolve account. Please check the account number and try again.</span>
+                                    <!-- Account Number -->
+                                    <div class="mb-3">
+                                        <label class="text-xs font-semibold text-brand-textGray">Enter 10-digit Account No.</label>
+                                        <input type="text" id="transfer-account" maxlength="10" inputmode="numeric" pattern="[0-9]*" placeholder="8201633275" class="w-full mt-1 px-3 py-3 bg-brand-bgGray border-0 rounded-lg text-sm focus:ring-2 focus:ring-brand-purple outline-none font-semibold" />
+                                    </div>
+
+                                    <!-- Resolution Status & Result -->
+                                    <div id="resolution-area" class="mt-2">
+                                        <!-- Status message -->
+                                        <div id="resolution-status" class="text-xs text-brand-textGray hidden">
+                                            <span class="resolving-spinner"></span>
+                                            <span>Resolving account details...</span>
+                                        </div>
+
+                                        <!-- Success result -->
+                                        <div id="resolution-success" class="hidden">
+                                            <div class="account-preview-card resolved p-3 bg-brand-lightPurple/40 rounded-lg border border-brand-purple/10">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple font-bold text-sm"><i class="fa-solid fa-check-circle"></i></div>
+                                                    <div>
+                                                        <p class="text-xs font-bold text-brand-textDark" id="resolved-account-name">---</p>
+                                                        <p class="text-[10px] text-brand-textGray"><span id="resolved-account-number">---</span> • <span id="resolved-bank-name">---</span></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Error -->
+                                        <div id="resolution-error" class="hidden text-xs text-red-500 mt-2">
+                                            <i class="fa-solid fa-exclamation-circle mr-1"></i>
+                                            <span id="resolution-error-text">Failed to resolve account. Please verify the account number.</span>
+                                        </div>
+
+                                        <!-- Manual entry fallback -->
+                                        <div id="manual-entry-area" class="hidden mt-3">
+                                            <label class="text-xs font-semibold text-brand-textGray">Account Name (if resolution failed)</label>
+                                            <input type="text" id="manual-account-name" placeholder="Enter account holder name" class="w-full mt-1 px-3 py-3 bg-brand-bgGray border-0 rounded-lg text-sm focus:ring-2 focus:ring-brand-purple outline-none font-semibold" />
+                                            <button onclick="confirmManualAccount()" class="mt-2 text-xs text-brand-purple font-bold">Confirm name</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1881,178 +1903,188 @@
         });
 
         // ================================================================
-        // ===== ACCOUNT RESOLUTION WITH MULTI-BANK SUPPORT =====
+        // ===== ACCOUNT RESOLUTION (SIMPLIFIED) =====
         // ================================================================
 
-        // Extended mock database with multiple banks per account number
-        const accountDatabase = {
-            '8201633275': [
-                { bank: 'Moniepoint', name: 'IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise' },
-                { bank: 'OPay', name: 'VIVIAN ENTERPRISES LTD' },
-            ],
-            '8134013878': [
-                { bank: 'OPay', name: 'AYOTOLA OLUWATOBILOBA ALAMU' },
-                { bank: 'Moniepoint', name: 'AYOTOLA ALAMU' },
-            ],
-            '8058746952': [
-                { bank: 'OPay', name: 'FAVOUR STEVE -EMOKINIOVO' },
-            ],
-            '8052241166': [
-                { bank: 'OPay', name: 'PHILO OGHENEOVO EVENT' },
-            ],
-            '8454383041': [
-                { bank: 'Wema Bank', name: 'CNL/CODAPAYMENTSNGBANKTR' },
-            ],
-            '9153307641': [
-                { bank: 'Moniepoint', name: 'FLORENCE OGHENEMUDIAKEWVE OYIBOCHA' },
-            ],
-            '9061234567': [
-                { bank: 'GTBank', name: 'CHIZOBA ONYEMA' },
-                { bank: 'Access Bank', name: 'CHIZOBA ONYEMA' },
-            ],
-            '1234567890': [
-                { bank: 'First Bank', name: 'TEST ACCOUNT HOLDER' },
-                { bank: 'UBA', name: 'TEST UBA ACCOUNT' },
-                { bank: 'Zenith Bank', name: 'TEST ZENITH ACCOUNT' },
-            ],
-        };
-
-        // Real bank codes for Monnify (sandbox)
+        // Bank code mapping for Monnify
         const bankCodeMap = {
             'Moniepoint': '030',
             'OPay': '038',
-            'Wema Bank': '035',
+            'PalmPay': '999',
             'GTBank': '058',
             'Access Bank': '044',
             'First Bank': '011',
             'UBA': '033',
             'Zenith Bank': '057',
-            'PalmPay': '999'
+            'Wema Bank': '035',
+            'Sterling Bank': '232',
+            'FCMB': '214',
+            'Union Bank': '032',
+            'Ecobank': '050',
+            'Fidelity Bank': '070',
+            'Stanbic IBTC': '221'
         };
 
+        let selectedBank = '';
+        let selectedBankCode = '';
+        let resolvedAccountName = '';
         let isResolving = false;
-        let selectedBankMatch = null;
 
-        async function resolveAccountNumber(accountNumber) {
-            if (isResolving) return;
-            isResolving = true;
+        // Local mock database for fallback
+        const mockAccountDB = {
+            '8201633275': { name: 'IJE-DIJI VIVIAN ENTERPRISES - Vivian enterprise', bank: 'Moniepoint' },
+            '8134013878': { name: 'AYOTOLA OLUWATOBILOBA ALAMU', bank: 'OPay' },
+            '8058746952': { name: 'FAVOUR STEVE -EMOKINIOVO', bank: 'OPay' },
+            '8052241166': { name: 'PHILO OGHENEOVO EVENT', bank: 'OPay' },
+            '8454383041': { name: 'CNL/CODAPAYMENTSNGBANKTR', bank: 'Wema Bank' },
+            '9153307641': { name: 'FLORENCE OGHENEMUDIAKEWVE OYIBOCHA', bank: 'Moniepoint' },
+            '1234567890': { name: 'TEST ACCOUNT HOLDER', bank: 'GTBank' },
+            '9061234567': { name: 'CHIZOBA ONYEMA', bank: 'PalmPay' },
+        };
 
-            const area = document.getElementById('account-resolution-area');
-            const list = document.getElementById('account-match-list');
-            const error = document.getElementById('account-resolution-error');
-            const status = document.getElementById('resolution-status');
-            const spinner = document.getElementById('resolving-spinner');
-            const preview = document.getElementById('selected-account-preview');
+        function toggleBankDropdown() {
+            const dd = document.getElementById('bank-dropdown');
+            dd.classList.toggle('hidden');
+        }
 
-            // Show loading
-            area.classList.remove('hidden');
-            error.classList.add('hidden');
-            preview.classList.add('hidden');
-            list.innerHTML = '';
-            spinner.style.display = 'inline-block';
-            status.textContent = 'Resolving account details...';
-
-            try {
-                // First try Monnify API with multiple banks
-                const results = await tryMonnifyResolution(accountNumber);
-
-                if (results && results.length > 0) {
-                    // Show matches
-                    list.innerHTML = '';
-                    results.forEach((match, index) => {
-                        const div = document.createElement('div');
-                        div.className = 'bank-match-item';
-                        div.innerHTML = `
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <div class="bank-name">${match.bank}</div>
-                                    <div class="account-info">${match.name}</div>
-                                    <div class="account-info text-[10px] text-brand-textGray">${accountNumber}</div>
-                                </div>
-                                <button class="text-brand-purple text-xs font-bold px-3 py-1 rounded-full border border-brand-purple/30 hover:bg-brand-lightPurple transition-all" onclick="selectBankMatch(${index})">Select</button>
-                            </div>
-                        `;
-                        list.appendChild(div);
-                    });
-                    status.textContent = `${results.length} account(s) found. Select one to continue.`;
-                    spinner.style.display = 'none';
-                } else {
-                    // Try local database
-                    const localMatches = accountDatabase[accountNumber] || [];
-                    if (localMatches.length > 0) {
-                        localMatches.forEach((match, index) => {
-                            const div = document.createElement('div');
-                            div.className = 'bank-match-item';
-                            div.innerHTML = `
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <div class="bank-name">${match.bank}</div>
-                                        <div class="account-info">${match.name}</div>
-                                        <div class="account-info text-[10px] text-brand-textGray">${accountNumber}</div>
-                                    </div>
-                                    <button class="text-brand-purple text-xs font-bold px-3 py-1 rounded-full border border-brand-purple/30 hover:bg-brand-lightPurple transition-all" onclick="selectLocalBankMatch('${match.bank}', '${match.name}')">Select</button>
-                                </div>
-                            `;
-                            list.appendChild(div);
-                        });
-                        status.textContent = `${localMatches.length} account(s) found in local database.`;
-                        spinner.style.display = 'none';
-                    } else {
-                        // No matches found - show error
-                        error.classList.remove('hidden');
-                        error.innerHTML = '<i class="fa-solid fa-exclamation-circle mr-1"></i> No account found. Please verify the account number.';
-                        status.textContent = 'No accounts found.';
-                        spinner.style.display = 'none';
+        // Bank selection
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.bank-option[data-bank]').forEach(el => {
+                el.addEventListener('click', function() {
+                    const bank = this.dataset.bank;
+                    const code = this.dataset.code;
+                    selectedBank = bank;
+                    selectedBankCode = code;
+                    document.getElementById('selected-bank-label').textContent = bank;
+                    document.getElementById('selected-bank-label').className = 'text-brand-textDark font-semibold';
+                    document.getElementById('bank-dropdown').classList.add('hidden');
+                    // Trigger resolution if account is entered
+                    const account = document.getElementById('transfer-account').value.trim();
+                    if (account.length === 10) {
+                        resolveAccount(account, bank, code);
                     }
-                }
-            } catch (e) {
-                error.classList.remove('hidden');
-                error.innerHTML = '<i class="fa-solid fa-exclamation-circle mr-1"></i> Error resolving account. Please try again.';
-                status.textContent = 'Error occurred.';
-                spinner.style.display = 'none';
-            } finally {
-                isResolving = false;
+                });
+            });
+
+            // Account input listener
+            const accInput = document.getElementById('transfer-account');
+            if (accInput) {
+                accInput.addEventListener('input', function() {
+                    this.value = this.value.replace(/\D/g, '').slice(0, 10);
+                    const account = this.value.trim();
+                    if (account.length === 10 && selectedBank) {
+                        resolveAccount(account, selectedBank, selectedBankCode);
+                    } else if (account.length < 10) {
+                        // Hide results
+                        document.getElementById('resolution-success').classList.add('hidden');
+                        document.getElementById('resolution-error').classList.add('hidden');
+                        document.getElementById('resolution-status').classList.add('hidden');
+                        document.getElementById('manual-entry-area').classList.add('hidden');
+                        document.getElementById('transfer-next-1').disabled = true;
+                    }
+                });
+            }
+        });
+
+        // Manual account name entry
+        function confirmManualAccount() {
+            const name = document.getElementById('manual-account-name').value.trim();
+            if (name.length > 2) {
+                resolvedAccountName = name;
+                const account = document.getElementById('transfer-account').value.trim();
+                document.getElementById('resolved-account-name').textContent = name;
+                document.getElementById('resolved-account-number').textContent = account;
+                document.getElementById('resolved-bank-name').textContent = selectedBank;
+                document.getElementById('resolution-success').classList.remove('hidden');
+                document.getElementById('manual-entry-area').classList.add('hidden');
+                document.getElementById('transfer-next-1').disabled = false;
+                showToast('Account name confirmed manually.', 'success');
+            } else {
+                showToast('Please enter a valid account name.', 'error');
             }
         }
 
-        // Try Monnify API with multiple banks
-        async function tryMonnifyResolution(accountNumber) {
-            const results = [];
-            const banks = ['Moniepoint', 'OPay', 'Wema Bank', 'GTBank', 'Access Bank', 'First Bank', 'UBA', 'Zenith Bank'];
+        async function resolveAccount(account, bank, code) {
+            if (isResolving) return;
+            isResolving = true;
 
-            for (const bank of banks) {
-                try {
-                    const token = await getMonnifyToken();
-                    if (!token) continue;
+            const statusEl = document.getElementById('resolution-status');
+            const successEl = document.getElementById('resolution-success');
+            const errorEl = document.getElementById('resolution-error');
+            const manualEl = document.getElementById('manual-entry-area');
+            const errorText = document.getElementById('resolution-error-text');
 
-                    const code = bankCodeMap[bank] || '030';
-                    const res = await fetch(`https://sandbox.monnify.com/api/v1/merchant/bank-accounts/resolve`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ accountNumber, bankCode: code })
-                    });
+            statusEl.classList.remove('hidden');
+            successEl.classList.add('hidden');
+            errorEl.classList.add('hidden');
+            manualEl.classList.add('hidden');
+            document.getElementById('transfer-next-1').disabled = true;
 
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data.responseBody && data.responseBody.accountName) {
-                            results.push({
-                                bank: bank,
-                                name: data.responseBody.accountName
-                            });
-                            // Break early if we found multiple matches
-                            if (results.length >= 2) break;
+            try {
+                // First try Monnify API
+                const token = await getMonnifyToken();
+                let accountName = null;
+
+                if (token) {
+                    try {
+                        const res = await fetch('https://sandbox.monnify.com/api/v1/merchant/bank-accounts/resolve', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ accountNumber: account, bankCode: code })
+                        });
+
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data.responseBody && data.responseBody.accountName) {
+                                accountName = data.responseBody.accountName;
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('Monnify resolve failed:', e);
+                    }
+                }
+
+                // Fallback to mock database
+                if (!accountName) {
+                    const mock = mockAccountDB[account];
+                    if (mock) {
+                        accountName = mock.name;
+                        // If the mock bank doesn't match selected, still use it but show warning
+                        if (mock.bank !== bank) {
+                            showToast(`Note: Account found under ${mock.bank}`, 'success');
                         }
                     }
-                } catch (e) {
-                    // Continue to next bank
-                    continue;
                 }
-            }
 
-            return results;
+                if (accountName) {
+                    resolvedAccountName = accountName;
+                    document.getElementById('resolved-account-name').textContent = accountName;
+                    document.getElementById('resolved-account-number').textContent = account;
+                    document.getElementById('resolved-bank-name').textContent = bank;
+                    successEl.classList.remove('hidden');
+                    statusEl.classList.add('hidden');
+                    document.getElementById('transfer-next-1').disabled = false;
+                    showToast(`Account resolved: ${accountName}`, 'success');
+                } else {
+                    // Show manual entry
+                    errorText.textContent = 'Could not resolve account automatically. Please enter the account name manually.';
+                    errorEl.classList.remove('hidden');
+                    statusEl.classList.add('hidden');
+                    manualEl.classList.remove('hidden');
+                    document.getElementById('manual-account-name').value = '';
+                    document.getElementById('manual-account-name').focus();
+                }
+            } catch (e) {
+                errorText.textContent = 'Error resolving account. Please try again or enter manually.';
+                errorEl.classList.remove('hidden');
+                statusEl.classList.add('hidden');
+                manualEl.classList.remove('hidden');
+            } finally {
+                isResolving = false;
+            }
         }
 
         // Monnify token cache
@@ -2080,92 +2112,6 @@
             }
         }
 
-        // Select bank match from Monnify results
-        let monnifyResults = [];
-
-        function selectBankMatch(index) {
-            const list = document.getElementById('account-match-list');
-            const items = list.querySelectorAll('.bank-match-item');
-            if (items[index]) {
-                const bankName = items[index].querySelector('.bank-name')?.textContent || '';
-                const accountName = items[index].querySelector('.account-info')?.textContent || '';
-                selectAccount(bankName, accountName);
-            }
-        }
-
-        function selectLocalBankMatch(bank, name) {
-            selectAccount(bank, name);
-        }
-
-        function selectAccount(bank, name) {
-            const account = document.getElementById('transfer-account').value.trim();
-            transferData.bank = bank;
-            transferData.bankCode = bankCodeMap[bank] || '030';
-            transferData.account = account;
-            transferData.accountName = name;
-
-            // Update preview
-            document.getElementById('selected-account-name').textContent = name;
-            document.getElementById('selected-account-number').textContent = account;
-            document.getElementById('selected-bank-name').textContent = bank;
-            document.getElementById('selected-account-preview').classList.remove('hidden');
-
-            // Hide resolution area
-            document.getElementById('account-resolution-area').classList.add('hidden');
-
-            // Enable next button
-            document.getElementById('transfer-next-1').disabled = false;
-
-            showToast(`Selected: ${name} (${bank})`, 'success');
-        }
-
-        // Account input listener
-        document.addEventListener('DOMContentLoaded', function() {
-            const accInput = document.getElementById('transfer-account');
-            if (accInput) {
-                accInput.addEventListener('input', function() {
-                    this.value = this.value.replace(/\D/g, '').slice(0, 10);
-                    transferData.account = this.value;
-
-                    // Hide previous results
-                    document.getElementById('account-resolution-area').classList.add('hidden');
-                    document.getElementById('selected-account-preview').classList.add('hidden');
-                    document.getElementById('account-resolution-error').classList.add('hidden');
-                    document.getElementById('transfer-next-1').disabled = true;
-
-                    // Auto-resolve when 10 digits are entered
-                    if (this.value.length === 10) {
-                        resolveAccountNumber(this.value);
-                    }
-                });
-            }
-        });
-
-        // ===== BANK DROPDOWN =====
-        function toggleBankDropdown() {
-            const dd = document.getElementById('bank-dropdown');
-            dd.classList.toggle('hidden');
-        }
-
-        // Bank option click handler
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.bank-option[data-bank]').forEach(el => {
-                el.addEventListener('click', function() {
-                    const bank = this.dataset.bank;
-                    const code = this.dataset.code;
-                    document.getElementById('selected-bank-label').textContent = bank;
-                    document.getElementById('selected-bank-label').className = 'text-brand-textDark font-semibold';
-                    document.getElementById('bank-dropdown').classList.add('hidden');
-
-                    // If account number is already entered, re-resolve
-                    const account = document.getElementById('transfer-account').value.trim();
-                    if (account.length === 10) {
-                        resolveAccountNumber(account);
-                    }
-                });
-            });
-        });
-
         // ================================================================
         // ===== TRANSFER FLOW =====
         // ================================================================
@@ -2185,18 +2131,21 @@
             document.getElementById('transfer-account').value = '';
             document.getElementById('selected-bank-label').textContent = 'Select bank';
             document.getElementById('selected-bank-label').className = 'text-brand-textGray';
-            document.getElementById('selected-account-preview').classList.add('hidden');
-            document.getElementById('account-resolution-area').classList.add('hidden');
-            document.getElementById('account-resolution-error').classList.add('hidden');
+            document.getElementById('resolution-success').classList.add('hidden');
+            document.getElementById('resolution-error').classList.add('hidden');
+            document.getElementById('resolution-status').classList.add('hidden');
+            document.getElementById('manual-entry-area').classList.add('hidden');
             document.getElementById('transfer-next-1').disabled = true;
             document.getElementById('transfer-amount-input').value = '';
             document.getElementById('transfer-note').value = '';
             document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
+            selectedBank = '';
+            selectedBankCode = '';
+            resolvedAccountName = '';
             showPage('page-transfer');
             goToTransferStep(1);
             updateBalanceUI();
             document.getElementById('bank-dropdown').classList.add('hidden');
-            document.getElementById('account-match-list').innerHTML = '';
         }
 
         function closeTransferFlow() {
@@ -2205,12 +2154,26 @@
         }
 
         function goToTransferStep(step) {
+            // Validate before proceeding
+            if (step === 2) {
+                const account = document.getElementById('transfer-account').value.trim();
+                if (account.length !== 10 || !selectedBank || !resolvedAccountName) {
+                    showToast('Please complete account details first.', 'error');
+                    return;
+                }
+                transferData.account = account;
+                transferData.bank = selectedBank;
+                transferData.bankCode = selectedBankCode;
+                transferData.accountName = resolvedAccountName;
+            }
+
             for (let i = 1; i <= 3; i++) {
                 const el = document.getElementById('transfer-step-' + i);
                 if (i === step) { el.style.display = 'flex';
                     el.classList.add('active'); } else { el.style.display = 'none';
                     el.classList.remove('active'); }
             }
+
             if (step === 3) {
                 const amt = transferData.amount || 0;
                 const formatted =
@@ -2237,19 +2200,20 @@
         }
 
         function fillRecentAccount(bank, name, account) {
-            transferData.bank = bank;
-            transferData.bankCode = bankCodeMap[bank] || '030';
+            selectedBank = bank;
+            selectedBankCode = bankCodeMap[bank] || '030';
+            resolvedAccountName = name;
             transferData.account = account;
-            transferData.accountName = name;
             document.getElementById('transfer-account').value = account;
             document.getElementById('selected-bank-label').textContent = bank;
             document.getElementById('selected-bank-label').className = 'text-brand-textDark font-semibold';
-            document.getElementById('selected-account-name').textContent = name;
-            document.getElementById('selected-account-number').textContent = account;
-            document.getElementById('selected-bank-name').textContent = bank;
-            document.getElementById('selected-account-preview').classList.remove('hidden');
-            document.getElementById('account-resolution-area').classList.add('hidden');
-            document.getElementById('account-resolution-error').classList.add('hidden');
+            document.getElementById('resolved-account-name').textContent = name;
+            document.getElementById('resolved-account-number').textContent = account;
+            document.getElementById('resolved-bank-name').textContent = bank;
+            document.getElementById('resolution-success').classList.remove('hidden');
+            document.getElementById('resolution-error').classList.add('hidden');
+            document.getElementById('resolution-status').classList.add('hidden');
+            document.getElementById('manual-entry-area').classList.add('hidden');
             document.getElementById('transfer-next-1').disabled = false;
             document.getElementById('bank-dropdown').classList.add('hidden');
             switchTransferTab('recent', document.querySelector('.tab-bar .tab-btn.active'));
@@ -2537,7 +2501,7 @@
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     const sw =
-                        `const C='palmpay-v10';const U=['/','index.html'];self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(U))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
+                        `const C='palmpay-v11';const U=['/','index.html'];self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(U))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
                     const b2 = new Blob([sw], { type: 'application/javascript' });
                     navigator.serviceWorker.register(URL.createObjectURL(b2)).catch(() => {});
                 });
@@ -2551,4 +2515,4 @@
     </script>
 
 </body>
-    </html>
+</html>
