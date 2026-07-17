@@ -29,8 +29,6 @@
                             textDark: '#1A1A1A',
                             textGray: '#757575',
                             bgGray: '#F6F7FB',
-                            cashboxBlue: '#EEF4FF',
-                            fixedOrange: '#FFF7ED'
                         }
                     },
                     fontFamily: { sans: ['Inter', 'sans-serif'] }
@@ -40,149 +38,33 @@
     </script>
 
     <style>
-        /* Full screen mobile optimization */
-        html,
-        body {
+        /* FULL SCREEN RESET */
+        * {
             margin: 0;
             padding: 0;
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-            background: #0f172a;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-        }
-
-        * {
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             user-select: none;
         }
 
-        /* Scrollbar hide */
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0f172a;
+            font-family: 'Inter', sans-serif;
+            touch-action: manipulation;
+        }
+
         ::-webkit-scrollbar {
             width: 0px;
             background: transparent;
         }
 
-        /* Page transitions */
-        .page-transition {
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
-        }
-
-        .page-enter {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-
-        .page-enter-active {
-            transform: translateX(0);
-            opacity: 1;
-        }
-
-        .page-exit {
-            transform: translateX(-30%);
-            opacity: 0;
-        }
-
-        .hidden-page {
-            pointer-events: none;
-            opacity: 0;
-            transform: translateX(100%);
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-
-        .hidden-page.slide-out {
-            transform: translateX(-30%);
-            opacity: 0;
-        }
-
-        .page-visible {
-            pointer-events: auto;
-            opacity: 1;
-            transform: translateX(0);
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: 10;
-        }
-
-        /* Pin dots */
-        .pin-dot {
-            transition: all 0.15s ease-in-out;
-        }
-
-        .pin-dot-filled {
-            background: white;
-            transform: scale(1.15);
-            box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
-        }
-
-        /* Toggle switch */
-        .toggle-track {
-            width: 48px;
-            height: 28px;
-            background: #d1d5db;
-            border-radius: 999px;
-            position: relative;
-            cursor: pointer;
-            transition: background 0.25s ease;
-            flex-shrink: 0;
-            border: 2px solid transparent;
-        }
-
-        .toggle-track.active {
-            background: #5F259F;
-            border-color: #5F259F;
-        }
-
-        .toggle-thumb {
-            width: 22px;
-            height: 22px;
-            background: white;
-            border-radius: 50%;
-            position: absolute;
-            top: 1px;
-            left: 1px;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .toggle-track.active .toggle-thumb {
-            transform: translateX(20px);
-            box-shadow: 0 1px 6px rgba(95, 37, 159, 0.3);
-        }
-
-        /* Settings item hover */
-        .settings-item {
-            transition: background 0.12s ease;
-            cursor: pointer;
-        }
-
-        .settings-item:active {
-            background: #f1f1f1;
-        }
-
-        /* Safe area for notched phones */
-        @supports (padding: max(0px)) {
-            .safe-top {
-                padding-top: max(env(safe-area-inset-top), 8px);
-            }
-            .safe-bottom {
-                padding-bottom: max(env(safe-area-inset-bottom), 8px);
-            }
-        }
-
-        /* Full screen shell */
+        /* APP SHELL */
         #app-shell {
             position: fixed;
             top: 0;
@@ -198,7 +80,19 @@
             flex-direction: column;
         }
 
-        /* Page container for stacking */
+        @media (min-width: 641px) {
+            #app-shell {
+                max-width: 420px;
+                max-height: 900px;
+                border-radius: 40px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        /* PAGE STACK */
         .page-stack {
             position: relative;
             width: 100%;
@@ -207,40 +101,163 @@
             flex: 1;
         }
 
+        /* PAGE LAYER */
         .page-layer {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #F6F7FB;
             overflow-y: auto;
             overflow-x: hidden;
             will-change: transform, opacity;
             -webkit-overflow-scrolling: touch;
             overscroll-behavior-y: contain;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateX(100%);
         }
 
-        .page-layer.bg-white {
-            background: #ffffff;
+        .page-layer.page-visible {
+            pointer-events: auto !important;
+            opacity: 1 !important;
+            transform: translateX(0) !important;
+            z-index: 10;
         }
 
-        .page-layer.bg-brand-purple {
+        /* Lock screen gets extra z-index */
+        #page-lockscreen {
+            z-index: 40;
             background: #5F259F;
         }
+        #page-lockscreen.page-visible {
+            z-index: 40 !important;
+        }
 
-        .page-layer.bg-gray {
+        /* Dashboard */
+        #page-dashboard {
+            z-index: 30;
             background: #F6F7FB;
         }
-
-        /* Status bar spacer */
-        .status-spacer {
-            height: env(safe-area-inset-top, 0px);
-            min-height: 8px;
-            flex-shrink: 0;
+        #page-dashboard.page-visible {
+            z-index: 30 !important;
         }
 
-        /* Bottom nav */
+        /* Settings pages */
+        #page-settings {
+            z-index: 60;
+            background: #ffffff;
+        }
+        #page-settings.page-visible {
+            z-index: 60 !important;
+        }
+
+        #page-login-settings {
+            z-index: 70;
+            background: #ffffff;
+        }
+        #page-login-settings.page-visible {
+            z-index: 70 !important;
+        }
+
+        /* Gateway */
+        #page-gateway {
+            z-index: 50;
+            background: #ffffff;
+        }
+        #page-gateway.page-visible {
+            z-index: 50 !important;
+        }
+
+        /* PIN DOTS */
+        .pin-dot {
+            transition: all 0.15s ease-in-out;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            background: transparent;
+        }
+        .pin-dot-filled {
+            background: #ffffff;
+            border-color: #ffffff;
+            transform: scale(1.15);
+            box-shadow: 0 0 16px rgba(255, 255, 255, 0.5);
+        }
+
+        /* KEYPAD BUTTONS — force clickability */
+        .key-btn {
+            cursor: pointer;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+            border: none;
+            background: transparent;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #ffffff;
+            padding: 16px 0;
+            border-radius: 50%;
+            transition: background 0.12s ease, transform 0.1s ease;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .key-btn:active {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(0.92);
+        }
+        .key-btn i {
+            font-size: 1.6rem;
+        }
+
+        /* TOGGLE SWITCH */
+        .toggle-track {
+            width: 48px;
+            height: 28px;
+            background: #d1d5db;
+            border-radius: 999px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.25s ease;
+            flex-shrink: 0;
+            border: 2px solid transparent;
+            touch-action: manipulation;
+        }
+        .toggle-track.active {
+            background: #5F259F;
+            border-color: #5F259F;
+        }
+        .toggle-thumb {
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+        .toggle-track.active .toggle-thumb {
+            transform: translateX(20px);
+            box-shadow: 0 1px 6px rgba(95, 37, 159, 0.3);
+        }
+
+        /* SETTINGS ITEMS */
+        .settings-item {
+            transition: background 0.12s ease;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        .settings-item:active {
+            background: #f1f1f1;
+        }
+
+        /* BOTTOM NAV */
         .bottom-nav {
             flex-shrink: 0;
             background: white;
@@ -248,88 +265,277 @@
             padding-bottom: env(safe-area-inset-bottom, 0px);
         }
 
-        /* Full screen fix for mobile */
-        @media (max-width: 640px) {
-            #app-shell {
-                border-radius: 0 !important;
-                box-shadow: none !important;
+        /* SAFE AREAS */
+        .safe-top {
+            padding-top: max(env(safe-area-inset-top), 8px);
+        }
+        .safe-bottom {
+            padding-bottom: max(env(safe-area-inset-bottom), 8px);
+        }
+
+        /* TOAST */
+        #toast-container {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            z-index: 150;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .toast-item {
+            padding: 14px 18px;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(16px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            pointer-events: auto;
+        }
+        .toast-item.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .toast-item.success {
+            background: #10b981;
+        }
+        .toast-item.error {
+            background: #ef4444;
+        }
+
+        /* LOADER */
+        #network-loader {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(8px);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        #network-loader.show {
+            display: flex;
+        }
+        .loader-box {
+            background: #fff;
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 4px solid #5F259F;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
             }
         }
 
-        /* For desktop mockup */
-        @media (min-width: 641px) {
-            #app-shell {
-                max-width: 420px;
-                max-height: 900px;
-                border-radius: 40px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
+        /* MODAL BACKDROP */
+        .modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .modal-backdrop.show {
+            display: flex;
+        }
+        .modal-box {
+            background: #fff;
+            border-radius: 28px;
+            width: 100%;
+            max-width: 380px;
+            padding: 24px;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .modal-box h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1A1A1A;
+        }
+        .modal-box p {
+            font-size: 12px;
+            color: #757575;
+        }
+
+        /* LOCK SCREEN LAYOUT FIX */
+        .lockscreen-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+        .lockscreen-top {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 32px;
+            text-align: center;
+            color: #fff;
+            padding-top: max(env(safe-area-inset-top), 24px);
+        }
+        .lockscreen-bottom {
+            background: rgba(255, 255, 255, 0.10);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
+            padding: 28px 32px 40px;
+            padding-bottom: max(env(safe-area-inset-bottom), 32px);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px 20px;
+            justify-items: center;
+            align-items: center;
+        }
+        .keypad-grid .key-btn {
+            width: 100%;
+            max-width: 72px;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            font-size: 26px;
+            font-weight: 700;
+            color: #fff;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            touch-action: manipulation;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .keypad-grid .key-btn:active {
+            background: rgba(255, 255, 255, 0.18);
+            transform: scale(0.92);
+        }
+        .keypad-grid .key-btn i {
+            font-size: 26px;
+        }
+        .lockscreen-footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 8px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .lockscreen-footer button {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            cursor: pointer;
+            padding: 4px 8px;
+            touch-action: manipulation;
+        }
+        .lockscreen-footer button:hover {
+            color: #fff;
+        }
+        .lockscreen-footer button:active {
+            color: #fff;
+            transform: scale(0.95);
+        }
+
+        .lock-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(255, 255, 255, 0.10);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .lock-icon i {
+            font-size: 24px;
+            color: #fff;
+        }
+        .lock-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .lock-sub {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 4px;
+        }
+        .pin-dots-row {
+            display: flex;
+            gap: 16px;
+            margin-top: 28px;
+            margin-bottom: 8px;
+        }
+
+        /* Fix for Safari */
+        @supports (padding: max(0px)) {
+            .safe-area-top {
+                padding-top: max(env(safe-area-inset-top), 8px);
+            }
+            .safe-area-bottom {
+                padding-bottom: max(env(safe-area-inset-bottom), 8px);
             }
         }
     </style>
 </head>
-
 <body>
 
     <!-- ===== APP SHELL ===== -->
     <div id="app-shell">
 
-        <!-- Network Loader -->
-        <div id="network-loader" class="absolute inset-0 bg-black/40 backdrop-blur-md z-[200] flex flex-col items-center justify-center hidden" style="position:absolute;top:0;left:0;width:100%;height:100%;">
-            <div class="bg-white p-6 rounded-2xl shadow-xl flex flex-col items-center gap-4">
-                <div class="w-12 h-12 border-4 border-brand-purple border-t-transparent rounded-full animate-spin"></div>
+        <!-- NETWORK LOADER -->
+        <div id="network-loader">
+            <div class="loader-box">
+                <div class="spinner"></div>
                 <p class="text-sm font-semibold text-brand-purple animate-pulse">Connecting securely...</p>
             </div>
         </div>
 
-        <!-- Audio Context -->
-        <script>
-            const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
-
-            function playTone(freq, type, duration) {
-                try {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = type;
-                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start();
-                    osc.stop(audioCtx.currentTime + duration);
-                } catch (_) {}
-            }
-
-            function playUnlockSound() {
-                playTone(523.25, 'triangle', 0.1);
-                setTimeout(() => playTone(659.25, 'triangle', 0.15), 80);
-            }
-
-            function playErrorSound() {
-                playTone(150, 'sawtooth', 0.25);
-            }
-
-            function playKeySound() {
-                playTone(380, 'sine', 0.06);
-            }
-
-            function playClickSound() {
-                playTone(440, 'sine', 0.04);
-            }
-        </script>
+        <!-- TOAST CONTAINER -->
+        <div id="toast-container"></div>
 
         <!-- ===== PAGE STACK ===== -->
-        <div class="page-stack" id="pageStack">
+        <div class="page-stack">
 
             <!-- ========================================== -->
-            <!-- PAGE: GATEWAY (Signup / Login)             -->
+            <!-- PAGE: GATEWAY                              -->
             <!-- ========================================== -->
-            <div id="page-gateway" class="page-layer bg-white page-visible" style="z-index:50;background:#ffffff;">
-                <div class="flex flex-col h-full overflow-y-auto px-6 py-8 safe-top">
-                    <div class="flex flex-col items-center mt-10 mb-8">
+            <div id="page-gateway" class="page-layer page-visible">
+                <div class="flex flex-col h-full overflow-y-auto px-6 pt-8 pb-6 safe-top" style="background:#fff;">
+                    <div class="flex flex-col items-center mt-8 mb-6">
                         <div class="w-16 h-16 bg-brand-purple rounded-3xl flex items-center justify-center shadow-lg shadow-brand-purple/20 mb-3">
                             <span class="text-white text-3xl font-extrabold tracking-wider">P</span>
                         </div>
@@ -337,7 +543,7 @@
                         <p class="text-xs text-brand-textGray mt-1">Secure Mobile Financial Gateway</p>
                     </div>
 
-                    <div class="flex bg-brand-lightPurple p-1 rounded-xl mb-6">
+                    <div class="flex bg-brand-lightPurple p-1 rounded-xl mb-5">
                         <button onclick="toggleAuthTab('login')" id="btn-tab-login" class="flex-1 py-3 text-sm font-bold rounded-lg transition-all bg-white text-brand-purple shadow-sm">Log In</button>
                         <button onclick="toggleAuthTab('signup')" id="btn-tab-signup" class="flex-1 py-3 text-sm font-bold rounded-lg transition-all text-brand-textGray">Sign Up</button>
                     </div>
@@ -354,7 +560,7 @@
                             <label class="text-xs font-semibold text-brand-textGray">4-Digit Security PIN</label>
                             <input type="password" id="login-pin" maxlength="4" pattern="[0-9]*" inputmode="numeric" placeholder="••••" required class="w-full px-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none text-center tracking-widest font-extrabold" />
                         </div>
-                        <button type="submit" class="w-full bg-brand-btnPurple text-white py-4 rounded-xl font-bold text-sm mt-4 shadow-md shadow-brand-purple/20 hover:bg-brand-purple transition-all">Sign In</button>
+                        <button type="submit" class="w-full bg-brand-btnPurple text-white py-4 rounded-xl font-bold text-sm mt-2 shadow-md shadow-brand-purple/20 hover:bg-brand-purple transition-all">Sign In</button>
                     </form>
 
                     <form id="form-signup" class="flex flex-col gap-4 hidden">
@@ -377,68 +583,69 @@
                             <label class="text-xs font-semibold text-brand-textGray">Confirm 4-Digit PIN</label>
                             <input type="password" id="signup-pin-confirm" maxlength="4" pattern="[0-9]*" inputmode="numeric" placeholder="••••" required class="w-full px-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none text-center tracking-widest font-extrabold" />
                         </div>
-                        <button type="submit" class="w-full bg-brand-btnPurple text-white py-4 rounded-xl font-bold text-sm mt-4 shadow-md shadow-brand-purple/20 hover:bg-brand-purple transition-all">Create Account</button>
+                        <button type="submit" class="w-full bg-brand-btnPurple text-white py-4 rounded-xl font-bold text-sm mt-2 shadow-md shadow-brand-purple/20 hover:bg-brand-purple transition-all">Create Account</button>
                     </form>
                 </div>
             </div>
 
             <!-- ========================================== -->
-            <!-- PAGE: LOCK SCREEN                          -->
+            <!-- PAGE: LOCK SCREEN                         -->
             <!-- ========================================== -->
-            <div id="page-lockscreen" class="page-layer bg-brand-purple hidden-page" style="z-index:40;background:#5F259F;">
-                <div class="flex flex-col h-full">
-                    <div class="flex flex-col items-center mt-16 flex-1 px-8 text-center text-white">
-                        <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mb-4">
-                            <i class="fa-solid fa-lock text-xl text-white"></i>
+            <div id="page-lockscreen" class="page-layer">
+                <div class="lockscreen-content">
+                    <!-- TOP -->
+                    <div class="lockscreen-top">
+                        <div class="lock-icon">
+                            <i class="fa-solid fa-lock"></i>
                         </div>
-                        <h2 id="lockscreen-username" class="text-xl font-bold">Welcome Back, Somtochukwu</h2>
-                        <p class="text-xs text-white/70 mt-1">Verify security credentials to continue</p>
-
-                        <div class="flex gap-4 my-10">
-                            <div class="pin-dot w-3.5 h-3.5 rounded-full border border-white/40 bg-transparent"></div>
-                            <div class="pin-dot w-3.5 h-3.5 rounded-full border border-white/40 bg-transparent"></div>
-                            <div class="pin-dot w-3.5 h-3.5 rounded-full border border-white/40 bg-transparent"></div>
-                            <div class="pin-dot w-3.5 h-3.5 rounded-full border border-white/40 bg-transparent"></div>
+                        <div class="lock-title" id="lockscreen-username">Welcome Back, Somtochukwu</div>
+                        <div class="lock-sub">Verify security credentials to continue</div>
+                        <div class="pin-dots-row" id="pinDotsRow">
+                            <div class="pin-dot"></div>
+                            <div class="pin-dot"></div>
+                            <div class="pin-dot"></div>
+                            <div class="pin-dot"></div>
                         </div>
                     </div>
 
-                    <div class="bg-white/10 backdrop-blur-xl rounded-t-[40px] px-8 pt-8 pb-10 flex flex-col gap-6" style="padding-bottom:max(env(safe-area-inset-bottom,0px),40px);">
-                        <div class="grid grid-cols-3 gap-y-4 gap-x-8 text-center">
-                            <button onclick="pressPinKey('1')" class="py-4 text-2xl font-bold text-white rounded-full hover:bg-white/10 transition-all active:scale-90">1</button>
-                            <button onclick="pressPinKey('2')" class="py-4 text-2xl font-bold text-white rounded-full hover:bg-white/10 transition-all active:scale-90">2</button>
-                            <button onclick="pressPinKey('3')" class="py-4 text-2xl font-bold text-white rounded-full hover:bg-white/10 transition-all active:scale-90">3</button>
-                            <button onclick="pressPinKey('4')" class="py-4 text-2xl font-bold text-white rounded-full hover:bg-white/10 transition-all active:scale-90">4</button>
-                            <button onclick="pressPinKey('5')" class="py-4 text-2xl font-bold text-white rounded-full hover:bg-white/10 transition-all active:scale-90">5</button>
-                            <button onclick="pressPinKey('6')" class="py-4 text-2xl font-bold text-white rounded-full hover:bg-white/10 transition-all active:scale-90">6</button>
-                            <button onclick="pressPinKey('7')" class="py-4 text-2xl font-bold text-white rounded-full hover:bg-white/10 transition-all active:scale-90">7</button>
-                            <button onclick="pressPinKey('8')" class="py-4 text-2xl font-bold text-white rounded-full hover:bg-white/10 transition-all active:scale-90">8</button>
-                            <button onclick="pressPinKey('9')" class="py-4 text-2xl font-bold text-white rounded-full hover:bg-white/10 transition-all active:scale-90">9</button>
-                            <button onclick="triggerBiometricUnlock()" class="py-4 flex items-center justify-center text-white rounded-full hover:bg-white/10 transition-all active:scale-90">
-                                <i class="fa-solid fa-fingerprint text-2xl"></i>
+                    <!-- BOTTOM (keypad) -->
+                    <div class="lockscreen-bottom">
+                        <div class="keypad-grid">
+                            <button class="key-btn" data-key="1">1</button>
+                            <button class="key-btn" data-key="2">2</button>
+                            <button class="key-btn" data-key="3">3</button>
+                            <button class="key-btn" data-key="4">4</button>
+                            <button class="key-btn" data-key="5">5</button>
+                            <button class="key-btn" data-key="6">6</button>
+                            <button class="key-btn" data-key="7">7</button>
+                            <button class="key-btn" data-key="8">8</button>
+                            <button class="key-btn" data-key="9">9</button>
+                            <button class="key-btn" id="fingerprintBtn" data-key="fingerprint">
+                                <i class="fa-solid fa-fingerprint"></i>
                             </button>
-                            <button onclick="pressPinKey('0')" class="py-4 text-2xl font-bold text-white rounded-full hover:bg-white/10 transition-all active:scale-90">0</button>
-                            <button onclick="pressPinKey('backspace')" class="py-4 flex items-center justify-center text-white rounded-full hover:bg-white/10 transition-all active:scale-90">
-                                <i class="fa-solid fa-backspace text-xl"></i>
+                            <button class="key-btn" data-key="0">0</button>
+                            <button class="key-btn" data-key="backspace">
+                                <i class="fa-solid fa-backspace"></i>
                             </button>
                         </div>
-                        <div class="flex justify-between text-xs text-white/50 px-4">
-                            <button onclick="logout()" class="hover:text-white">Switch Account</button>
-                            <button onclick="alert('Contact administrator to reset PIN using security keys.')" class="hover:text-white">Forgot PIN?</button>
+                        <div class="lockscreen-footer">
+                            <button id="switchAccountBtn">Switch Account</button>
+                            <button id="forgotPinBtn">Forgot PIN?</button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- ========================================== -->
-            <!-- PAGE: DASHBOARD (Home + Me tabs)           -->
+            <!-- PAGE: DASHBOARD                           -->
             <!-- ========================================== -->
-            <div id="page-dashboard" class="page-layer bg-brand-bgGray hidden-page" style="z-index:30;background:#F6F7FB;">
-                <div class="flex flex-col h-full">
+            <div id="page-dashboard" class="page-layer">
+                <div class="flex flex-col h-full" style="background:#F6F7FB;">
 
                     <!-- TAB: HOME -->
                     <div id="tab-home" class="flex-grow flex flex-col overflow-hidden">
                         <!-- Header -->
-                        <div class="bg-white px-4 pt-4 pb-2 flex justify-between items-center z-10 flex-shrink-0">
+                        <div class="bg-white px-4 pt-4 pb-2 flex justify-between items-center flex-shrink-0">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-purple to-indigo-600 flex items-center justify-center text-white font-extrabold text-sm border-2 border-brand-lightPurple relative shadow-sm">
                                     <span>P</span>
@@ -458,10 +665,9 @@
                             </div>
                         </div>
 
-                        <!-- Scrollable Home Content -->
+                        <!-- Content -->
                         <div class="flex-1 overflow-y-auto pb-24">
-                            <!-- Balance Card -->
-                            <div class="mx-4 mt-3 bg-gradient-to-br from-[#EBE3FF] to-[#F5F2FF] rounded-2xl p-4 shadow-sm border border-brand-purple/10 relative overflow-hidden">
+                            <div class="mx-4 mt-3 bg-gradient-to-br from-[#EBE3FF] to-[#F5F2FF] rounded-2xl p-4 shadow-sm border border-brand-purple/10">
                                 <div class="flex justify-between items-center text-brand-purple mb-3">
                                     <div class="flex items-center gap-1.5 text-xs font-semibold">
                                         <i class="fa-solid fa-shield-halved text-[11px]"></i>
@@ -491,7 +697,7 @@
                                 </div>
                             </div>
 
-                            <!-- Action Cards -->
+                            <!-- Quick Actions -->
                             <div class="grid grid-cols-4 gap-2.5 mx-4 mt-4">
                                 <button onclick="alert('Interbank transfers offline.')" class="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-2 hover:bg-slate-50 transition-all relative">
                                     <span class="absolute -top-1.5 -right-1 px-1.5 py-0.5 bg-orange-500 text-[8px] text-white rounded-full font-extrabold scale-90">0 Fee</span>
@@ -512,7 +718,7 @@
                                 </button>
                             </div>
 
-                            <!-- Services Grid -->
+                            <!-- Services -->
                             <div class="mx-4 mt-4 bg-white rounded-3xl p-4 shadow-sm border border-slate-100">
                                 <div class="grid grid-cols-4 gap-y-5 gap-x-2 text-center">
                                     <button onclick="openAirtimeModal()" class="flex flex-col items-center gap-1.5">
@@ -551,7 +757,7 @@
                                 </div>
                             </div>
 
-                            <!-- Cash Reward Banner -->
+                            <!-- Banner -->
                             <div class="mx-4 mt-4 bg-white rounded-2xl p-3 shadow-sm border border-slate-100 flex justify-between items-center gap-3">
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-full bg-green-800 text-white flex flex-col items-center justify-center leading-none">
@@ -570,7 +776,6 @@
 
                     <!-- TAB: ME -->
                     <div id="tab-me" class="flex-grow flex flex-col overflow-hidden hidden">
-                        <!-- Header -->
                         <div class="bg-white px-5 pt-5 pb-3 flex justify-between items-center border-b border-slate-50 flex-shrink-0">
                             <div class="flex items-center gap-3">
                                 <div class="w-11 h-11 rounded-full bg-purple-100 flex items-center justify-center text-brand-purple font-black text-lg border border-brand-purple/10">
@@ -592,9 +797,7 @@
                             </div>
                         </div>
 
-                        <!-- Scrollable Me Body -->
                         <div class="flex-1 overflow-y-auto px-4 pb-24 pt-3 space-y-3.5">
-                            <!-- Total Assets -->
                             <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
                                 <div class="flex justify-between items-center text-xs text-brand-textGray font-medium mb-1">
                                     <span class="flex items-center gap-1">Total Assets <i class="fa-regular fa-eye-slash text-[10px]"></i></span>
@@ -613,7 +816,6 @@
                                 </div>
                             </div>
 
-                            <!-- Add Email -->
                             <div class="bg-brand-lightPurple/50 rounded-xl p-3 border border-brand-purple/10 flex justify-between items-center">
                                 <div class="flex items-center gap-2.5">
                                     <div class="w-8 h-8 rounded-full bg-brand-lightPurple flex items-center justify-center text-brand-purple text-xs"><i class="fa-solid fa-envelope"></i></div>
@@ -625,7 +827,6 @@
                                 <button class="bg-brand-btnPurple text-white px-3 py-1 rounded-full text-[10px] font-bold">Add Now</button>
                             </div>
 
-                            <!-- Quick Access -->
                             <div>
                                 <h4 class="text-xs font-bold text-brand-textGray uppercase tracking-wider mb-2 px-1">Quick Access</h4>
                                 <div class="grid grid-cols-2 gap-3">
@@ -646,7 +847,6 @@
                                 </div>
                             </div>
 
-                            <!-- Menu List -->
                             <div class="bg-white rounded-2xl p-2 shadow-sm border border-slate-100 divide-y divide-slate-50">
                                 <button class="w-full flex justify-between items-center py-3.5 px-3 text-left settings-item">
                                     <div class="flex items-center gap-3">
@@ -723,77 +923,59 @@
             </div>
 
             <!-- ========================================== -->
-            <!-- PAGE: SETTINGS (Full screen, matches screenshot) -->
+            <!-- PAGE: SETTINGS                            -->
             <!-- ========================================== -->
-            <div id="page-settings" class="page-layer bg-white hidden-page" style="z-index:60;background:#ffffff;">
-                <div class="flex flex-col h-full">
-                    <!-- Header -->
-                    <div class="bg-white px-5 pt-5 pb-4 border-b border-slate-50 flex items-center gap-3 flex-shrink-0" style="padding-top:max(env(safe-area-inset-top,0px),12px);">
+            <div id="page-settings" class="page-layer">
+                <div class="flex flex-col h-full" style="background:#fff;">
+                    <div class="bg-white px-5 pt-5 pb-4 border-b border-slate-50 flex items-center gap-3 flex-shrink-0 safe-top">
                         <button onclick="goBackFromSettings()" class="w-10 h-10 rounded-full bg-brand-bgGray flex items-center justify-center text-brand-textDark hover:bg-slate-200 transition-all">
                             <i class="fa-solid fa-arrow-left text-base"></i>
                         </button>
                         <h3 class="font-bold text-lg text-brand-textDark">Settings</h3>
                     </div>
 
-                    <!-- Scrollable Settings List -->
                     <div class="flex-1 overflow-y-auto px-4 py-3 divide-y divide-slate-50">
-                        <!-- Login Settings -->
                         <div class="settings-item flex justify-between items-center py-3.5" onclick="navigateToLoginSettings()">
                             <span class="text-sm font-medium text-brand-textDark">Login Settings</span>
                             <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
                         </div>
-
-                        <!-- Payment Settings -->
                         <div class="settings-item flex justify-between items-center py-3.5" onclick="showToast('Payment Settings', 'success')">
                             <span class="text-sm font-medium text-brand-textDark">Payment Settings</span>
                             <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
                         </div>
-
-                        <!-- Dark Mode -->
                         <div class="settings-item flex justify-between items-center py-3.5">
                             <span class="text-sm font-medium text-brand-textDark">Dark Mode</span>
                             <div class="toggle-track" id="toggle-darkmode" onclick="toggleSwitch(this, 'darkmode')">
                                 <div class="toggle-thumb"></div>
                             </div>
                         </div>
-
-                        <!-- SMS Alert Subscribe -->
                         <div class="settings-item flex justify-between items-center py-3.5">
                             <span class="text-sm font-medium text-brand-textDark">SMS Alert Subscribe</span>
                             <div class="toggle-track" id="toggle-sms" onclick="toggleSwitch(this, 'sms')">
                                 <div class="toggle-thumb"></div>
                             </div>
                         </div>
-
-                        <!-- Email Notification Settings -->
                         <div class="settings-item flex justify-between items-center py-3.5" onclick="showToast('Email Notification Settings', 'success')">
                             <span class="text-sm font-medium text-brand-textDark">Email Notification Settings</span>
                             <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
                         </div>
-
-                        <!-- Speaker on -->
                         <div class="settings-item flex justify-between items-center py-3.5">
                             <span class="text-sm font-medium text-brand-textDark">Speaker on</span>
                             <div class="toggle-track active" id="toggle-speaker" onclick="toggleSwitch(this, 'speaker')">
                                 <div class="toggle-thumb"></div>
                             </div>
                         </div>
-
-                        <!-- About PalmPay -->
                         <div class="settings-item flex justify-between items-center py-3.5" onclick="showToast('About PalmPay', 'success')">
                             <span class="text-sm font-medium text-brand-textDark">About PalmPay</span>
                             <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
                         </div>
-
-                        <!-- Close PalmPay Account -->
                         <div class="settings-item flex justify-between items-center py-3.5" onclick="if(confirm('Are you sure you want to close your PalmPay account? This action is irreversible.')){showToast('Account closure requested.','success');}">
                             <span class="text-sm font-medium text-red-500">Close PalmPay Account</span>
                             <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
                         </div>
                     </div>
 
-                    <!-- Log Out Button -->
-                    <div class="px-5 py-5 border-t border-slate-100 flex-shrink-0" style="padding-bottom:max(env(safe-area-inset-bottom,0px),16px);">
+                    <div class="px-5 py-5 border-t border-slate-100 flex-shrink-0 safe-bottom">
                         <button onclick="logout()" class="w-full bg-red-50 text-red-600 border border-red-200 py-3.5 rounded-xl font-extrabold text-sm flex items-center justify-center gap-2 hover:bg-red-100/60 transition-all">
                             <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
                         </button>
@@ -802,62 +984,47 @@
             </div>
 
             <!-- ========================================== -->
-            <!-- PAGE: LOGIN SETTINGS (Sub-page)            -->
+            <!-- PAGE: LOGIN SETTINGS                      -->
             <!-- ========================================== -->
-            <div id="page-login-settings" class="page-layer bg-white hidden-page" style="z-index:70;background:#ffffff;">
-                <div class="flex flex-col h-full">
-                    <!-- Header with back button -->
-                    <div class="bg-white px-5 pt-5 pb-4 border-b border-slate-50 flex items-center gap-3 flex-shrink-0" style="padding-top:max(env(safe-area-inset-top,0px),12px);">
+            <div id="page-login-settings" class="page-layer">
+                <div class="flex flex-col h-full" style="background:#fff;">
+                    <div class="bg-white px-5 pt-5 pb-4 border-b border-slate-50 flex items-center gap-3 flex-shrink-0 safe-top">
                         <button onclick="goBackFromLoginSettings()" class="w-10 h-10 rounded-full bg-brand-bgGray flex items-center justify-center text-brand-textDark hover:bg-slate-200 transition-all">
                             <i class="fa-solid fa-arrow-left text-base"></i>
                         </button>
                         <h3 class="font-bold text-lg text-brand-textDark">Login Settings</h3>
                     </div>
 
-                    <!-- Login Settings List -->
                     <div class="flex-1 overflow-y-auto px-4 py-3 divide-y divide-slate-50">
-
-                        <!-- Set Password -->
                         <div class="settings-item flex justify-between items-center py-3.5" onclick="showToast('Set Password', 'success')">
                             <span class="text-sm font-medium text-brand-textDark">Set Password</span>
                             <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
                         </div>
-
-                        <!-- Auto-Logout Setting -->
                         <div class="settings-item flex justify-between items-center py-3.5" onclick="showToast('Auto-Logout Setting', 'success')">
                             <span class="text-sm font-medium text-brand-textDark">Auto-Logout Setting</span>
                             <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
                         </div>
-
-                        <!-- Touch ID Login (Biometric toggle) -->
                         <div class="settings-item flex justify-between items-center py-3.5">
                             <span class="text-sm font-medium text-brand-textDark">Touch ID Login</span>
                             <div class="toggle-track" id="toggle-biometric" onclick="toggleSwitch(this, 'biometric')">
                                 <div class="toggle-thumb"></div>
                             </div>
                         </div>
-
-                        <!-- Device Management -->
                         <div class="settings-item flex justify-between items-center py-3.5" onclick="showToast('Device Management', 'success')">
                             <span class="text-sm font-medium text-brand-textDark">Device Management</span>
                             <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
                         </div>
-
                     </div>
                 </div>
             </div>
 
         </div><!-- /page-stack -->
 
-        <!-- ========================================== -->
-        <!-- MODALS (Deposit, Airtime, Toast)            -->
-        <!-- ========================================== -->
-
-        <!-- Deposit Modal -->
-        <div id="modal-deposit" class="absolute inset-0 bg-black/50 z-[100] flex items-center justify-center px-6 hidden" style="position:absolute;top:0;left:0;width:100%;height:100%;">
-            <div class="bg-white rounded-3xl w-full p-6 shadow-xl flex flex-col gap-4 max-w-sm">
-                <h3 class="font-bold text-lg text-brand-textDark">Add Money</h3>
-                <p class="text-xs text-brand-textGray">Fund your account balance from simulated gateway channels.</p>
+        <!-- ===== MODALS ===== -->
+        <div id="modal-deposit" class="modal-backdrop">
+            <div class="modal-box">
+                <h3>Add Money</h3>
+                <p>Fund your account balance from simulated gateway channels.</p>
                 <div class="relative">
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold text-brand-purple">₦</span>
                     <input type="number" id="deposit-amount" placeholder="2,500" class="w-full pl-10 pr-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-bold" />
@@ -874,11 +1041,10 @@
             </div>
         </div>
 
-        <!-- Airtime Modal -->
-        <div id="modal-airtime" class="absolute inset-0 bg-black/50 z-[100] flex items-center justify-center px-6 hidden" style="position:absolute;top:0;left:0;width:100%;height:100%;">
-            <div class="bg-white rounded-3xl w-full p-6 shadow-xl flex flex-col gap-4 max-w-sm">
-                <h3 class="font-bold text-lg text-brand-textDark">Buy Airtime / Data</h3>
-                <p class="text-xs text-brand-textGray">Recharge networks and save with cash rewards.</p>
+        <div id="modal-airtime" class="modal-backdrop">
+            <div class="modal-box">
+                <h3>Buy Airtime / Data</h3>
+                <p>Recharge networks and save with cash rewards.</p>
                 <input type="tel" id="airtime-phone" placeholder="08012345678" class="w-full px-4 py-3.5 bg-brand-bgGray border-0 rounded-xl text-sm focus:ring-2 focus:ring-brand-purple outline-none font-bold" />
                 <div class="relative">
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold text-brand-purple">₦</span>
@@ -891,17 +1057,65 @@
             </div>
         </div>
 
-        <!-- Toast Container -->
-        <div id="toast-container" class="absolute bottom-20 left-1/2 -translate-x-1/2 w-[85%] z-[150] flex flex-col gap-2 pointer-events-none" style="position:absolute;bottom:80px;left:50%;transform:translateX(-50%);">
-        </div>
-
     </div><!-- /app-shell -->
 
+
     <!-- ========================================== -->
-    <!-- JAVASCRIPT                                -->
+    <!-- JAVASCRIPT                                 -->
     <!-- ========================================== -->
     <script>
-        // ===== JSONBin Mock =====
+        // ===== AUDIO =====
+        const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+
+        function playTone(freq, type, duration) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.005, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (_) {}
+        }
+
+        function playUnlockSound() {
+            playTone(523, 'triangle', 0.1);
+            setTimeout(() => playTone(659, 'triangle', 0.12), 80);
+        }
+
+        function playErrorSound() {
+            playTone(150, 'sawtooth', 0.25);
+        }
+
+        function playKeySound() {
+            playTone(380, 'sine', 0.05);
+        }
+
+        // ===== TOAST =====
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const el = document.createElement('div');
+            el.className = `toast-item ${type}`;
+            el.innerHTML =
+                `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark'}"></i> <span>${message}</span>`;
+            container.appendChild(el);
+            requestAnimationFrame(() => el.classList.add('show'));
+            setTimeout(() => {
+                el.classList.remove('show');
+                setTimeout(() => el.remove(), 300);
+            }, 2600);
+        }
+
+        function showLoading(state) {
+            const loader = document.getElementById('network-loader');
+            loader.classList.toggle('show', state);
+        }
+
+        // ===== JSONBin =====
         const BIN_ID = '6a58c982f5f4af5e29974312';
         const API_KEY = '$2a$10$PJWNL5nmooDAmJU3JBroFeZPCID0xzSK42c90gSnFEFT.KUtwOT5K';
         const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
@@ -913,127 +1127,119 @@
             enteredPin: ""
         };
 
-        // ===== Toast =====
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className =
-                `p-3.5 rounded-xl shadow-lg text-xs font-bold text-white flex items-center gap-2 transform translate-y-4 opacity-0 transition-all duration-300 pointer-events-auto ${type === 'success' ? 'bg-emerald-500' : 'bg-red-500'}`;
-            toast.innerHTML =
-                `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark'}"></i> <span>${message}</span>`;
-            container.appendChild(toast);
-            requestAnimationFrame(() => {
-                toast.classList.remove('translate-y-4', 'opacity-0');
-            });
-            setTimeout(() => {
-                toast.classList.add('translate-y-4', 'opacity-0');
-                setTimeout(() => toast.remove(), 300);
-            }, 2800);
+        async function fetchUsers() {
+            try {
+                showLoading(true);
+                const res = await fetch(API_URL, { headers: { 'X-Master-Key': API_KEY } });
+                const data = await res.json();
+                appState.users = data.record?.users || [];
+                return true;
+            } catch (_) {
+                showToast('Failed to connect.', 'error');
+                return false;
+            } finally {
+                showLoading(false);
+            }
         }
 
-        function showLoading(state) {
-            document.getElementById('network-loader').classList.toggle('hidden', !state);
+        async function syncUsers() {
+            try {
+                showLoading(true);
+                const res = await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: { 'X-Master-Key': API_KEY, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ users: appState.users })
+                });
+                return res.ok;
+            } catch (_) {
+                showToast('Sync failed.', 'error');
+                return false;
+            } finally {
+                showLoading(false);
+            }
         }
 
-        // ===== Page Navigation =====
+        // ===== PAGE NAVIGATION =====
         function showPage(pageId) {
-            const pages = ['page-gateway', 'page-lockscreen', 'page-dashboard', 'page-settings', 'page-login-settings'];
-            pages.forEach(id => {
+            const all = ['page-gateway', 'page-lockscreen', 'page-dashboard', 'page-settings', 'page-login-settings'];
+            all.forEach(id => {
                 const el = document.getElementById(id);
-                if (el) {
-                    el.classList.remove('page-visible');
-                    el.classList.add('hidden-page');
-                }
+                if (el) el.classList.remove('page-visible');
             });
             const target = document.getElementById(pageId);
-            if (target) {
-                target.classList.remove('hidden-page');
-                target.classList.add('page-visible');
+            if (target) target.classList.add('page-visible');
+        }
+
+        // ===== AUTH TABS =====
+        function toggleAuthTab(tab) {
+            const btnLogin = document.getElementById('btn-tab-login');
+            const btnSignup = document.getElementById('btn-tab-signup');
+            const formLogin = document.getElementById('form-login');
+            const formSignup = document.getElementById('form-signup');
+
+            if (tab === 'login') {
+                btnLogin.className =
+                    'flex-1 py-3 text-sm font-bold rounded-lg transition-all bg-white text-brand-purple shadow-sm';
+                btnSignup.className = 'flex-1 py-3 text-sm font-bold rounded-lg transition-all text-brand-textGray';
+                formLogin.classList.remove('hidden');
+                formSignup.classList.add('hidden');
+            } else {
+                btnSignup.className =
+                    'flex-1 py-3 text-sm font-bold rounded-lg transition-all bg-white text-brand-purple shadow-sm';
+                btnLogin.className = 'flex-1 py-3 text-sm font-bold rounded-lg transition-all text-brand-textGray';
+                formSignup.classList.remove('hidden');
+                formLogin.classList.add('hidden');
             }
         }
 
-        // ===== Settings Navigation =====
-        function navigateToSettings() {
-            playClickSound();
-            showPage('page-settings');
-            // Load saved toggle states
-            loadToggleStates();
+        // ===== LOCK SCREEN =====
+        function resetPinState() {
+            appState.enteredPin = '';
+            updatePinDots();
         }
 
-        function goBackFromSettings() {
-            playClickSound();
-            showPage('page-dashboard');
-            // Ensure we're on the me tab when going back
-            if (document.getElementById('tab-me').classList.contains('hidden')) {
-                switchTab('me');
-            }
-        }
-
-        function navigateToLoginSettings() {
-            playClickSound();
-            showPage('page-login-settings');
-            loadToggleStates();
-        }
-
-        function goBackFromLoginSettings() {
-            playClickSound();
-            showPage('page-settings');
-        }
-
-        // ===== Toggle Switch with localStorage =====
-        function toggleSwitch(el, key) {
-            el.classList.toggle('active');
-            const state = el.classList.contains('active');
-            if (key) {
-                localStorage.setItem('palmpay_' + key, state ? 'true' : 'false');
-                // If biometric toggle, also handle the biometric enrollment
-                if (key === 'biometric') {
-                    if (state) {
-                        registerDeviceBiometrics().then(success => {
-                            if (!success) {
-                                el.classList.remove('active');
-                                localStorage.setItem('palmpay_biometric', 'false');
-                            }
-                        });
-                    } else {
-                        localStorage.removeItem('local_biometric_id');
-                        showToast('Touch ID disabled', 'success');
-                    }
-                }
-                if (key === 'speaker') {
-                    showToast(state ? 'Speaker ON' : 'Speaker OFF', 'success');
-                }
-                if (key === 'darkmode') {
-                    showToast(state ? 'Dark Mode ON' : 'Dark Mode OFF', 'success');
-                }
-                if (key === 'sms') {
-                    showToast(state ? 'SMS Alerts ON' : 'SMS Alerts OFF', 'success');
-                }
-            }
-        }
-
-        function loadToggleStates() {
-            const toggles = ['biometric', 'darkmode', 'sms', 'speaker'];
-            toggles.forEach(key => {
-                const el = document.getElementById('toggle-' + key);
-                if (el) {
-                    const saved = localStorage.getItem('palmpay_' + key);
-                    if (saved === 'true') {
-                        el.classList.add('active');
-                    } else if (saved === 'false') {
-                        el.classList.remove('active');
-                    } else {
-                        // Defaults: speaker ON, others OFF
-                        if (key === 'speaker') el.classList.add('active');
-                        else el.classList.remove('active');
-                    }
-                }
+        function updatePinDots() {
+            const dots = document.querySelectorAll('#pinDotsRow .pin-dot');
+            dots.forEach((dot, i) => {
+                dot.className = i < appState.enteredPin.length ? 'pin-dot pin-dot-filled' : 'pin-dot';
             });
         }
 
-        // ===== Biometric Registration (WebAuthn) =====
+        function pressPinKey(key) {
+            if (key === 'backspace') {
+                if (appState.enteredPin.length > 0) {
+                    appState.enteredPin = appState.enteredPin.slice(0, -1);
+                    updatePinDots();
+                    playKeySound();
+                }
+                return;
+            }
+            if (appState.enteredPin.length < 4) {
+                appState.enteredPin += key;
+                updatePinDots();
+                playKeySound();
+                if (appState.enteredPin.length === 4) {
+                    setTimeout(() => verifyPinCode(), 180);
+                }
+            }
+        }
+
+        function verifyPinCode() {
+            if (appState.enteredPin === appState.currentUser.pin) {
+                playUnlockSound();
+                showToast('Access Authorized.');
+                initializeDashboard();
+                showPage('page-dashboard');
+            } else {
+                playErrorSound();
+                showToast('Incorrect security PIN.', 'error');
+                resetPinState();
+            }
+        }
+
+        // ===== BIOMETRIC =====
         async function registerDeviceBiometrics() {
-            const hasWebAuthn = window.PublicKeyCredential !== undefined;
+            const hasWebAuthn = !!window.PublicKeyCredential;
             const secure = window.isSecureContext || window.location.hostname === 'localhost' || window.location.protocol ===
                 'https:';
 
@@ -1041,55 +1247,50 @@
                 try {
                     const challenge = crypto.getRandomValues(new Uint8Array(32));
                     const userId = crypto.getRandomValues(new Uint8Array(16));
-                    const username = appState.currentUser.phone;
-
                     const options = {
                         publicKey: {
                             challenge,
                             rp: { name: 'PalmPay Replica', id: window.location.hostname },
-                            user: { id: userId, name: username, displayName: appState.currentUser.name },
+                            user: { id: userId, name: appState.currentUser.phone, displayName: appState.currentUser
+                                    .name },
                             pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
                             authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },
                             timeout: 15000
                         }
                     };
-
-                    const credential = await navigator.credentials.create(options);
-                    if (credential) {
-                        const rawId = new Uint8Array(credential.rawId);
-                        const base64Id = btoa(String.fromCharCode(...rawId));
-                        localStorage.setItem('local_biometric_id', base64Id);
-                        showToast('Touch ID enabled successfully!', 'success');
+                    const cred = await navigator.credentials.create(options);
+                    if (cred) {
+                        const rawId = new Uint8Array(cred.rawId);
+                        const b64 = btoa(String.fromCharCode(...rawId));
+                        localStorage.setItem('local_biometric_id', b64);
+                        showToast('Touch ID enabled!', 'success');
                         return true;
                     }
-                } catch (e) {
-                    console.warn('WebAuthn registration failed:', e);
+                } catch (_) {
                     showToast('Biometric registration failed.', 'error');
                     return false;
                 }
             }
-
-            // Fallback: store a flag
+            // Fallback mock
             localStorage.setItem('local_biometric_id', 'mock_' + Date.now());
             showToast('Touch ID enabled (simulated).', 'success');
             return true;
         }
 
-        // ===== Biometric Unlock (WebAuthn) =====
         async function triggerBiometricUnlock() {
             const enabled = localStorage.getItem('palmpay_biometric') === 'true';
             if (!enabled) {
-                showToast('Please enable Touch ID in Settings > Login Settings first!', 'error');
+                showToast('Enable Touch ID in Login Settings first.', 'error');
                 return;
             }
 
-            const savedCredId = localStorage.getItem('local_biometric_id');
-            const hasWebAuthn = window.PublicKeyCredential !== undefined;
+            const savedId = localStorage.getItem('local_biometric_id');
+            const hasWA = !!window.PublicKeyCredential;
 
-            if (hasWebAuthn && savedCredId && !savedCredId.startsWith('mock_')) {
+            if (hasWA && savedId && !savedId.startsWith('mock_')) {
                 try {
                     const challenge = crypto.getRandomValues(new Uint8Array(32));
-                    const rawId = Uint8Array.from(atob(savedCredId), c => c.charCodeAt(0));
+                    const rawId = Uint8Array.from(atob(savedId), c => c.charCodeAt(0));
                     const options = {
                         publicKey: {
                             challenge,
@@ -1106,43 +1307,20 @@
                         showPage('page-dashboard');
                         return;
                     }
-                } catch (e) {
-                    console.warn('WebAuthn assertion failed:', e);
-                    showToast('Biometric scan failed. Please use PIN.', 'error');
+                } catch (_) {
+                    showToast('Biometric scan failed. Use PIN.', 'error');
                     return;
                 }
             }
 
             // Mock fallback
-            showToast('Touch ID simulation: access granted.', 'success');
+            showToast('Touch ID simulation: granted.', 'success');
             playUnlockSound();
             initializeDashboard();
             showPage('page-dashboard');
         }
 
-        // ===== Auth Tabs =====
-        function toggleAuthTab(tab) {
-            const btnLogin = document.getElementById('btn-tab-login');
-            const btnSignup = document.getElementById('btn-tab-signup');
-            const formLogin = document.getElementById('form-login');
-            const formSignup = document.getElementById('form-signup');
-
-            if (tab === 'login') {
-                btnLogin.className =
-                'flex-1 py-3 text-sm font-bold rounded-lg transition-all bg-white text-brand-purple shadow-sm';
-                btnSignup.className = 'flex-1 py-3 text-sm font-bold rounded-lg transition-all text-brand-textGray';
-                formLogin.classList.remove('hidden');
-                formSignup.classList.add('hidden');
-            } else {
-                btnSignup.className =
-                'flex-1 py-3 text-sm font-bold rounded-lg transition-all bg-white text-brand-purple shadow-sm';
-                btnLogin.className = 'flex-1 py-3 text-sm font-bold rounded-lg transition-all text-brand-textGray';
-                formSignup.classList.remove('hidden');
-                formLogin.classList.add('hidden');
-            }
-        }
-
-        // ===== Session =====
+        // ===== SESSION =====
         function loadLocalSession() {
             const phone = localStorage.getItem('palmpay_current_phone');
             if (phone && appState.users.length) {
@@ -1160,9 +1338,9 @@
         function setupLockscreen() {
             document.getElementById('lockscreen-username').textContent = `Welcome Back, ${appState.currentUser.name}`;
             resetPinState();
-            // Auto-trigger biometric if enabled
+            // Auto-trigger if biometrics enabled
             if (localStorage.getItem('palmpay_biometric') === 'true') {
-                setTimeout(() => triggerBiometricUnlock(), 600);
+                setTimeout(() => triggerBiometricUnlock(), 700);
             }
         }
 
@@ -1172,7 +1350,7 @@
             switchTab('home');
         }
 
-        // ===== Balance =====
+        // ===== BALANCE =====
         function updateBalanceUI() {
             const bal = document.getElementById('dashboard-balance');
             const assets = document.getElementById('me-assets-balance');
@@ -1190,7 +1368,7 @@
             updateBalanceUI();
         }
 
-        // ===== Tab Switching =====
+        // ===== TAB SWITCH =====
         function switchTab(tabId) {
             const home = document.getElementById('tab-home');
             const me = document.getElementById('tab-me');
@@ -1207,12 +1385,11 @@
                 me.classList.remove('hidden');
                 btnMe.className = 'flex-1 flex flex-col items-center gap-1 text-brand-purple';
                 btnHome.className = 'flex-1 flex flex-col items-center gap-1 text-brand-textGray';
-                populateMePageDetails();
+                populateMePage();
             }
         }
 
-        // ===== Me Tab =====
-        function populateMePageDetails() {
+        function populateMePage() {
             const u = appState.currentUser;
             document.getElementById('me-user-name').textContent = `Hi, ${u.name.toUpperCase()}`;
             document.getElementById('me-user-phone').textContent =
@@ -1224,7 +1401,7 @@
             const txs = u.transactions || [];
             if (!txs.length) {
                 container.innerHTML =
-                `<p class="text-[10px] text-brand-textGray text-center py-2">No transactions recorded.</p>`;
+                    `<p class="text-[10px] text-brand-textGray text-center py-2">No transactions recorded.</p>`;
                 return;
             }
             txs.slice(0, 2).forEach(t => {
@@ -1252,55 +1429,70 @@
             });
         }
 
-        // ===== Lockscreen PIN =====
-        function resetPinState() {
-            appState.enteredPin = '';
-            updatePinDots();
+        // ===== SETTINGS NAV =====
+        function navigateToSettings() {
+            showPage('page-settings');
+            loadToggleStates();
         }
 
-        function updatePinDots() {
-            document.querySelectorAll('.pin-dot').forEach((dot, i) => {
-                dot.className = i < appState.enteredPin.length ?
-                    'pin-dot w-3.5 h-3.5 rounded-full bg-white scale-110 shadow-lg shadow-white/30' :
-                    'pin-dot w-3.5 h-3.5 rounded-full border border-white/40 bg-transparent';
+        function goBackFromSettings() {
+            showPage('page-dashboard');
+            if (document.getElementById('tab-me').classList.contains('hidden')) switchTab('me');
+        }
+
+        function navigateToLoginSettings() {
+            showPage('page-login-settings');
+            loadToggleStates();
+        }
+
+        function goBackFromLoginSettings() {
+            showPage('page-settings');
+        }
+
+        // ===== TOGGLES =====
+        function toggleSwitch(el, key) {
+            el.classList.toggle('active');
+            const state = el.classList.contains('active');
+            if (key) {
+                localStorage.setItem('palmpay_' + key, state ? 'true' : 'false');
+                if (key === 'biometric') {
+                    if (state) {
+                        registerDeviceBiometrics().then(success => {
+                            if (!success) {
+                                el.classList.remove('active');
+                                localStorage.setItem('palmpay_biometric', 'false');
+                            }
+                        });
+                    } else {
+                        localStorage.removeItem('local_biometric_id');
+                        showToast('Touch ID disabled', 'success');
+                    }
+                }
+                if (key === 'speaker') showToast(state ? 'Speaker ON' : 'Speaker OFF', 'success');
+                if (key === 'darkmode') showToast(state ? 'Dark Mode ON' : 'Dark Mode OFF', 'success');
+                if (key === 'sms') showToast(state ? 'SMS Alerts ON' : 'SMS Alerts OFF', 'success');
+            }
+        }
+
+        function loadToggleStates() {
+            const keys = ['biometric', 'darkmode', 'sms', 'speaker'];
+            keys.forEach(k => {
+                const el = document.getElementById('toggle-' + k);
+                if (el) {
+                    const saved = localStorage.getItem('palmpay_' + k);
+                    if (saved === 'true') el.classList.add('active');
+                    else if (saved === 'false') el.classList.remove('active');
+                    else {
+                        if (k === 'speaker') el.classList.add('active');
+                        else el.classList.remove('active');
+                    }
+                }
             });
         }
 
-        function pressPinKey(key) {
-            if (key === 'backspace') {
-                if (appState.enteredPin.length) {
-                    appState.enteredPin = appState.enteredPin.slice(0, -1);
-                    updatePinDots();
-                    playKeySound();
-                }
-                return;
-            }
-            if (appState.enteredPin.length < 4) {
-                appState.enteredPin += key;
-                updatePinDots();
-                playKeySound();
-                if (appState.enteredPin.length === 4) {
-                    setTimeout(() => verifyPinCode(), 200);
-                }
-            }
-        }
-
-        function verifyPinCode() {
-            if (appState.enteredPin === appState.currentUser.pin) {
-                playUnlockSound();
-                showToast('Access Authorized.');
-                initializeDashboard();
-                showPage('page-dashboard');
-            } else {
-                playErrorSound();
-                showToast('Incorrect security PIN.', 'error');
-                resetPinState();
-            }
-        }
-
-        // ===== Deposit =====
+        // ===== MODALS =====
         function openDepositModal() {
-            document.getElementById('modal-deposit').classList.remove('hidden');
+            document.getElementById('modal-deposit').classList.add('show');
         }
 
         function setDepositQuick(amt) {
@@ -1311,7 +1503,7 @@
             const input = document.getElementById('deposit-amount');
             const amount = parseFloat(input.value);
             if (isNaN(amount) || amount <= 0) {
-                showToast('Please input a valid sum.', 'error');
+                showToast('Enter a valid amount.', 'error');
                 return;
             }
             appState.currentUser.balance += amount;
@@ -1320,28 +1512,27 @@
                 type: 'deposit',
                 amount,
                 date: new Date().toLocaleDateString(),
-                title: 'Account Deposit (Simulation)'
+                title: 'Account Deposit'
             });
-            const ok = await syncUsersToCloud();
+            const ok = await syncUsers();
             if (ok) {
-                showToast(`Deposited ₦${amount.toLocaleString()} successfully.`);
+                showToast(`Deposited ₦${amount.toLocaleString()}`);
                 updateBalanceUI();
                 closeModal('modal-deposit');
                 input.value = '';
-                if (!document.getElementById('tab-me').classList.contains('hidden')) populateMePageDetails();
+                if (!document.getElementById('tab-me').classList.contains('hidden')) populateMePage();
             }
         }
 
-        // ===== Airtime =====
         function openAirtimeModal() {
-            document.getElementById('modal-airtime').classList.remove('hidden');
+            document.getElementById('modal-airtime').classList.add('show');
         }
 
         async function executeAirtimePurchase() {
             const phone = document.getElementById('airtime-phone').value.trim();
             const amount = parseFloat(document.getElementById('airtime-amount').value);
             if (!phone || isNaN(amount) || amount <= 0) {
-                showToast('Invalid network top-up parameters.', 'error');
+                showToast('Invalid input.', 'error');
                 return;
             }
             if (appState.currentUser.balance < amount) {
@@ -1356,66 +1547,30 @@
                 date: new Date().toLocaleDateString(),
                 title: `Airtime Sent (${phone})`
             });
-            const ok = await syncUsersToCloud();
+            const ok = await syncUsers();
             if (ok) {
                 showToast(`₦${amount.toLocaleString()} sent to ${phone}`);
                 updateBalanceUI();
                 closeModal('modal-airtime');
                 document.getElementById('airtime-phone').value = '';
                 document.getElementById('airtime-amount').value = '';
-                if (!document.getElementById('tab-me').classList.contains('hidden')) populateMePageDetails();
+                if (!document.getElementById('tab-me').classList.contains('hidden')) populateMePage();
             }
         }
 
-        // ===== Close Modal =====
         function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
+            document.getElementById(id).classList.remove('show');
         }
 
-        // ===== Logout =====
+        // ===== LOGOUT =====
         function logout() {
             localStorage.removeItem('palmpay_current_phone');
-            // Don't remove biometric settings so they persist
             appState.currentUser = null;
-            closeModal('modal-settings');
             showPage('page-gateway');
-            showToast('Logged out completely.');
+            showToast('Logged out.');
         }
 
-        // ===== JSONBin =====
-        async function fetchUsersFromCloud() {
-            try {
-                showLoading(true);
-                const res = await fetch(API_URL, { headers: { 'X-Master-Key': API_KEY } });
-                const data = await res.json();
-                appState.users = data.record?.users || [];
-                return true;
-            } catch (_) {
-                showToast('Failed to connect to secure servers.', 'error');
-                return false;
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        async function syncUsersToCloud() {
-            try {
-                showLoading(true);
-                const res = await fetch(API_URL, {
-                    method: 'PUT',
-                    headers: { 'X-Master-Key': API_KEY, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ users: appState.users })
-                });
-                return res.ok;
-            } catch (_) {
-                showToast('Could not sync state to cloud.', 'error');
-                return false;
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        // ===== Form Handlers =====
+        // ===== FORMS =====
         document.getElementById('form-signup').addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('signup-name').value.trim();
@@ -1423,10 +1578,18 @@
             const pin = document.getElementById('signup-pin').value;
             const confirm = document.getElementById('signup-pin-confirm').value;
 
-            if (pin.length !== 4 || confirm.length !== 4) { showToast('PIN must be exactly 4 digits.', 'error'); return; }
-            if (pin !== confirm) { showToast('PIN confirmation mismatched.', 'error'); return; }
-            if (appState.users.find(u => u.phone === phone)) { showToast('This mobile number is already registered.',
-                    'error'); return; }
+            if (pin.length !== 4 || confirm.length !== 4) {
+                showToast('PIN must be 4 digits.', 'error');
+                return;
+            }
+            if (pin !== confirm) {
+                showToast('PIN mismatch.', 'error');
+                return;
+            }
+            if (appState.users.find(u => u.phone === phone)) {
+                showToast('Number already registered.', 'error');
+                return;
+            }
 
             const newUser = {
                 name,
@@ -1437,7 +1600,7 @@
                         .toLocaleDateString(), title: 'Registration Reward' }]
             };
             appState.users.push(newUser);
-            const ok = await syncUsersToCloud();
+            const ok = await syncUsers();
             if (ok) {
                 appState.currentUser = newUser;
                 localStorage.setItem('palmpay_current_phone', phone);
@@ -1455,19 +1618,52 @@
             const user = appState.users.find(u => u.phone === phone);
             if (!user || user.pin !== pin) {
                 playErrorSound();
-                showToast('Invalid credentials supplied.', 'error');
+                showToast('Invalid credentials.', 'error');
                 return;
             }
             appState.currentUser = user;
             localStorage.setItem('palmpay_current_phone', phone);
-            showToast('Secure session loaded.');
+            showToast('Welcome back!');
             playUnlockSound();
             initializeDashboard();
             showPage('page-dashboard');
         });
 
-        // ===== PWA =====
-        function registerSecurePWA() {
+        // ===== KEYPAD EVENT BINDING =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Bind keypad buttons
+            document.querySelectorAll('.key-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const key = this.dataset.key;
+                    if (key === 'fingerprint') {
+                        triggerBiometricUnlock();
+                    } else {
+                        pressPinKey(key);
+                    }
+                });
+                // Touch feedback
+                btn.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.92)';
+                }, { passive: true });
+                btn.addEventListener('touchend', function() {
+                    this.style.transform = '';
+                }, { passive: true });
+            });
+
+            // Switch Account
+            document.getElementById('switchAccountBtn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                logout();
+            });
+
+            // Forgot PIN
+            document.getElementById('forgotPinBtn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                alert('Contact support to reset your PIN.');
+            });
+
+            // PWA manifest
             const manifest = {
                 short_name: 'PalmPay',
                 name: 'PalmPay Portal',
@@ -1485,34 +1681,25 @@
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     const sw = `
-                            const CACHE='palmpay-v4';
-                            const URLS=['/','index.html'];
-                            self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(URLS))));
+                            const C='palmpay-v5';
+                            const U=['/','index.html'];
+                            self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(U))));
                             self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));
                         `;
-                    const blob2 = new Blob([sw], { type: 'application/javascript' });
-                    navigator.serviceWorker.register(URL.createObjectURL(blob2)).catch(() => {});
+                    const b2 = new Blob([sw], { type: 'application/javascript' });
+                    navigator.serviceWorker.register(URL.createObjectURL(b2)).catch(() => {});
                 });
             }
-        }
 
-        // ===== Init =====
-        window.addEventListener('DOMContentLoaded', async () => {
-            registerSecurePWA();
-            const loaded = await fetchUsersFromCloud();
-            if (loaded) {
-                loadLocalSession();
-                loadToggleStates();
-            }
+            // Init
+            fetchUsers().then(loaded => {
+                if (loaded) {
+                    loadLocalSession();
+                    loadToggleStates();
+                }
+            });
         });
-
-        // Prevent zoom on double tap
-        document.addEventListener('touchend', (e) => {
-            if (e.target.closest('button, .toggle-track, .settings-item')) {
-                e.preventDefault();
-            }
-        }, { passive: false });
     </script>
 
 </body>
-                                </html>
+                                                                                                                                                  </html>
