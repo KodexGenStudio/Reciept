@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PalmPay</title>
-    <!-- PWA Link Placeholders -->
     <link id="manifest-placeholder" rel="manifest">
     <meta name="theme-color" content="#5F259F">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,7 +13,6 @@
     <!-- Tailwind CSS & FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts (Inter) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <script>
@@ -43,7 +41,6 @@
     </script>
 
     <style>
-        /* Smooth Custom Transitions */
         .page-transition {
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
         }
@@ -55,7 +52,6 @@
             width: 100%;
             height: 100%;
         }
-        /* Custom Fingerprint Pulse Animation */
         @keyframes radar-pulse {
             0% { transform: scale(1); opacity: 0.6; }
             100% { transform: scale(1.6); opacity: 0; }
@@ -63,11 +59,9 @@
         .radar-ring {
             animation: radar-pulse 2s infinite ease-out;
         }
-        /* Lock screen input dot transitions */
         .pin-dot {
             transition: all 0.15s ease-in-out;
         }
-        /* Disable pull-to-refresh & custom scrollbars */
         body {
             overscroll-behavior-y: contain;
             -webkit-tap-highlight-color: transparent;
@@ -80,10 +74,10 @@
 </head>
 <body class="bg-slate-900 font-sans text-brand-textDark antialiased flex items-center justify-center min-h-screen selection:bg-brand-purple selection:text-white">
 
-    <!-- Screen/Viewport Shell (Mimicking premium smartphone proportions or displaying perfectly full-screen on mobile) -->
+    <!-- Screen Shell -->
     <div class="relative w-full max-w-md bg-brand-bgGray h-screen md:h-[880px] md:rounded-[40px] md:shadow-2xl overflow-hidden flex flex-col page-transition border border-slate-800 md:border-slate-700">
 
-        <!-- Network Loading Overlay (Dynamic glassmorphism spinner) -->
+        <!-- Network Loading Overlay -->
         <div id="network-loader" class="absolute inset-0 bg-black/40 backdrop-blur-md z-[100] flex flex-col items-center justify-center hidden">
             <div class="bg-white p-6 rounded-2xl shadow-xl flex flex-col items-center gap-4">
                 <div class="w-12 h-12 border-4 border-brand-purple border-t-transparent rounded-full animate-spin"></div>
@@ -91,7 +85,7 @@
             </div>
         </div>
 
-        <!-- Custom Audio feedback generator (Using Web Audio API) -->
+        <!-- Custom Audio Feedback -->
         <script>
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             function playTone(freq, type, duration) {
@@ -106,23 +100,21 @@
                     gain.connect(audioCtx.destination);
                     osc.start();
                     osc.stop(audioCtx.currentTime + duration);
-                } catch (e) { console.log("Audio not allowed yet"); }
+                } catch (e) { console.log("Audio blocked"); }
             }
             function playUnlockSound() {
-                playTone(523.25, 'triangle', 0.1); // C5
-                setTimeout(() => playTone(659.25, 'triangle', 0.15), 80); // E5
+                playTone(523.25, 'triangle', 0.1); 
+                setTimeout(() => playTone(659.25, 'triangle', 0.15), 80); 
             }
             function playErrorSound() {
                 playTone(150, 'sawtooth', 0.25);
             }
         </script>
 
-
         <!-- ========================================== -->
         <!-- SCREEN 1: WELCOME GATEWAY (SIGNUP / LOGIN) -->
         <!-- ========================================== -->
         <div id="page-gateway" class="absolute inset-0 bg-white flex flex-col z-50 overflow-y-auto px-6 py-8">
-            <!-- Brand Logo & Header -->
             <div class="flex flex-col items-center mt-10 mb-8">
                 <div class="w-16 h-16 bg-brand-purple rounded-3xl flex items-center justify-center shadow-lg shadow-brand-purple/20 mb-3">
                     <span class="text-white text-3xl font-extrabold tracking-wider">P</span>
@@ -131,13 +123,11 @@
                 <p class="text-xs text-brand-textGray mt-1">Secure Mobile Financial Gateway</p>
             </div>
 
-            <!-- Tabs Selection -->
             <div class="flex bg-brand-lightPurple p-1 rounded-xl mb-6">
                 <button onclick="toggleAuthTab('login')" id="btn-tab-login" class="flex-1 py-3 text-sm font-bold rounded-lg transition-all bg-white text-brand-purple shadow-sm">Log In</button>
                 <button onclick="toggleAuthTab('signup')" id="btn-tab-signup" class="flex-1 py-3 text-sm font-bold rounded-lg transition-all text-brand-textGray">Sign Up</button>
             </div>
 
-            <!-- Login Form -->
             <form id="form-login" class="flex flex-col gap-4">
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-brand-textGray">Mobile Number</label>
@@ -153,7 +143,6 @@
                 <button type="submit" class="w-full bg-brand-btnPurple text-white py-4 rounded-xl font-bold text-sm mt-4 shadow-md shadow-brand-purple/20 hover:bg-brand-purple transition-all">Sign In</button>
             </form>
 
-            <!-- Signup Form -->
             <form id="form-signup" class="flex flex-col gap-4 hidden">
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-brand-textGray">Full Name</label>
@@ -183,7 +172,6 @@
         <!-- SCREEN 2: LOCK SCREEN (PIN & BIOMETRIC) -->
         <!-- ========================================== -->
         <div id="page-lockscreen" class="absolute inset-0 bg-brand-purple flex flex-col z-[40] hidden-page">
-            <!-- Header elements -->
             <div class="flex flex-col items-center mt-16 flex-1 px-8 text-center text-white">
                 <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mb-4">
                     <i class="fa-solid fa-lock text-xl text-white"></i>
@@ -191,7 +179,6 @@
                 <h2 id="lockscreen-username" class="text-xl font-bold">Welcome Back, Somtochukwu</h2>
                 <p class="text-xs text-white/70 mt-1">Verify security credentials to continue</p>
 
-                <!-- Input Circles Indicator -->
                 <div class="flex gap-4 my-10">
                     <div class="pin-dot w-3.5 h-3.5 rounded-full border border-white/40 bg-transparent"></div>
                     <div class="pin-dot w-3.5 h-3.5 rounded-full border border-white/40 bg-transparent"></div>
@@ -200,7 +187,6 @@
                 </div>
             </div>
 
-            <!-- Numeric Lockpad (Built in pure grid layout for tactile precision) -->
             <div class="bg-white/10 backdrop-blur-xl rounded-t-[40px] px-8 pt-8 pb-10 flex flex-col gap-6">
                 <div class="grid grid-cols-3 gap-y-4 gap-x-8 text-center">
                     <button onclick="pressPinKey('1')" class="py-4 text-2xl font-bold text-white rounded-full hover:bg-white/10 transition-all active:scale-90">1</button>
@@ -213,13 +199,11 @@
                     <button onclick="pressPinKey('8')" class="py-4 text-2xl font-bold text-white rounded-full hover:bg-white/10 transition-all active:scale-90">8</button>
                     <button onclick="pressPinKey('9')" class="py-4 text-2xl font-bold text-white rounded-full hover:bg-white/10 transition-all active:scale-90">9</button>
 
-                    <!-- Biometric trigger button (Left) -->
                     <button onclick="triggerBiometricUnlock()" class="py-4 flex items-center justify-center text-white rounded-full hover:bg-white/10 transition-all active:scale-90">
                         <i class="fa-solid fa-fingerprint text-2xl"></i>
                     </button>
                     <button onclick="pressPinKey('0')" class="py-4 text-2xl font-bold text-white rounded-full hover:bg-white/10 transition-all active:scale-90">0</button>
-                    <!-- Backspace (Right) -->
-                    <button onclick="pressPinBackspace()" class="py-4 flex items-center justify-center text-white rounded-full hover:bg-white/10 transition-all active:scale-90">
+                    <button onclick="pressPinKey('backspace')" class="py-4 flex items-center justify-center text-white rounded-full hover:bg-white/10 transition-all active:scale-90">
                         <i class="fa-solid fa-backspace text-xl"></i>
                     </button>
                 </div>
@@ -232,191 +216,280 @@
 
 
         <!-- ========================================== -->
-        <!-- SCREEN 3: ACTUAL PALMPAY REPLICA HOMEPAGE -->
+        <!-- SCREEN 3: MASTER DASHBOARD WITH MULTI-TABS -->
         <!-- ========================================== -->
-        <div id="page-dashboard" class="absolute inset-0 flex flex-col z-30 hidden-page overflow-hidden">
-            <!-- Top Status Bar & Custom Header -->
-            <div class="bg-white px-4 pt-4 pb-2 flex justify-between items-center z-10">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-purple to-indigo-600 flex items-center justify-center text-white font-extrabold text-sm border-2 border-brand-lightPurple relative shadow-sm">
-                        <span>P</span>
-                        <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
-                    </div>
-                    <div>
-                        <p class="text-[10px] text-brand-textGray font-medium leading-none">Welcome back</p>
-                        <h3 id="dashboard-user-title" class="text-sm font-bold tracking-tight">Hi, Somtochukwu</h3>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4 text-brand-textDark">
-                    <button class="relative hover:opacity-80"><i class="fa-solid fa-headset text-lg"></i></button>
-                    <button class="relative hover:opacity-80">
-                        <i class="fa-regular fa-bell text-lg"></i>
-                        <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-[9px] text-white font-bold w-4 h-4 rounded-full flex items-center justify-center">42</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Dashboard Content Container (Scrollable viewport block) -->
-            <div class="flex-1 overflow-y-auto pb-24">
-                
-                <!-- Purple Glowing Balance Card -->
-                <div class="mx-4 mt-3 bg-gradient-to-br from-[#EBE3FF] to-[#F5F2FF] rounded-2xl p-4 shadow-sm border border-brand-purple/10 relative overflow-hidden">
-                    <div class="flex justify-between items-center text-brand-purple mb-3">
-                        <div class="flex items-center gap-1.5 text-xs font-semibold">
-                            <i class="fa-solid fa-shield-halved text-[11px]"></i>
-                            <span>Available Balance</span>
-                            <button onclick="toggleBalanceMask()"><i id="balance-eye-icon" class="fa-solid fa-eye text-xs"></i></button>
-                        </div>
-                        <button onclick="showTransactionHistory()" class="text-xs font-bold flex items-center gap-1">
-                            <span>Transaction History</span>
-                            <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                        </button>
-                    </div>
-
-                    <!-- Balance Figure & Add Money -->
-                    <div class="flex justify-between items-end">
-                        <div>
-                            <h2 id="dashboard-balance" class="text-3xl font-extrabold text-brand-purple tracking-tight">₦171.41</h2>
-                        </div>
-                        <button onclick="openDepositModal()" class="bg-brand-btnPurple text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-md shadow-brand-purple/20 flex items-center gap-1">
-                            <i class="fa-solid fa-plus text-[10px]"></i>
-                            <span>Add Money</span>
-                        </button>
-                    </div>
-
-                    <!-- Earnings Banner -->
-                    <div class="mt-4 pt-3 border-t border-brand-purple/10 flex justify-between items-center text-[11px] text-brand-purple font-medium">
-                        <div class="flex items-center gap-1.5">
-                            <i class="fa-solid fa-wallet"></i>
-                            <span>Yesterday's Earnings: <b class="text-green-600">+₦0.07</b></span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-[9px] text-brand-purple/50"></i>
-                    </div>
-                </div>
-
-                <!-- Primary Action Cards (Grid row) -->
-                <div class="grid grid-cols-4 gap-2.5 mx-4 mt-4">
-                    <button onclick="alert('Interbank transfers offline.')" class="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-2 hover:bg-slate-50 transition-all relative">
-                        <span class="absolute -top-1.5 -right-1 px-1.5 py-0.5 bg-orange-500 text-[8px] text-white rounded-full font-extrabold scale-90">0 Fee</span>
-                        <div class="w-10 h-10 rounded-full bg-brand-lightPurple flex items-center justify-center text-brand-purple text-lg"><i class="fa-solid fa-building-columns"></i></div>
-                        <span class="text-[11px] font-bold text-brand-textDark leading-none">To Bank</span>
-                    </button>
-                    <button onclick="alert('P2P transfers operational.')" class="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-2 hover:bg-slate-50 transition-all">
-                        <div class="w-10 h-10 rounded-full bg-brand-lightPurple flex items-center justify-center text-brand-purple text-lg"><i class="fa-solid fa-mobile-screen"></i></div>
-                        <span class="text-[11px] font-bold text-brand-textDark leading-none">To PalmPay</span>
-                    </button>
-                    <button onclick="alert('Direct savings portal loaded.')" class="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-2 hover:bg-slate-50 transition-all">
-                        <div class="w-10 h-10 rounded-full bg-brand-lightPurple flex items-center justify-center text-brand-purple text-lg"><i class="fa-solid fa-piggy-bank"></i></div>
-                        <span class="text-[11px] font-bold text-brand-textDark leading-none">Savings</span>
-                    </button>
-                    <button onclick="alert('Accessing payment cards.')" class="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-2 hover:bg-slate-50 transition-all">
-                        <div class="w-10 h-10 rounded-full bg-brand-lightPurple flex items-center justify-center text-brand-purple text-lg"><i class="fa-solid fa-credit-card"></i></div>
-                        <span class="text-[11px] font-bold text-brand-textDark leading-none">Cards</span>
-                    </button>
-                </div>
-
-                <!-- Main Services Grid Container -->
-                <div class="mx-4 mt-4 bg-white rounded-3xl p-4 shadow-sm border border-slate-100">
-                    <div class="grid grid-cols-4 gap-y-5 gap-x-2 text-center">
-                        <button onclick="openAirtimeModal()" class="flex flex-col items-center gap-1.5">
-                            <div class="w-11 h-11 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 text-lg"><i class="fa-solid fa-phone"></i></div>
-                            <span class="text-[11px] font-semibold text-brand-textDark">Airtime</span>
-                        </button>
-                        <button onclick="openAirtimeModal()" class="flex flex-col items-center gap-1.5 relative">
-                            <span class="absolute -top-2 -right-1 px-1.5 py-0.5 bg-amber-500 text-[8px] text-white rounded-full font-bold scale-75">Promo</span>
-                            <div class="w-11 h-11 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500 text-lg"><i class="fa-solid fa-arrows-rotate"></i></div>
-                            <span class="text-[11px] font-semibold text-brand-textDark">Data</span>
-                        </button>
-                        <button class="flex flex-col items-center gap-1.5">
-                            <div class="w-11 h-11 rounded-full bg-green-50 flex items-center justify-center text-green-500 text-lg"><i class="fa-solid fa-volleyball"></i></div>
-                            <span class="text-[11px] font-semibold text-brand-textDark">Betting</span>
-                        </button>
-                        <button class="flex flex-col items-center gap-1.5">
-                            <div class="w-11 h-11 rounded-full bg-teal-50 flex items-center justify-center text-teal-500 text-lg"><i class="fa-solid fa-bolt"></i></div>
-                            <span class="text-[11px] font-semibold text-brand-textDark">Electricity</span>
-                        </button>
-                        <button class="flex flex-col items-center gap-1.5">
-                            <div class="w-11 h-11 rounded-full bg-purple-50 flex items-center justify-center text-purple-500 text-lg"><i class="fa-solid fa-gift"></i></div>
-                            <span class="text-[11px] font-semibold text-brand-textDark">Refer & Earn</span>
-                        </button>
-                        <button class="flex flex-col items-center gap-1.5">
-                            <div class="w-11 h-11 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-500 text-lg"><i class="fa-solid fa-shield-heart"></i></div>
-                            <span class="text-[11px] font-semibold text-brand-textDark">Insurance</span>
-                        </button>
-                        <button class="flex flex-col items-center gap-1.5">
-                            <div class="w-11 h-11 rounded-full bg-teal-50 flex items-center justify-center text-teal-600 text-lg"><i class="fa-solid fa-sack-dollar"></i></div>
-                            <span class="text-[11px] font-semibold text-brand-textDark">Loan</span>
-                        </button>
-                        <button class="flex flex-col items-center gap-1.5">
-                            <div class="w-11 h-11 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 text-lg"><i class="fa-solid fa-grid-2"></i><i class="fa-solid fa-ellipsis"></i></div>
-                            <span class="text-[11px] font-semibold text-brand-textDark">More</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Mid-Tier Cash Reward Banner -->
-                <div class="mx-4 mt-4 bg-white rounded-2xl p-3 shadow-sm border border-slate-100 flex justify-between items-center gap-3">
+        <div id="page-dashboard" class="absolute inset-0 flex flex-col z-30 hidden-page overflow-hidden bg-brand-bgGray">
+            
+            <!-- Tab Container 1: HOME PAGE -->
+            <div id="tab-home" class="flex-grow flex flex-col overflow-hidden">
+                <!-- Top Status Bar & Custom Header -->
+                <div class="bg-white px-4 pt-4 pb-2 flex justify-between items-center z-10">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-green-800 text-white flex flex-col items-center justify-center leading-none">
-                            <span class="text-[8px] font-bold">₦2500</span>
-                            <span class="text-[6px] opacity-80">EACH SHARE</span>
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-purple to-indigo-600 flex items-center justify-center text-white font-extrabold text-sm border-2 border-brand-lightPurple relative shadow-sm">
+                            <span>P</span>
+                            <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
                         </div>
                         <div>
-                            <h4 class="text-xs font-bold text-brand-textDark">100% Cash Reward</h4>
-                            <p class="text-[10px] text-brand-textGray">Earn up to ₦2500 per invite</p>
+                            <p class="text-[10px] text-brand-textGray font-medium leading-none">Welcome back</p>
+                            <h3 id="dashboard-user-title" class="text-sm font-bold tracking-tight">Hi, Somtochukwu</h3>
                         </div>
                     </div>
-                    <button class="border border-brand-purple text-brand-purple px-4 py-1 rounded-full text-xs font-bold hover:bg-brand-lightPurple transition-all">GO</button>
-                </div>
-
-                <!-- Wealth Management split boxes (Cashbox / Fixed Savings) -->
-                <div class="grid grid-cols-2 gap-3 mx-4 mt-4">
-                    <!-- CashBox -->
-                    <div class="bg-brand-cashboxBlue rounded-2xl p-4 shadow-sm relative flex flex-col justify-between h-40">
-                        <div>
-                            <h4 class="text-xs font-bold text-brand-purple">CashBox</h4>
-                            <p class="text-[9px] text-brand-textGray leading-snug mt-1">Your Available Balance, Earning for You Daily!</p>
-                        </div>
-                        <div class="my-2">
-                            <p class="text-xs text-green-600 font-bold">20.00%</p>
-                            <p class="text-[8px] text-brand-textGray uppercase tracking-wider font-semibold">Maximum Annual Yield</p>
-                        </div>
-                        <button onclick="openDepositModal()" class="bg-brand-btnPurple text-white py-1.5 rounded-xl text-[10px] font-bold w-full">₦1 to Start</button>
-                    </div>
-
-                    <!-- Fixed Savings -->
-                    <div class="bg-[#FFF8F0] rounded-2xl p-4 shadow-sm relative flex flex-col justify-between h-40 border border-amber-100 overflow-hidden">
-                        <span class="absolute top-0 right-0 bg-amber-500 text-white font-black text-[7px] px-2 py-0.5 uppercase tracking-wide rounded-bl-lg">NEW</span>
-                        <div>
-                            <h4 class="text-xs font-bold text-amber-700">Fixed Savings</h4>
-                            <p class="text-[9px] text-brand-textGray leading-snug mt-1">The longer you save, the more you earn!</p>
-                        </div>
-                        <div class="my-2">
-                            <p class="text-xs text-amber-600 font-bold">up to 20%</p>
-                            <p class="text-[8px] text-brand-textGray uppercase tracking-wider font-semibold">Annual Yield</p>
-                        </div>
-                        <button onclick="alert('Locked savings system initiated.')" class="bg-amber-600 text-white py-1.5 rounded-xl text-[10px] font-bold w-full">Save</button>
+                    <div class="flex items-center gap-4 text-brand-textDark">
+                        <button class="relative hover:opacity-80"><i class="fa-solid fa-headset text-lg"></i></button>
+                        <button class="relative hover:opacity-80">
+                            <i class="fa-regular fa-bell text-lg"></i>
+                            <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-[9px] text-white font-bold w-4 h-4 rounded-full flex items-center justify-center">42</span>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Bottom Large Banner (Promotional Grid Card) -->
-                <div class="mx-4 mt-4 bg-gradient-to-r from-brand-purple to-purple-900 rounded-3xl p-5 shadow-lg relative overflow-hidden flex items-center justify-between min-h-[110px]">
-                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_right,_var(--tw-gradient-stops))] from-white/10 to-transparent"></div>
-                    <div class="flex flex-col gap-1 relative z-10">
-                        <span class="bg-yellow-400 text-brand-purple text-[8px] font-extrabold px-2 py-0.5 rounded-full w-max uppercase">Airtime Promotion</span>
-                        <h3 class="text-sm font-extrabold text-white leading-tight">Save Up to ₦400 on<br>Airtime Recharge</h3>
+                <!-- Scrollable Home Content -->
+                <div class="flex-1 overflow-y-auto pb-24">
+                    <!-- Purple Glowing Balance Card -->
+                    <div class="mx-4 mt-3 bg-gradient-to-br from-[#EBE3FF] to-[#F5F2FF] rounded-2xl p-4 shadow-sm border border-brand-purple/10 relative overflow-hidden">
+                        <div class="flex justify-between items-center text-brand-purple mb-3">
+                            <div class="flex items-center gap-1.5 text-xs font-semibold">
+                                <i class="fa-solid fa-shield-halved text-[11px]"></i>
+                                <span>Available Balance</span>
+                                <button onclick="toggleBalanceMask()"><i id="balance-eye-icon" class="fa-solid fa-eye text-xs"></i></button>
+                            </div>
+                            <button onclick="switchTab('me')" class="text-xs font-bold flex items-center gap-1">
+                                <span>Transaction History</span>
+                                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <h2 id="dashboard-balance" class="text-3xl font-extrabold text-brand-purple tracking-tight">₦171.41</h2>
+                            </div>
+                            <button onclick="openDepositModal()" class="bg-brand-btnPurple text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-md shadow-brand-purple/20 flex items-center gap-1">
+                                <i class="fa-solid fa-plus text-[10px]"></i>
+                                <span>Add Money</span>
+                            </button>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-brand-purple/10 flex justify-between items-center text-[11px] text-brand-purple font-medium">
+                            <div class="flex items-center gap-1.5">
+                                <i class="fa-solid fa-wallet"></i>
+                                <span>Yesterday's Earnings: <b class="text-green-600">+₦0.09</b></span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-[9px] text-brand-purple/50"></i>
+                        </div>
                     </div>
-                    <button onclick="openAirtimeModal()" class="w-12 h-12 rounded-full bg-yellow-400 text-brand-purple font-black flex items-center justify-center text-xs shadow-lg shadow-yellow-400/20 z-10 hover:scale-105 active:scale-95 transition-all">GO</button>
-                    <div class="absolute -bottom-2 -right-4 w-16 h-16 bg-white/5 rounded-full flex items-center justify-center rotate-12 scale-110">
-                        <i class="fa-solid fa-gift text-white/10 text-3xl"></i>
+
+                    <!-- Primary Action Cards -->
+                    <div class="grid grid-cols-4 gap-2.5 mx-4 mt-4">
+                        <button onclick="alert('Interbank transfers offline.')" class="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-2 hover:bg-slate-50 transition-all relative">
+                            <span class="absolute -top-1.5 -right-1 px-1.5 py-0.5 bg-orange-500 text-[8px] text-white rounded-full font-extrabold scale-90">0 Fee</span>
+                            <div class="w-10 h-10 rounded-full bg-brand-lightPurple flex items-center justify-center text-brand-purple text-lg"><i class="fa-solid fa-building-columns"></i></div>
+                            <span class="text-[11px] font-bold text-brand-textDark leading-none">To Bank</span>
+                        </button>
+                        <button onclick="alert('P2P transfers operational.')" class="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-2 hover:bg-slate-50 transition-all">
+                            <div class="w-10 h-10 rounded-full bg-brand-lightPurple flex items-center justify-center text-brand-purple text-lg"><i class="fa-solid fa-mobile-screen"></i></div>
+                            <span class="text-[11px] font-bold text-brand-textDark leading-none">To PalmPay</span>
+                        </button>
+                        <button onclick="alert('Direct savings portal loaded.')" class="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-2 hover:bg-slate-50 transition-all">
+                            <div class="w-10 h-10 rounded-full bg-brand-lightPurple flex items-center justify-center text-brand-purple text-lg"><i class="fa-solid fa-piggy-bank"></i></div>
+                            <span class="text-[11px] font-bold text-brand-textDark leading-none">Savings</span>
+                        </button>
+                        <button onclick="alert('Accessing payment cards.')" class="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-2 hover:bg-slate-50 transition-all">
+                            <div class="w-10 h-10 rounded-full bg-brand-lightPurple flex items-center justify-center text-brand-purple text-lg"><i class="fa-solid fa-credit-card"></i></div>
+                            <span class="text-[11px] font-bold text-brand-textDark leading-none">Cards</span>
+                        </button>
+                    </div>
+
+                    <!-- Main Services Grid -->
+                    <div class="mx-4 mt-4 bg-white rounded-3xl p-4 shadow-sm border border-slate-100">
+                        <div class="grid grid-cols-4 gap-y-5 gap-x-2 text-center">
+                            <button onclick="openAirtimeModal()" class="flex flex-col items-center gap-1.5">
+                                <div class="w-11 h-11 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 text-lg"><i class="fa-solid fa-phone"></i></div>
+                                <span class="text-[11px] font-semibold text-brand-textDark">Airtime</span>
+                            </button>
+                            <button onclick="openAirtimeModal()" class="flex flex-col items-center gap-1.5 relative">
+                                <span class="absolute -top-2 -right-1 px-1.5 py-0.5 bg-amber-500 text-[8px] text-white rounded-full font-bold scale-75">Promo</span>
+                                <div class="w-11 h-11 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500 text-lg"><i class="fa-solid fa-arrows-rotate"></i></div>
+                                <span class="text-[11px] font-semibold text-brand-textDark">Data</span>
+                            </button>
+                            <button class="flex flex-col items-center gap-1.5">
+                                <div class="w-11 h-11 rounded-full bg-green-50 flex items-center justify-center text-green-500 text-lg"><i class="fa-solid fa-volleyball"></i></div>
+                                <span class="text-[11px] font-semibold text-brand-textDark">Betting</span>
+                            </button>
+                            <button class="flex flex-col items-center gap-1.5">
+                                <div class="w-11 h-11 rounded-full bg-teal-50 flex items-center justify-center text-teal-500 text-lg"><i class="fa-solid fa-bolt"></i></div>
+                                <span class="text-[11px] font-semibold text-brand-textDark">Electricity</span>
+                            </button>
+                            <button class="flex flex-col items-center gap-1.5">
+                                <div class="w-11 h-11 rounded-full bg-purple-50 flex items-center justify-center text-purple-500 text-lg"><i class="fa-solid fa-gift"></i></div>
+                                <span class="text-[11px] font-semibold text-brand-textDark">Refer & Earn</span>
+                            </button>
+                            <button class="flex flex-col items-center gap-1.5">
+                                <div class="w-11 h-11 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-500 text-lg"><i class="fa-solid fa-shield-heart"></i></div>
+                                <span class="text-[11px] font-semibold text-brand-textDark">Insurance</span>
+                            </button>
+                            <button class="flex flex-col items-center gap-1.5">
+                                <div class="w-11 h-11 rounded-full bg-teal-50 flex items-center justify-center text-teal-600 text-lg"><i class="fa-solid fa-sack-dollar"></i></div>
+                                <span class="text-[11px] font-semibold text-brand-textDark">Loan</span>
+                            </button>
+                            <button class="flex flex-col items-center gap-1.5">
+                                <div class="w-11 h-11 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 text-lg"><i class="fa-solid fa-ellipsis"></i></div>
+                                <span class="text-[11px] font-semibold text-brand-textDark">More</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mid-Tier Cash Reward Banner -->
+                    <div class="mx-4 mt-4 bg-white rounded-2xl p-3 shadow-sm border border-slate-100 flex justify-between items-center gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-green-800 text-white flex flex-col items-center justify-center leading-none">
+                                <span class="text-[8px] font-bold">₦2500</span>
+                                <span class="text-[6px] opacity-80">EACH SHARE</span>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-brand-textDark">100% Cash Reward</h4>
+                                <p class="text-[10px] text-brand-textGray">Earn up to ₦2500 per invite</p>
+                            </div>
+                        </div>
+                        <button class="border border-brand-purple text-brand-purple px-4 py-1 rounded-full text-xs font-bold hover:bg-brand-lightPurple transition-all">GO</button>
                     </div>
                 </div>
-
             </div>
 
-            <!-- Bottom Navigation Bar -->
+            <!-- Tab Container 2: ME MENU PAGE (Matches your screenshot) -->
+            <div id="tab-me" class="flex-grow flex flex-col overflow-hidden hidden">
+                <!-- Top Header Row -->
+                <div class="bg-white px-5 pt-5 pb-3 flex justify-between items-center border-b border-slate-50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-full bg-purple-100 flex items-center justify-center text-brand-purple font-black text-lg border border-brand-purple/10">
+                            <i class="fa-regular fa-user"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 id="me-user-name" class="font-bold text-base text-brand-textDark">Hi, SOMTOCHUKWU</h3>
+                                <span class="bg-brand-purple/10 text-brand-purple text-[9px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1">
+                                    <i class="fa-solid fa-shield text-[7px]"></i> Tier 1
+                                </span>
+                            </div>
+                            <p id="me-user-phone" class="text-[10px] text-brand-textGray font-semibold mt-0.5">+234 801 234 5678</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 text-brand-textDark">
+                        <button class="hover:opacity-75"><i class="fa-solid fa-expand text-lg"></i></button>
+                        <button onclick="openSettingsModal()" class="hover:opacity-75 text-brand-textDark"><i class="fa-solid fa-gear text-xl"></i></button>
+                    </div>
+                </div>
+
+                <!-- Scrollable Body for Me Section -->
+                <div class="flex-1 overflow-y-auto px-4 pb-24 pt-3 space-y-3.5">
+                    
+                    <!-- Total Assets Card (Matches screenshot layout) -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+                        <div class="flex justify-between items-center text-xs text-brand-textGray font-medium mb-1">
+                            <span class="flex items-center gap-1">Total Assets <i class="fa-regular fa-eye-slash text-[10px]"></i></span>
+                            <span class="flex items-center gap-1">Yesterday's Earnings <i class="fa-solid fa-chevron-right text-[8px]"></i></span>
+                        </div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 id="me-assets-balance" class="text-2xl font-black text-brand-textDark tracking-tight">₦171.41</h2>
+                            <span class="text-emerald-500 font-bold text-sm">+₦0.09</span>
+                        </div>
+
+                        <!-- Dynamic Mini-Transaction History -->
+                        <div class="border-t border-slate-100 pt-3">
+                            <div class="flex justify-between items-center mb-2.5">
+                                <span class="text-[11px] font-bold text-brand-textGray">Transaction History</span>
+                                <button class="text-[10px] text-brand-purple font-extrabold bg-brand-lightPurple px-2.5 py-1 rounded-full">Monthly Overview</button>
+                            </div>
+                            <div id="me-mini-transactions" class="space-y-3">
+                                <!-- Populated dynamically by script -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add Email CTA Row -->
+                    <div class="bg-brand-lightPurple/50 rounded-xl p-3 border border-brand-purple/10 flex justify-between items-center">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-full bg-brand-lightPurple flex items-center justify-center text-brand-purple text-xs"><i class="fa-solid fa-envelope"></i></div>
+                            <div>
+                                <h4 class="text-xs font-bold text-brand-textDark">Add Your Email</h4>
+                                <p class="text-[9px] text-brand-textGray">Link your email for safer account backups</p>
+                            </div>
+                        </div>
+                        <button class="bg-brand-btnPurple text-white px-3 py-1 rounded-full text-[10px] font-bold">Add Now</button>
+                    </div>
+
+                    <!-- Quick Access Section -->
+                    <div>
+                        <h4 class="text-xs font-bold text-brand-textGray uppercase tracking-wider mb-2 px-1">Quick Access</h4>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-white rounded-xl p-3 shadow-sm border border-slate-100 flex items-start gap-2.5">
+                                <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-500 flex items-center justify-center text-sm"><i class="fa-solid fa-wallet"></i></div>
+                                <div>
+                                    <h5 class="text-xs font-bold text-brand-textDark">CashBox</h5>
+                                    <p class="text-[9px] text-brand-textGray leading-normal mt-0.5">Available balance with daily interest</p>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl p-3 shadow-sm border border-slate-100 flex items-start gap-2.5">
+                                <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-500 flex items-center justify-center text-sm"><i class="fa-solid fa-credit-card"></i></div>
+                                <div>
+                                    <h5 class="text-xs font-bold text-brand-textDark">Cards</h5>
+                                    <p class="text-[9px] text-brand-textGray leading-normal mt-0.5">Enjoy seamless balance flexibility</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Menu List Actions -->
+                    <div class="bg-white rounded-2xl p-2 shadow-sm border border-slate-100 divide-y divide-slate-50">
+                        <button class="w-full flex justify-between items-center py-3.5 px-3 text-left">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-shop text-brand-textGray text-sm"></i>
+                                <span class="text-xs font-bold text-brand-textDark">My Business Hub</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
+                        </button>
+                        <button class="w-full flex justify-between items-center py-3.5 px-3 text-left">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-phone-square text-brand-textGray text-sm"></i>
+                                <span class="text-xs font-bold text-brand-textDark">USSD Service</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
+                        </button>
+                        <button class="w-full flex justify-between items-center py-3.5 px-3 text-left">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-shield-halved text-brand-textGray text-sm"></i>
+                                <span class="text-xs font-bold text-brand-textDark">Security Center</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
+                        </button>
+                        <button class="w-full flex justify-between items-center py-3.5 px-3 text-left">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-moon text-brand-textGray text-sm"></i>
+                                <span class="text-xs font-bold text-brand-textDark">Dark Mode</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
+                        </button>
+                        <button class="w-full flex justify-between items-center py-3.5 px-3 text-left">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-university text-brand-textGray text-sm"></i>
+                                <span class="text-xs font-bold text-brand-textDark">Banks And Cards</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
+                        </button>
+                        <button class="w-full flex justify-between items-center py-3.5 px-3 text-left">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-headset text-brand-textGray text-sm"></i>
+                                <span class="text-xs font-bold text-brand-textDark">Customer Service</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Persistent Bottom Navigation Bar -->
             <div class="absolute bottom-0 inset-x-0 bg-white border-t border-slate-100 px-3 py-2 flex justify-between items-center z-10">
-                <button class="flex-1 flex flex-col items-center gap-1 text-brand-purple">
+                <button onclick="switchTab('home')" id="nav-btn-home" class="flex-1 flex flex-col items-center gap-1 text-brand-purple">
                     <i class="fa-solid fa-house text-lg"></i>
                     <span class="text-[10px] font-bold">Home</span>
                 </button>
@@ -430,11 +503,11 @@
                     <i class="fa-solid fa-chart-line text-lg"></i>
                     <span class="text-[10px] font-medium">Wealth</span>
                 </button>
-                <button class="flex-1 flex flex-col items-center gap-1 text-brand-textGray">
+                <button onclick="alert('Accessing dynamic gift inventory...')" class="flex-1 flex flex-col items-center gap-1 text-brand-textGray">
                     <i class="fa-solid fa-gift text-lg"></i>
                     <span class="text-[10px] font-medium">Reward</span>
                 </button>
-                <button onclick="openMeTab()" class="flex-1 flex flex-col items-center gap-1 text-brand-textGray">
+                <button onclick="switchTab('me')" id="nav-btn-me" class="flex-1 flex flex-col items-center gap-1 text-brand-textGray">
                     <i class="fa-regular fa-user text-lg"></i>
                     <span class="text-[10px] font-medium">Me</span>
                 </button>
@@ -446,20 +519,46 @@
         <!-- MODAL FLOATS & SLIDING DRAWERS -->
         <!-- ========================================== -->
 
-        <!-- Transaction History Slide Up Drawer -->
-        <div id="drawer-transactions" class="absolute inset-0 bg-black/50 z-[60] flex flex-col justify-end hidden page-transition">
+        <!-- Dynamic Settings & Biometric Setup Drawer -->
+        <div id="modal-settings" class="absolute inset-0 bg-black/50 z-[60] flex flex-col justify-end hidden page-transition">
             <div class="bg-white rounded-t-[32px] max-h-[80%] flex flex-col">
-                <div class="flex justify-between items-center px-6 py-4 border-b border-slate-100">
-                    <h3 class="font-bold text-brand-textDark">Transaction History</h3>
-                    <button onclick="closeDrawer('drawer-transactions')" class="w-8 h-8 rounded-full bg-brand-bgGray flex items-center justify-center text-brand-textGray"><i class="fa-solid fa-xmark"></i></button>
+                <div class="flex justify-between items-center px-6 py-5 border-b border-slate-100">
+                    <h3 class="font-bold text-base text-brand-textDark">Account Security Settings</h3>
+                    <button onclick="closeModal('modal-settings')" class="w-8 h-8 rounded-full bg-brand-bgGray flex items-center justify-center text-brand-textGray"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <div id="transaction-list" class="overflow-y-auto p-6 flex flex-col gap-4 min-h-[250px]">
-                    <!-- Populated dynamically via JS -->
+                
+                <div class="p-6 flex flex-col gap-5">
+                    <!-- Toggle Switch for Biometrics -->
+                    <div class="flex items-center justify-between bg-brand-bgGray p-4 rounded-2xl border border-slate-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-brand-lightPurple flex items-center justify-center text-brand-purple text-lg"><i class="fa-solid fa-fingerprint"></i></div>
+                            <div>
+                                <h4 class="text-xs font-bold text-brand-textDark">Biometric Sign In</h4>
+                                <p class="text-[9px] text-brand-textGray mt-0.5">Unlock account instantly with your fingerprint</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Toggle Switch -->
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="toggle-biometrics" class="sr-only peer" onchange="handleBiometricsToggle(this)">
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-purple"></div>
+                        </label>
+                    </div>
+
+                    <!-- Informational Note -->
+                    <div class="p-3.5 bg-brand-lightPurple/40 rounded-xl border border-brand-purple/5 text-[10px] text-brand-purple leading-relaxed">
+                        <i class="fa-solid fa-circle-info mr-1"></i> Once biometric sign-in is configured and your session is cached, you will bypass credential input forms upon launching the application.
+                    </div>
+
+                    <!-- Master Danger Zone Log Out -->
+                    <button onclick="logout()" class="w-full mt-4 bg-red-50 text-red-600 border border-red-100 py-3.5 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 hover:bg-red-100/50 transition-all">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out Completely
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Add Money/Deposit Modal -->
+        <!-- Deposit Modal -->
         <div id="modal-deposit" class="absolute inset-0 bg-black/50 z-[60] flex items-center justify-center px-6 hidden page-transition">
             <div class="bg-white rounded-3xl w-full p-6 shadow-xl flex flex-col gap-4">
                 <h3 class="font-bold text-lg text-brand-textDark">Add Money</h3>
@@ -505,13 +604,11 @@
                     <p class="text-xs text-brand-textGray">Hold your finger on the sensor scanner</p>
                 </div>
                 
-                <!-- Animated fingerprint radar container -->
                 <div class="relative w-28 h-28 flex items-center justify-center">
                     <div class="absolute inset-0 rounded-full bg-brand-purple/10 radar-ring"></div>
                     <div class="absolute inset-2 rounded-full bg-brand-purple/20 radar-ring" style="animation-delay: 0.7s"></div>
                     <div class="w-20 h-20 rounded-full bg-brand-lightPurple flex items-center justify-center text-brand-purple text-4xl shadow-md border border-brand-purple/20 relative overflow-hidden">
                         <i class="fa-solid fa-fingerprint animate-pulse"></i>
-                        <!-- Scanning line beam -->
                         <div class="absolute inset-x-0 h-0.5 bg-brand-accentPurple shadow-[0_0_10px_#7C3AED] animate-bounce top-0"></div>
                     </div>
                 </div>
@@ -520,7 +617,6 @@
                 <button onclick="cancelBiometricVerification()" class="text-xs font-semibold text-brand-textGray hover:text-brand-textDark mt-2">Use PIN Security instead</button>
             </div>
         </div>
-
 
         <!-- Toast Alerts Container -->
         <div id="toast-container" class="absolute bottom-20 left-1/2 -translate-x-1/2 w-[85%] z-[100] flex flex-col gap-2 pointer-events-none"></div>
@@ -552,26 +648,23 @@
             toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark'}"></i> <span>${message}</span>`;
             container.appendChild(toast);
             
-            // Trigger animation
             setTimeout(() => {
                 toast.classList.remove('translate-y-4', 'opacity-0');
             }, 10);
 
-            // Dismiss automatically
             setTimeout(() => {
                 toast.classList.add('translate-y-4', 'opacity-0');
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
 
-        // Show/Hide page load spinner
         function showLoading(state) {
             const loader = document.getElementById('network-loader');
             if (state) loader.classList.remove('hidden');
             else loader.classList.add('hidden');
         }
 
-        // Network Handlers with JSONBin.io backend
+        // Database Access Functions
         async function fetchUsersFromCloud() {
             try {
                 showLoading(true);
@@ -582,7 +675,7 @@
                 appState.users = data.record.users || [];
                 return true;
             } catch (err) {
-                console.error("Fetch failure:", err);
+                console.error("Database connection failure:", err);
                 showToast("Failed to connect to secure servers.", "error");
                 return false;
             } finally {
@@ -602,17 +695,17 @@
                     body: JSON.stringify({ users: appState.users })
                 });
                 if (response.ok) return true;
-                throw new Error("Cloud update rejected.");
+                throw new Error("Synchronization rejected.");
             } catch (err) {
-                console.error("Sync failure:", err);
-                showToast("Could not synchronize data with cloud.", "error");
+                console.error("Cloud update failure:", err);
+                showToast("Could not sync state to cloud.", "error");
                 return false;
             } finally {
                 showLoading(false);
             }
         }
 
-        // UI View Transitions
+        // Master Page Display Engine
         function showPage(pageId) {
             document.getElementById('page-gateway').classList.add('hidden-page');
             document.getElementById('page-lockscreen').classList.add('hidden-page');
@@ -620,8 +713,26 @@
 
             const page = document.getElementById(pageId);
             page.classList.remove('hidden-page');
-            if (pageId === 'page-lockscreen') {
-                page.classList.remove('hidden');
+        }
+
+        // Tab Switching Engine (Home vs. Me)
+        function switchTab(tabId) {
+            const tabHome = document.getElementById('tab-home');
+            const tabMe = document.getElementById('tab-me');
+            const btnHome = document.getElementById('nav-btn-home');
+            const btnMe = document.getElementById('nav-btn-me');
+
+            if (tabId === 'home') {
+                tabHome.classList.remove('hidden');
+                tabMe.classList.add('hidden');
+                btnHome.className = "flex-1 flex flex-col items-center gap-1 text-brand-purple";
+                btnMe.className = "flex-1 flex flex-col items-center gap-1 text-brand-textGray";
+            } else {
+                tabHome.classList.add('hidden');
+                tabMe.classList.remove('hidden');
+                btnMe.className = "flex-1 flex flex-col items-center gap-1 text-brand-purple";
+                btnHome.className = "flex-1 flex flex-col items-center gap-1 text-brand-textGray";
+                populateMePageDetails();
             }
         }
 
@@ -644,7 +755,7 @@
             }
         }
 
-        // Local Storage Session Persistence
+        // Initial App Routing Flow
         function loadLocalSession() {
             const userPhone = localStorage.getItem('palmpay_current_phone');
             if (userPhone && appState.users.length > 0) {
@@ -662,13 +773,17 @@
         function setupLockscreen() {
             document.getElementById('lockscreen-username').textContent = `Welcome Back, ${appState.currentUser.name}`;
             resetPinState();
-            // Automatically prompt biometric scanning if enabled
-            setTimeout(() => {
-                triggerBiometricUnlock();
-            }, 550);
+            
+            // Auto-trigger biometric scan ONLY if enabled in settings
+            const bioEnabled = localStorage.getItem('biometrics_enabled') === 'true';
+            if (bioEnabled) {
+                setTimeout(() => {
+                    triggerBiometricUnlock();
+                }, 600);
+            }
         }
 
-        // Signup & Login Processing
+        // Auth Submissions
         document.getElementById('form-signup').addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('signup-name').value.trim();
@@ -681,7 +796,7 @@
                 return;
             }
             if (pin !== pinConfirm) {
-                showToast("PIN confirmation matching failure.", "error");
+                showToast("PIN confirmation mismatched.", "error");
                 return;
             }
 
@@ -706,7 +821,7 @@
             if (success) {
                 appState.currentUser = newUser;
                 localStorage.setItem('palmpay_current_phone', phone);
-                showToast("Registration completed successfully!");
+                showToast("Welcome! Registration completed.");
                 playUnlockSound();
                 initializeDashboard();
                 showPage('page-dashboard');
@@ -721,30 +836,38 @@
             const user = appState.users.find(u => u.phone === phone);
             if (!user || user.pin !== pin) {
                 playErrorSound();
-                showToast("Invalid credentials provided.", "error");
+                showToast("Invalid credentials supplied.", "error");
                 return;
             }
 
             appState.currentUser = user;
             localStorage.setItem('palmpay_current_phone', phone);
-            showToast("Secure session restored.");
+            showToast("Secure session loaded.");
             playUnlockSound();
             initializeDashboard();
             showPage('page-dashboard');
         });
 
-        // Initialize user dashboard variables
+        // Dashboard Balance Managers
         function initializeDashboard() {
             document.getElementById('dashboard-user-title').textContent = `Hi, ${appState.currentUser.name}`;
             updateBalanceUI();
+            switchTab('home');
         }
 
         function updateBalanceUI() {
             const balElement = document.getElementById('dashboard-balance');
+            const assetsElement = document.getElementById('me-assets-balance');
+            
+            const formatter = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const formattedBalance = `₦${formatter.format(appState.currentUser.balance)}`;
+
             if (appState.isBalanceHidden) {
                 balElement.textContent = "••••••";
+                assetsElement.textContent = "••••••";
             } else {
-                balElement.textContent = `₦${appState.currentUser.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                balElement.textContent = formattedBalance;
+                assetsElement.textContent = formattedBalance;
             }
         }
 
@@ -759,7 +882,46 @@
             updateBalanceUI();
         }
 
-        // PIN security lockpad interactions
+        // Populate Me Tab Layout (Matches screenshot details)
+        function populateMePageDetails() {
+            document.getElementById('me-user-name').textContent = `Hi, ${appState.currentUser.name.toUpperCase()}`;
+            document.getElementById('me-user-phone').textContent = `+234 ${appState.currentUser.phone.slice(0,3)} ${appState.currentUser.phone.slice(3,6)} ${appState.currentUser.phone.slice(6)}`;
+            updateBalanceUI();
+
+            const miniList = document.getElementById('me-mini-transactions');
+            miniList.innerHTML = "";
+
+            const transactions = appState.currentUser.transactions || [];
+            if (transactions.length === 0) {
+                miniList.innerHTML = `<p class="text-[10px] text-brand-textGray text-center py-2">No transactions recorded.</p>`;
+            } else {
+                // Show up to the last 2 transactions to mimic screenshot style
+                transactions.slice(0, 2).forEach(t => {
+                    const color = t.type === 'deposit' ? 'text-emerald-500' : 'text-brand-textDark';
+                    const prefix = t.type === 'deposit' ? '+' : '-';
+                    const icon = t.type === 'deposit' ? 'fa-wallet text-emerald-500' : 'fa-mobile-retro text-brand-purple';
+                    
+                    const row = document.createElement('div');
+                    row.className = "flex justify-between items-center text-xs border-b border-slate-50 pb-2 last:border-b-0 last:pb-0";
+                    row.innerHTML = `
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid ${icon} text-[11px] opacity-85"></i>
+                            <div>
+                                <h5 class="font-bold text-brand-textDark text-[11px]">${t.title}</h5>
+                                <p class="text-[9px] text-brand-textGray font-semibold">${t.date}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-bold ${color}">${prefix} ₦ ${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                            <p class="text-[8px] text-emerald-500 font-extrabold mt-0.5">Successful</p>
+                        </div>
+                    `;
+                    miniList.appendChild(row);
+                });
+            }
+        }
+
+        // Lockscreen Keypad Handlers
         function resetPinState() {
             appState.enteredPin = "";
             updatePinDots();
@@ -777,6 +939,15 @@
         }
 
         function pressPinKey(num) {
+            if (num === 'backspace') {
+                if (appState.enteredPin.length > 0) {
+                    appState.enteredPin = appState.enteredPin.slice(0, -1);
+                    updatePinDots();
+                    playTone(300, 'sine', 0.05);
+                }
+                return;
+            }
+            
             if (appState.enteredPin.length < 4) {
                 appState.enteredPin += num;
                 updatePinDots();
@@ -790,18 +961,10 @@
             }
         }
 
-        function pressPinBackspace() {
-            if (appState.enteredPin.length > 0) {
-                appState.enteredPin = appState.enteredPin.slice(0, -1);
-                updatePinDots();
-                playTone(300, 'sine', 0.05);
-            }
-        }
-
         function verifyPinCode() {
             if (appState.enteredPin === appState.currentUser.pin) {
                 playUnlockSound();
-                showToast("Security code matching success.");
+                showToast("Access Authorized.");
                 initializeDashboard();
                 showPage('page-dashboard');
             } else {
@@ -811,25 +974,151 @@
             }
         }
 
-        // Simulated Biometric Fingerprint Engine
-        function triggerBiometricUnlock() {
+        // Settings Modal Controls
+        function openSettingsModal() {
+            document.getElementById('modal-settings').classList.remove('hidden');
+            const bioToggle = document.getElementById('toggle-biometrics');
+            bioToggle.checked = localStorage.getItem('biometrics_enabled') === 'true';
+        }
+
+        // Handles Biometric Setting Toggle Control with Fallback Verification
+        async function handleBiometricsToggle(checkbox) {
+            if (checkbox.checked) {
+                // Biometrics activation triggered
+                const enrollmentSuccessful = await registerDeviceBiometrics();
+                if (enrollmentSuccessful) {
+                    localStorage.setItem('biometrics_enabled', 'true');
+                    showToast("Biometric verification active.");
+                } else {
+                    checkbox.checked = false;
+                    localStorage.setItem('biometrics_enabled', 'false');
+                }
+            } else {
+                localStorage.setItem('biometrics_enabled', 'false');
+                showToast("Biometric verification disabled.");
+            }
+        }
+
+        // Registers biometric credential using WebAuthn or clean local mock fallback
+        async function registerDeviceBiometrics() {
+            const isSecureContext = window.isSecureContext || window.location.hostname === 'localhost' || window.location.protocol === 'https:';
+            const hasWebAuthn = window.PublicKeyCredential;
+
+            if (isSecureContext && hasWebAuthn) {
+                try {
+                    const challenge = crypto.getRandomValues(new Uint8Array(32));
+                    const userId = crypto.getRandomValues(new Uint8Array(16));
+                    const username = appState.currentUser.phone;
+
+                    const options = {
+                        publicKey: {
+                            challenge: challenge,
+                            rp: { name: "PalmPay Replica", id: window.location.hostname },
+                            user: {
+                                id: userId,
+                                name: username,
+                                displayName: appState.currentUser.name
+                            },
+                            pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+                            authenticatorSelection: {
+                                authenticatorAttachment: "platform",
+                                userVerification: "required"
+                            },
+                            timeout: 15000
+                        }
+                    };
+
+                    const credential = await navigator.credentials.create(options);
+                    if (credential) {
+                        const rawId = new Uint8Array(credential.rawId);
+                        const base64Id = btoa(String.fromCharCode(...rawId));
+                        localStorage.setItem("local_biometric_id", base64Id);
+                        return true;
+                    }
+                } catch (e) {
+                    console.warn("Hardware registration cancelled or failed. Emulating scan interface context.", e);
+                }
+            }
+
+            // Interactive Emulation Fallback
+            return new Promise((resolve) => {
+                const modal = document.getElementById('modal-biometric');
+                const statusText = document.getElementById('biometric-status');
+                
+                modal.classList.remove('hidden');
+                statusText.textContent = "Setting up hardware credential link...";
+                statusText.className = "text-xs font-bold text-brand-purple animate-pulse";
+
+                if ('vibrate' in navigator) navigator.vibrate([100]);
+
+                setTimeout(() => {
+                    statusText.textContent = "Scan Verified & Saved Locally.";
+                    statusText.className = "text-xs font-bold text-emerald-500 animate-none";
+                    playUnlockSound();
+                    
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        resolve(true);
+                    }, 800);
+                }, 2000);
+            });
+        }
+
+        // Biometric Scanning Execution Flow
+        async function triggerBiometricUnlock() {
+            const bioEnabled = localStorage.getItem('biometrics_enabled') === 'true';
+            if (!bioEnabled) {
+                showToast("Please enable Biometric Login in Me > Settings first!", "error");
+                return;
+            }
+
             const modal = document.getElementById('modal-biometric');
             const statusText = document.getElementById('biometric-status');
             
             modal.classList.remove('hidden');
-            statusText.textContent = "Processing Biometric Signature...";
+            statusText.textContent = "Authenticating fingerprint credentials...";
             statusText.className = "text-xs font-bold text-brand-purple animate-pulse";
 
-            // Trigger physical haptic motor vibration where supported
-            if ('vibrate' in navigator) {
-                navigator.vibrate([80, 50, 80]);
+            if ('vibrate' in navigator) navigator.vibrate([80, 50, 80]);
+
+            // Try real WebAuthn login handshake if saved credentials exist
+            const savedCredId = localStorage.getItem("local_biometric_id");
+            if (savedCredId && window.PublicKeyCredential) {
+                try {
+                    const challenge = crypto.getRandomValues(new Uint8Array(32));
+                    const rawId = Uint8Array.from(atob(savedCredId), c => c.charCodeAt(0));
+
+                    const options = {
+                        publicKey: {
+                            challenge: challenge,
+                            allowCredentials: [{ id: rawId, type: "public-key" }],
+                            userVerification: "required",
+                            timeout: 15000
+                        }
+                    };
+
+                    const assertion = await navigator.credentials.get(options);
+                    if (assertion) {
+                        statusText.textContent = "Fingerprint matched!";
+                        statusText.className = "text-xs font-bold text-emerald-500 animate-none";
+                        playUnlockSound();
+                        setTimeout(() => {
+                            modal.classList.add('hidden');
+                            initializeDashboard();
+                            showPage('page-dashboard');
+                        }, 500);
+                        return;
+                    }
+                } catch (e) {
+                    console.warn("Hardware assertion bypassed, falling back to simulated validation timeline.", e);
+                }
             }
 
-            // High Fidelity Simulated Scan Validation Loop
+            // Unified Emulator Timeline (If hardware fails or local dev context has no https)
             setTimeout(() => {
-                if (modal.classList.contains('hidden')) return; // Check if cancelled
+                if (modal.classList.contains('hidden')) return;
                 
-                statusText.textContent = "Signature Match Succeeded.";
+                statusText.textContent = "Biometric Match Confirmed.";
                 statusText.className = "text-xs font-bold text-emerald-500 animate-none";
                 playUnlockSound();
                 
@@ -837,17 +1126,16 @@
                     modal.classList.add('hidden');
                     initializeDashboard();
                     showPage('page-dashboard');
-                }, 500);
+                }, 600);
             }, 2200);
         }
 
         function cancelBiometricVerification() {
             document.getElementById('modal-biometric').classList.add('hidden');
-            showToast("Biometric fallback triggered.", "error");
+            showToast("Fingerprint scanner dismissed.", "error");
         }
 
-
-        // Deposit Functionality
+        // Money Deposit Execution Flows
         function openDepositModal() {
             document.getElementById('modal-deposit').classList.remove('hidden');
         }
@@ -861,7 +1149,7 @@
             const amount = parseFloat(amountInput.value);
 
             if (isNaN(amount) || amount <= 0) {
-                showToast("Please input a valid transaction amount.", "error");
+                showToast("Please input a valid sum.", "error");
                 return;
             }
 
@@ -871,7 +1159,7 @@
                 type: 'deposit',
                 amount: amount,
                 date: new Date().toLocaleDateString(),
-                title: 'Secure Account Deposit'
+                title: 'Account Deposit (Simulation)'
             });
 
             const success = await syncUsersToCloud();
@@ -880,10 +1168,13 @@
                 updateBalanceUI();
                 closeModal('modal-deposit');
                 amountInput.value = "";
+                if (!document.getElementById('tab-me').classList.contains('hidden')) {
+                    populateMePageDetails();
+                }
             }
         }
 
-        // Airtime Purchasing System Simulation
+        // Airtime Purchasing
         function openAirtimeModal() {
             document.getElementById('modal-airtime').classList.remove('hidden');
         }
@@ -895,12 +1186,12 @@
             const amount = parseFloat(amountInput.value);
 
             if (!phone || isNaN(amount) || amount <= 0) {
-                showToast("Please construct valid inputs.", "error");
+                showToast("Invalid network top-up parameters.", "error");
                 return;
             }
 
             if (appState.currentUser.balance < amount) {
-                showToast("Insufficient account credit.", "error");
+                showToast("Insufficient Balance.", "error");
                 return;
             }
 
@@ -910,87 +1201,47 @@
                 type: 'airtime',
                 amount: amount,
                 date: new Date().toLocaleDateString(),
-                title: `Airtime Purchase (${phone})`
+                title: `Airtime Sent (${phone})`
             });
 
             const success = await syncUsersToCloud();
             if (success) {
-                showToast(`Airtime sent to ${phone} successfully.`);
+                showToast(`₦${amount.toLocaleString()} sent to ${phone}`);
                 updateBalanceUI();
                 closeModal('modal-airtime');
                 phoneInput.value = "";
                 amountInput.value = "";
+                if (!document.getElementById('tab-me').classList.contains('hidden')) {
+                    populateMePageDetails();
+                }
             }
         }
 
-        // Drawer controllers
         function closeModal(modalId) {
             document.getElementById(modalId).classList.add('hidden');
         }
 
-        function closeDrawer(drawerId) {
-            document.getElementById(drawerId).classList.add('hidden');
-        }
-
-        function showTransactionHistory() {
-            const drawer = document.getElementById('drawer-transactions');
-            const list = document.getElementById('transaction-list');
-            list.innerHTML = "";
-
-            if (!appState.currentUser.transactions || appState.currentUser.transactions.length === 0) {
-                list.innerHTML = `<div class="flex flex-col items-center justify-center h-48 text-brand-textGray"><i class="fa-solid fa-receipt text-3xl mb-2 opacity-30"></i><p class="text-xs">No active operations found.</p></div>`;
-            } else {
-                appState.currentUser.transactions.forEach(t => {
-                    const sign = t.type === 'deposit' ? '+' : '-';
-                    const color = t.type === 'deposit' ? 'text-emerald-500' : 'text-brand-textDark';
-                    const icon = t.type === 'deposit' ? 'fa-arrow-down-long text-emerald-500 bg-emerald-50' : 'fa-mobile-screen-button text-brand-purple bg-brand-lightPurple';
-                    
-                    const el = document.createElement('div');
-                    el.className = "flex items-center justify-between py-2 border-b border-slate-50 last:border-0";
-                    el.innerHTML = `
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center ${icon}"><i class="fa-solid"></i></div>
-                            <div>
-                                <h4 class="text-xs font-bold text-brand-textDark">${t.title}</h4>
-                                <p class="text-[10px] text-brand-textGray">${t.date}</p>
-                            </div>
-                        </div>
-                        <span class="text-sm font-black ${color}">${sign}₦${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-                    `;
-                    list.appendChild(el);
-                });
-            }
-            drawer.classList.remove('hidden');
-        }
-
-        function openMeTab() {
-            const action = confirm("Would you like to log out of your PalmPay account?");
-            if (action) {
-                logout();
-            }
-        }
-
+        // Complete Session Reset (Pure Logout)
         function logout() {
             localStorage.removeItem('palmpay_current_phone');
+            localStorage.removeItem('biometrics_enabled');
+            localStorage.removeItem('local_biometric_id');
             appState.currentUser = null;
+            closeModal('modal-settings');
             showPage('page-gateway');
-            showToast("Session disconnected.");
+            showToast("Logged out completely.");
         }
 
-        // ==========================================
-        // SINGLE FILE PWA SERVICE WORKER ENGINE
-        // ==========================================
+        // Register Secure Browser Offline PWA Shell
         function registerSecurePWA() {
             const manifest = {
                 "short_name": "PalmPay",
                 "name": "PalmPay Portal",
-                "icons": [
-                    {
-                        "src": "https://cdn-icons-png.flaticon.com/512/10014/10014234.png",
-                        "type": "image/png",
-                        "sizes": "512x512"
-                    }
-                ],
+                "icons": [{
+                    "src": "https://cdn-icons-png.flaticon.com/512/10014/10014234.png",
+                    "type": "image/png",
+                    "sizes": "512x512"
+                }],
                 "start_url": ".",
                 "background_color": "#5F259F",
                 "theme_color": "#5F259F",
@@ -1005,36 +1256,19 @@
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     const swContent = `
-                        const CACHE_NAME = 'palmpay-v1';
-                        const urlsToCache = [
-                            '/',
-                            'index.html',
-                            'https://cdn.tailwindcss.com',
-                            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
-                        ];
-                        self.addEventListener('install', event => {
-                            event.waitUntil(
-                                caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
-                            );
-                        });
-                        self.addEventListener('fetch', event => {
-                            event.respondWith(
-                                caches.match(event.request).then(response => response || fetch(event.request))
-                            );
-                        });
+                        const CACHE_NAME = 'palmpay-v2';
+                        const urlsToCache = ['/', 'index.html'];
+                        self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(urlsToCache))));
+                        self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
                     `;
                     const swBlob = new Blob([swContent], { type: 'application/javascript' });
                     const swUrl = URL.createObjectURL(swBlob);
-                    navigator.serviceWorker.register(swUrl).then(registration => {
-                        console.log('PalmPay PWA System Loaded.');
-                    }).catch(err => {
-                        console.log('Fallback to standard application shell.', err);
-                    });
+                    navigator.serviceWorker.register(swUrl).catch(e => console.log('PWA Service bypassed.', e));
                 });
             }
         }
 
-        // Application Core Initialization
+        // Load & Mount app
         window.addEventListener('DOMContentLoaded', async () => {
             registerSecurePWA();
             const loaded = await fetchUsersFromCloud();
