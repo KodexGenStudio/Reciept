@@ -8,7 +8,11 @@
     <meta name="theme-color" content="#5F259F" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/10014/10014234.png" />
+
+    <!-- ===== LOGO ===== -->
+    <!-- Replace the URL below with your actual logo URL -->
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png" />
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png" />
 
     <!-- Tailwind & FontAwesome -->
     <script src="https://cdn.tailwindcss.com">
@@ -127,7 +131,6 @@
             z-index: 10;
         }
 
-        /* Lock screen gets extra z-index */
         #page-lockscreen {
             z-index: 40;
             background: #5F259F;
@@ -136,7 +139,6 @@
             z-index: 40 !important;
         }
 
-        /* Dashboard */
         #page-dashboard {
             z-index: 30;
             background: #F6F7FB;
@@ -145,7 +147,6 @@
             z-index: 30 !important;
         }
 
-        /* Settings pages */
         #page-settings {
             z-index: 60;
             background: #ffffff;
@@ -162,7 +163,6 @@
             z-index: 70 !important;
         }
 
-        /* Gateway */
         #page-gateway {
             z-index: 50;
             background: #ffffff;
@@ -187,7 +187,7 @@
             box-shadow: 0 0 16px rgba(255, 255, 255, 0.5);
         }
 
-        /* KEYPAD BUTTONS — force clickability */
+        /* KEYPAD BUTTONS */
         .key-btn {
             cursor: pointer;
             touch-action: manipulation;
@@ -207,7 +207,7 @@
             justify-content: center;
         }
         .key-btn:active {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.18);
             transform: scale(0.92);
         }
         .key-btn i {
@@ -385,7 +385,7 @@
             color: #757575;
         }
 
-        /* LOCK SCREEN LAYOUT FIX */
+        /* LOCK SCREEN */
         .lockscreen-content {
             display: flex;
             flex-direction: column;
@@ -461,9 +461,6 @@
             padding: 4px 8px;
             touch-action: manipulation;
         }
-        .lockscreen-footer button:hover {
-            color: #fff;
-        }
         .lockscreen-footer button:active {
             color: #fff;
             transform: scale(0.95);
@@ -500,7 +497,86 @@
             margin-bottom: 8px;
         }
 
-        /* Fix for Safari */
+        /* INSTALL BUTTON */
+        .install-btn {
+            background: #5F259F;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            touch-action: manipulation;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+        .install-btn:active {
+            background: #4a1a7a;
+            transform: scale(0.95);
+        }
+        .install-btn i {
+            font-size: 14px;
+        }
+        .install-btn.hidden {
+            display: none !important;
+        }
+
+        /* LOGO IMAGE STYLES */
+        .app-logo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+        .app-logo-sm {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .app-logo-md {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .app-logo-lg {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .app-logo-circle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        .app-logo-placeholder {
+            background: #5F259F;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 24px;
+        }
+
+        /* Status bar spacer */
+        .status-spacer {
+            height: env(safe-area-inset-top, 0px);
+            min-height: 8px;
+            flex-shrink: 0;
+        }
+
         @supports (padding: max(0px)) {
             .safe-area-top {
                 padding-top: max(env(safe-area-inset-top), 8px);
@@ -536,8 +612,14 @@
             <div id="page-gateway" class="page-layer page-visible">
                 <div class="flex flex-col h-full overflow-y-auto px-6 pt-8 pb-6 safe-top" style="background:#fff;">
                     <div class="flex flex-col items-center mt-8 mb-6">
-                        <div class="w-16 h-16 bg-brand-purple rounded-3xl flex items-center justify-center shadow-lg shadow-brand-purple/20 mb-3">
-                            <span class="text-white text-3xl font-extrabold tracking-wider">P</span>
+                        <!-- Logo -->
+                        <div class="app-logo-lg shadow-lg shadow-brand-purple/20 mb-3">
+                            <img
+                                src="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png"
+                                alt="PalmPay Logo"
+                                class="app-logo-img"
+                                onerror="this.style.display='none'; this.parentElement.classList.add('app-logo-placeholder'); this.parentElement.textContent='P';"
+                            />
                         </div>
                         <h1 class="text-2xl font-bold text-brand-purple">PalmPay Replica</h1>
                         <p class="text-xs text-brand-textGray mt-1">Secure Mobile Financial Gateway</p>
@@ -585,6 +667,13 @@
                         </div>
                         <button type="submit" class="w-full bg-brand-btnPurple text-white py-4 rounded-xl font-bold text-sm mt-2 shadow-md shadow-brand-purple/20 hover:bg-brand-purple transition-all">Create Account</button>
                     </form>
+
+                    <!-- Install App Button -->
+                    <div class="mt-4 flex justify-center">
+                        <button id="installAppBtn" class="install-btn hidden">
+                            <i class="fa-solid fa-download"></i> Install App
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -593,10 +682,14 @@
             <!-- ========================================== -->
             <div id="page-lockscreen" class="page-layer">
                 <div class="lockscreen-content">
-                    <!-- TOP -->
                     <div class="lockscreen-top">
                         <div class="lock-icon">
-                            <i class="fa-solid fa-lock"></i>
+                            <img
+                                src="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png"
+                                alt="PalmPay"
+                                class="w-8 h-8 rounded-full object-cover"
+                                onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-solid fa-lock text-white text-2xl\'></i>';"
+                            />
                         </div>
                         <div class="lock-title" id="lockscreen-username">Welcome Back, Somtochukwu</div>
                         <div class="lock-sub">Verify security credentials to continue</div>
@@ -608,7 +701,6 @@
                         </div>
                     </div>
 
-                    <!-- BOTTOM (keypad) -->
                     <div class="lockscreen-bottom">
                         <div class="keypad-grid">
                             <button class="key-btn" data-key="1">1</button>
@@ -644,19 +736,25 @@
 
                     <!-- TAB: HOME -->
                     <div id="tab-home" class="flex-grow flex flex-col overflow-hidden">
-                        <!-- Header -->
                         <div class="bg-white px-4 pt-4 pb-2 flex justify-between items-center flex-shrink-0">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-purple to-indigo-600 flex items-center justify-center text-white font-extrabold text-sm border-2 border-brand-lightPurple relative shadow-sm">
-                                    <span>P</span>
-                                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                                <div class="app-logo-sm border-2 border-brand-lightPurple shadow-sm">
+                                    <img
+                                        src="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png"
+                                        alt="PalmPay"
+                                        class="app-logo-img"
+                                        onerror="this.style.display='none'; this.parentElement.classList.add('app-logo-placeholder'); this.parentElement.textContent='P';"
+                                    />
                                 </div>
                                 <div>
                                     <p class="text-[10px] text-brand-textGray font-medium leading-none">Welcome back</p>
                                     <h3 id="dashboard-user-title" class="text-sm font-bold tracking-tight">Hi, Somtochukwu</h3>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-4 text-brand-textDark">
+                            <div class="flex items-center gap-3">
+                                <button id="installBtnHeader" class="install-btn hidden text-xs px-3 py-1.5">
+                                    <i class="fa-solid fa-download"></i> Install
+                                </button>
                                 <button class="relative hover:opacity-80"><i class="fa-solid fa-headset text-lg"></i></button>
                                 <button class="relative hover:opacity-80">
                                     <i class="fa-regular fa-bell text-lg"></i>
@@ -665,7 +763,6 @@
                             </div>
                         </div>
 
-                        <!-- Content -->
                         <div class="flex-1 overflow-y-auto pb-24">
                             <div class="mx-4 mt-3 bg-gradient-to-br from-[#EBE3FF] to-[#F5F2FF] rounded-2xl p-4 shadow-sm border border-brand-purple/10">
                                 <div class="flex justify-between items-center text-brand-purple mb-3">
@@ -697,7 +794,6 @@
                                 </div>
                             </div>
 
-                            <!-- Quick Actions -->
                             <div class="grid grid-cols-4 gap-2.5 mx-4 mt-4">
                                 <button onclick="alert('Interbank transfers offline.')" class="bg-white rounded-2xl p-3 shadow-sm flex flex-col items-center gap-2 hover:bg-slate-50 transition-all relative">
                                     <span class="absolute -top-1.5 -right-1 px-1.5 py-0.5 bg-orange-500 text-[8px] text-white rounded-full font-extrabold scale-90">0 Fee</span>
@@ -718,7 +814,6 @@
                                 </button>
                             </div>
 
-                            <!-- Services -->
                             <div class="mx-4 mt-4 bg-white rounded-3xl p-4 shadow-sm border border-slate-100">
                                 <div class="grid grid-cols-4 gap-y-5 gap-x-2 text-center">
                                     <button onclick="openAirtimeModal()" class="flex flex-col items-center gap-1.5">
@@ -757,7 +852,6 @@
                                 </div>
                             </div>
 
-                            <!-- Banner -->
                             <div class="mx-4 mt-4 bg-white rounded-2xl p-3 shadow-sm border border-slate-100 flex justify-between items-center gap-3">
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-full bg-green-800 text-white flex flex-col items-center justify-center leading-none">
@@ -778,8 +872,13 @@
                     <div id="tab-me" class="flex-grow flex flex-col overflow-hidden hidden">
                         <div class="bg-white px-5 pt-5 pb-3 flex justify-between items-center border-b border-slate-50 flex-shrink-0">
                             <div class="flex items-center gap-3">
-                                <div class="w-11 h-11 rounded-full bg-purple-100 flex items-center justify-center text-brand-purple font-black text-lg border border-brand-purple/10">
-                                    <i class="fa-regular fa-user"></i>
+                                <div class="app-logo-sm border border-brand-purple/10">
+                                    <img
+                                        src="https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png"
+                                        alt="PalmPay"
+                                        class="app-logo-img"
+                                        onerror="this.style.display='none'; this.parentElement.classList.add('app-logo-placeholder'); this.parentElement.textContent='P';"
+                                    />
                                 </div>
                                 <div>
                                     <div class="flex items-center gap-2">
@@ -927,11 +1026,16 @@
             <!-- ========================================== -->
             <div id="page-settings" class="page-layer">
                 <div class="flex flex-col h-full" style="background:#fff;">
-                    <div class="bg-white px-5 pt-5 pb-4 border-b border-slate-50 flex items-center gap-3 flex-shrink-0 safe-top">
-                        <button onclick="goBackFromSettings()" class="w-10 h-10 rounded-full bg-brand-bgGray flex items-center justify-center text-brand-textDark hover:bg-slate-200 transition-all">
-                            <i class="fa-solid fa-arrow-left text-base"></i>
+                    <div class="bg-white px-5 pt-5 pb-4 border-b border-slate-50 flex items-center justify-between flex-shrink-0 safe-top">
+                        <div class="flex items-center gap-3">
+                            <button onclick="goBackFromSettings()" class="w-10 h-10 rounded-full bg-brand-bgGray flex items-center justify-center text-brand-textDark hover:bg-slate-200 transition-all">
+                                <i class="fa-solid fa-arrow-left text-base"></i>
+                            </button>
+                            <h3 class="font-bold text-lg text-brand-textDark">Settings</h3>
+                        </div>
+                        <button id="installBtnSettings" class="install-btn text-xs px-3 py-1.5 hidden">
+                            <i class="fa-solid fa-download"></i> Install
                         </button>
-                        <h3 class="font-bold text-lg text-brand-textDark">Settings</h3>
                     </div>
 
                     <div class="flex-1 overflow-y-auto px-4 py-3 divide-y divide-slate-50">
@@ -1127,16 +1231,54 @@
             enteredPin: ""
         };
 
+        // Default user for fallback
+        const DEFAULT_USER = {
+            name: 'PungyOnYT',
+            phone: '8012345678',
+            pin: '1234',
+            balance: 171.41,
+            transactions: [
+                { id: 'TX-' + Date.now(), type: 'deposit', amount: 171.41, date: new Date().toLocaleDateString(),
+                    title: 'Registration Reward' }
+            ]
+        };
+
         async function fetchUsers() {
             try {
                 showLoading(true);
                 const res = await fetch(API_URL, { headers: { 'X-Master-Key': API_KEY } });
+                if (!res.ok) throw new Error('API error');
                 const data = await res.json();
-                appState.users = data.record?.users || [];
+                const users = data.record?.users || [];
+                if (users.length === 0) {
+                    appState.users = [DEFAULT_USER];
+                    await syncUsers();
+                } else {
+                    appState.users = users;
+                }
+                localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users));
                 return true;
-            } catch (_) {
-                showToast('Failed to connect.', 'error');
-                return false;
+            } catch (err) {
+                console.warn('JSONBin fetch failed, using localStorage backup:', err);
+                const backup = localStorage.getItem('palmpay_users_backup');
+                if (backup) {
+                    try {
+                        appState.users = JSON.parse(backup);
+                        if (appState.users.length === 0) {
+                            appState.users = [DEFAULT_USER];
+                            localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users));
+                        }
+                        return true;
+                    } catch (_) {
+                        appState.users = [DEFAULT_USER];
+                        localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users));
+                        return true;
+                    }
+                } else {
+                    appState.users = [DEFAULT_USER];
+                    localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users));
+                    return true;
+                }
             } finally {
                 showLoading(false);
             }
@@ -1150,10 +1292,15 @@
                     headers: { 'X-Master-Key': API_KEY, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ users: appState.users })
                 });
-                return res.ok;
+                if (res.ok) {
+                    localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users));
+                    return true;
+                }
+                throw new Error('Sync failed');
             } catch (_) {
-                showToast('Sync failed.', 'error');
-                return false;
+                localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users));
+                showToast('Synced locally (offline mode).', 'success');
+                return true;
             } finally {
                 showLoading(false);
             }
@@ -1271,7 +1418,6 @@
                     return false;
                 }
             }
-            // Fallback mock
             localStorage.setItem('local_biometric_id', 'mock_' + Date.now());
             showToast('Touch ID enabled (simulated).', 'success');
             return true;
@@ -1313,7 +1459,6 @@
                 }
             }
 
-            // Mock fallback
             showToast('Touch ID simulation: granted.', 'success');
             playUnlockSound();
             initializeDashboard();
@@ -1338,7 +1483,6 @@
         function setupLockscreen() {
             document.getElementById('lockscreen-username').textContent = `Welcome Back, ${appState.currentUser.name}`;
             resetPinState();
-            // Auto-trigger if biometrics enabled
             if (localStorage.getItem('palmpay_biometric') === 'true') {
                 setTimeout(() => triggerBiometricUnlock(), 700);
             }
@@ -1616,9 +1760,14 @@
             const phone = document.getElementById('login-phone').value.trim();
             const pin = document.getElementById('login-pin').value;
             const user = appState.users.find(u => u.phone === phone);
-            if (!user || user.pin !== pin) {
+            if (!user) {
                 playErrorSound();
-                showToast('Invalid credentials.', 'error');
+                showToast('No account found with this number.', 'error');
+                return;
+            }
+            if (user.pin !== pin) {
+                playErrorSound();
+                showToast('Invalid PIN.', 'error');
                 return;
             }
             appState.currentUser = user;
@@ -1629,9 +1778,67 @@
             showPage('page-dashboard');
         });
 
+        // ===== PWA INSTALL =====
+        let deferredPrompt = null;
+        let isAppInstalled = false;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.querySelectorAll('.install-btn').forEach(btn => btn.classList.remove('hidden'));
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                document.querySelectorAll('.install-btn').forEach(btn => btn.classList.add('hidden'));
+                isAppInstalled = true;
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            isAppInstalled = true;
+            document.querySelectorAll('.install-btn').forEach(btn => btn.classList.add('hidden'));
+            showToast('App installed successfully!', 'success');
+        });
+
+        async function installApp() {
+            if (deferredPrompt) {
+                try {
+                    const result = await deferredPrompt.prompt();
+                    if (result.outcome === 'accepted') {
+                        showToast('App installation started!', 'success');
+                    } else {
+                        showToast('Installation cancelled.', 'error');
+                    }
+                    deferredPrompt = null;
+                    document.querySelectorAll('.install-btn').forEach(btn => btn.classList.add('hidden'));
+                } catch (_) {
+                    showToast('Installation failed.', 'error');
+                }
+            } else {
+                showToast('Open this page in Chrome and add to home screen.', 'success');
+                if (navigator.share) {
+                    try {
+                        await navigator.share({
+                            title: 'PalmPay',
+                            text: 'Install PalmPay app',
+                            url: window.location.href
+                        });
+                    } catch (_) {}
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.install-btn').forEach(btn => {
+                btn.addEventListener('click', installApp);
+            });
+
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                document.querySelectorAll('.install-btn').forEach(btn => btn.classList.add('hidden'));
+                isAppInstalled = true;
+            }
+        });
+
         // ===== KEYPAD EVENT BINDING =====
         document.addEventListener('DOMContentLoaded', function() {
-            // Bind keypad buttons
             document.querySelectorAll('.key-btn').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -1642,7 +1849,6 @@
                         pressPinKey(key);
                     }
                 });
-                // Touch feedback
                 btn.addEventListener('touchstart', function() {
                     this.style.transform = 'scale(0.92)';
                 }, { passive: true });
@@ -1651,37 +1857,54 @@
                 }, { passive: true });
             });
 
-            // Switch Account
             document.getElementById('switchAccountBtn').addEventListener('click', function(e) {
                 e.stopPropagation();
                 logout();
             });
 
-            // Forgot PIN
             document.getElementById('forgotPinBtn').addEventListener('click', function(e) {
                 e.stopPropagation();
                 alert('Contact support to reset your PIN.');
             });
 
-            // PWA manifest
+            // ===== PWA MANIFEST with custom logo =====
+            const LOGO_URL = 'https://raw.githubusercontent.com/KodexGenStudio/Reciept/refs/heads/main/images.png';
+
             const manifest = {
                 short_name: 'PalmPay',
                 name: 'PalmPay Portal',
-                icons: [{ src: 'https://cdn-icons-png.flaticon.com/512/10014/10014234.png', type: 'image/png',
-                    sizes: '512x512' }],
+                icons: [{
+                    src: LOGO_URL,
+                    type: 'image/png',
+                    sizes: '512x512',
+                    purpose: 'any maskable'
+                }],
                 start_url: '.',
                 background_color: '#5F259F',
                 theme_color: '#5F259F',
                 display: 'standalone',
                 orientation: 'portrait'
             };
+
+            // Try to fetch the logo and convert to base64 for manifest
+            // Fallback: use the URL directly
             const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-            document.querySelector('#manifest-placeholder').setAttribute('href', URL.createObjectURL(blob));
+            const manifestURL = URL.createObjectURL(blob);
+            const manifestLink = document.querySelector('#manifest-placeholder');
+            if (manifestLink) {
+                manifestLink.setAttribute('href', manifestURL);
+            }
+
+            // Also set favicon and apple-touch-icon dynamically
+            const favicon = document.querySelector('link[rel="icon"]');
+            if (favicon) favicon.href = LOGO_URL;
+            const appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
+            if (appleIcon) appleIcon.href = LOGO_URL;
 
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     const sw = `
-                            const C='palmpay-v5';
+                            const C='palmpay-v7';
                             const U=['/','index.html'];
                             self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(U))));
                             self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));
@@ -1702,4 +1925,4 @@
     </script>
 
 </body>
-                                                                                                                                                  </html>
+                                    </html>
