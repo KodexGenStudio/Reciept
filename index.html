@@ -42,6 +42,7 @@
     </script>
 
     <style>
+        /* RESET & FULLSCREEN */
         * {
             margin: 0;
             padding: 0;
@@ -883,7 +884,6 @@
             color: #fff;
         }
 
-        /* Re-authentication overlay */
         #reauth-overlay {
             position: absolute;
             inset: 0;
@@ -1352,7 +1352,7 @@
                 </div>
             </div>
 
-            <!-- ===== PAGE: TRANSFER FLOW (SHARED RECIPIENTS) ===== -->
+            <!-- ===== PAGE: TRANSFER FLOW (FIXED - USES GLOBAL RECIPIENTS) ===== -->
             <div id="page-transfer" class="page-layer">
                 <div class="flex flex-col h-full" style="background:#F6F7FB;">
                     <div class="bg-white px-4 pt-5 pb-3 border-b border-slate-50 flex items-center gap-3 flex-shrink-0 safe-top">
@@ -1376,7 +1376,7 @@
                                         <input type="text" id="transfer-account" maxlength="10" inputmode="numeric" pattern="[0-9]*" placeholder="8201633275" class="w-full mt-1 px-3 py-3 bg-brand-bgGray border-0 rounded-lg text-sm focus:ring-2 focus:ring-brand-purple outline-none font-semibold" />
                                     </div>
 
-                                    <!-- Suggested Banks from Global Recipients -->
+                                    <!-- Suggested Banks from GLOBAL Recipients -->
                                     <div id="suggested-banks" class="mb-3 hidden">
                                         <label class="text-xs font-semibold text-brand-textGray">Select linked bank</label>
                                         <div id="suggested-banks-list" class="mt-2 space-y-2">
@@ -1704,7 +1704,7 @@
             reauthPin: ""
         };
 
-        // Global recipients database - shared across all users
+        // GLOBAL RECIPIENTS - shared across all users
         let globalRecipients = [];
 
         const DEFAULT_USER = {
@@ -1724,17 +1724,22 @@
                 const data = await res.json();
                 const record = data.record || {};
                 const users = record.users || [];
+                // CRITICAL FIX: Load global recipients from JSONBin
                 globalRecipients = record.recipients || [];
 
                 if (users.length === 0) { appState.users = [DEFAULT_USER];
                     await syncUsers(); } else { appState.users = users; }
+
+                // Also save to localStorage as backup
                 localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users));
                 localStorage.setItem('palmpay_recipients_backup', JSON.stringify(globalRecipients));
                 return true;
             } catch (err) {
-                const backup = localStorage.getItem('palmpay_users_backup');
-                if (backup) { try { appState.users = JSON.parse(backup); if (appState.users.length === 0) { appState.users = [
-                            DEFAULT_USER];
+                console.warn('Fetch failed, using localStorage backup:', err);
+                // Try to load from localStorage
+                const usersBackup = localStorage.getItem('palmpay_users_backup');
+                if (usersBackup) { try { appState.users = JSON.parse(usersBackup); if (appState.users.length === 0) { appState
+                            .users = [DEFAULT_USER];
                         localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users)); } } catch (_) { appState
                             .users = [DEFAULT_USER];
                         localStorage.setItem('palmpay_users_backup', JSON.stringify(appState.users)); } } else { appState.users = [
@@ -1769,23 +1774,31 @@
             } finally { showLoading(false); }
         }
 
-        async function syncRecipients() {
-            try {
-                showLoading(true);
-                const res = await fetch(API_URL, {
-                    method: 'PUT',
-                    headers: { 'X-Master-Key': API_KEY, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ users: appState.users, recipients: globalRecipients })
+        // ===== GLOBAL RECIPIENT FUNCTIONS =====
+        function getRecipientsByAccount(account) {
+            return globalRecipients.filter(r => r.account === account);
+        }
+
+        function getRecipientByAccountAndBank(account, bank) {
+            return globalRecipients.find(r => r.account === account && r.bank === bank);
+        }
+
+        function addRecipientToGlobal(account, bank, name) {
+            const exists = globalRecipients.some(r => r.account === account && r.bank === bank);
+            if (!exists) {
+                globalRecipients.push({
+                    account: account,
+                    bank: bank,
+                    name: name,
+                    createdAt: new Date().toISOString()
                 });
-                if (res.ok) {
-                    localStorage.setItem('palmpay_recipients_backup', JSON.stringify(globalRecipients));
-                    return true;
-                }
-                return false;
-            } catch (_) {
+                // Save to localStorage and JSONBin
                 localStorage.setItem('palmpay_recipients_backup', JSON.stringify(globalRecipients));
+                // Async save to JSONBin
+                syncUsers().catch(() => {});
                 return true;
-            } finally { showLoading(false); }
+            }
+            return false;
         }
 
         // ===== PAGE NAVIGATION =====
@@ -2250,35 +2263,7 @@
         });
 
         // ================================================================
-        // ===== GLOBAL RECIPIENTS MANAGEMENT =====
-        // ================================================================
-
-        function addRecipientToGlobal(account, bank, name) {
-            // Check if already exists
-            const exists = globalRecipients.some(r => r.account === account && r.bank === bank);
-            if (!exists) {
-                globalRecipients.push({
-                    account: account,
-                    bank: bank,
-                    name: name,
-                    createdAt: new Date().toISOString()
-                });
-                syncRecipients();
-                return true;
-            }
-            return false;
-        }
-
-        function getRecipientsByAccount(account) {
-            return globalRecipients.filter(r => r.account === account);
-        }
-
-        function getRecipientByAccountAndBank(account, bank) {
-            return globalRecipients.find(r => r.account === account && r.bank === bank);
-        }
-
-        // ================================================================
-        // ===== ACCOUNT RESOLUTION & AUTOFILL =====
+        // ===== ACCOUNT RESOLUTION & AUTOFILL (FIXED) =====
         // ================================================================
 
         const bankCodeMap = {
@@ -2389,7 +2374,7 @@
             dd.classList.toggle('hidden');
         }
 
-        // Bank selection from dropdown (no images)
+        // Bank selection from dropdown
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.bank-option[data-bank]').forEach(el => {
                 el.addEventListener('click', function() {
@@ -2407,7 +2392,7 @@
                 });
             });
 
-            // Account input with smart autofill from GLOBAL recipients
+            // === CRITICAL FIX: Account input with GLOBAL recipients ===
             const accInput = document.getElementById('transfer-account');
             if (accInput) {
                 accInput.addEventListener('input', function() {
@@ -2416,12 +2401,24 @@
                     const suggestedBanks = document.getElementById('suggested-banks');
                     const suggestedList = document.getElementById('suggested-banks-list');
 
-                    // Check GLOBAL recipients
-                    const matches = getRecipientsByAccount(account);
+                    // FIRST: Check GLOBAL recipients (shared across all users)
+                    const globalMatches = getRecipientsByAccount(account);
 
-                    if (account.length === 10 && matches.length > 0) {
+                    // SECOND: Check user's personal recent transfers as fallback
+                    const personalMatches = appState.currentUser?.recentTransfers?.filter(r => r.account === account) ||
+                        [];
+
+                    // Combine matches: global first, then personal (deduplicate)
+                    const allMatches = [...globalMatches];
+                    personalMatches.forEach(pm => {
+                        if (!allMatches.some(m => m.account === pm.account && m.bank === pm.bank)) {
+                            allMatches.push(pm);
+                        }
+                    });
+
+                    if (account.length === 10 && allMatches.length > 0) {
                         suggestedList.innerHTML = '';
-                        matches.forEach(match => {
+                        allMatches.forEach(match => {
                             const item = document.createElement('div');
                             item.className = 'suggested-bank-item';
                             const logo = bankLogos[match.bank] || '';
@@ -2466,6 +2463,7 @@
                         suggestedBanks.classList.add('hidden');
                     }
 
+                    // Also try Monnify if bank is selected
                     if (account.length === 10 && selectedBank) {
                         manualOverride = false;
                         resolveAccount(account, selectedBank, selectedBankCode);
@@ -2557,13 +2555,13 @@
             try {
                 let accountName = null;
 
-                // First check GLOBAL recipients
+                // FIRST: Check GLOBAL recipients
                 const existing = getRecipientByAccountAndBank(account, bank);
                 if (existing) {
                     accountName = existing.name;
                 }
 
-                // If not in global, try Monnify
+                // SECOND: If not in global, try Monnify
                 if (!accountName) {
                     const token = await getMonnifyToken();
                     if (token) {
@@ -2580,7 +2578,7 @@
                                 const data = await res.json();
                                 if (data.responseBody && data.responseBody.accountName) {
                                     accountName = data.responseBody.accountName;
-                                    // Add to GLOBAL recipients
+                                    // Add to GLOBAL recipients for future use
                                     addRecipientToGlobal(account, bank, accountName);
                                 }
                             }
@@ -3085,7 +3083,7 @@
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     const sw =
-                        `const C='palmpay-v15';const U=['/','index.html'];self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(U))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
+                        `const C='palmpay-v16';const U=['/','index.html'];self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(U))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
                     const b2 = new Blob([sw], { type: 'application/javascript' });
                     navigator.serviceWorker.register(URL.createObjectURL(b2)).catch(() => {});
                 });
@@ -3099,4 +3097,4 @@
     </script>
 
 </body>
-                                                    </html>
+            </html>
